@@ -1,0 +1,48 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+DUP	inc/mqtt_fixed_header.h	/^        uint8_t DUP;  \/\/!< [0-1]$/;"	m	struct:mqtt_ctl_head
+MQTT_CTL_FLAG_DUP_CHECK	inc/mqtt_fixed_header.h	75;"	d
+MQTT_CTL_FLAG_DUP_EVAL	inc/mqtt_fixed_header.h	78;"	d
+MQTT_CTL_FLAG_DUP_Msk	inc/mqtt_fixed_header.h	76;"	d
+MQTT_CTL_FLAG_DUP_OFFSET	inc/mqtt_fixed_header.h	77;"	d
+MQTT_CTL_FLAG_QoS_CHECK	inc/mqtt_fixed_header.h	82;"	d
+MQTT_CTL_FLAG_QoS_EVAL	inc/mqtt_fixed_header.h	85;"	d
+MQTT_CTL_FLAG_QoS_Msk	inc/mqtt_fixed_header.h	83;"	d
+MQTT_CTL_FLAG_QoS_OFFSET	inc/mqtt_fixed_header.h	84;"	d
+MQTT_CTL_FLAG_RETAIN_CHECK	inc/mqtt_fixed_header.h	89;"	d
+MQTT_CTL_FLAG_RETAIN_EVAL	inc/mqtt_fixed_header.h	92;"	d
+MQTT_CTL_FLAG_RETAIN_Msk	inc/mqtt_fixed_header.h	90;"	d
+MQTT_CTL_FLAG_RETAIN_OFFSET	inc/mqtt_fixed_header.h	91;"	d
+MQTT_CTL_HEAD_PACK	inc/mqtt_fixed_header.h	106;"	d
+MQTT_CTL_TYPE_CHECK	inc/mqtt_fixed_header.h	60;"	d
+MQTT_CTL_TYPE_CONNACK	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_CONNACK,  $/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_CONNECT	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_CONNECT,  $/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_DISCONNECT	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_DISCONNECT,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_EVAL	inc/mqtt_fixed_header.h	67;"	d
+MQTT_CTL_TYPE_LOWER_BORDER	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_LOWER_BORDER, $/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_OFFSET	inc/mqtt_fixed_header.h	66;"	d
+MQTT_CTL_TYPE_PINGREQ	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_PINGREQ,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_PINGRESP	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_PINGRESP,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_PUBACK	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_PUBACK,   $/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_PUBCOMP	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_PUBCOMP,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_PUBLISH	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_PUBLISH,  $/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_PUBREC	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_PUBREC,   $/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_PUBREL	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_PUBREL,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_SUBACK	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_SUBACK,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_SUBSCRIBE	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_SUBSCRIBE,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_UNSUBACK	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_UNSUBACK,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_UNSUBSCRIBE	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_UNSUBSCRIBE,$/;"	e	enum:mqtt_ctl_type
+MQTT_CTL_TYPE_UPPER_BORDER	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_UPPER_BORDER$/;"	e	enum:mqtt_ctl_type
+QoS	inc/mqtt_fixed_header.h	/^        uint8_t QoS;  \/\/!< [0-2]$/;"	m	struct:mqtt_ctl_head
+RETAIN	inc/mqtt_fixed_header.h	/^        uint8_t RETAIN;  \/\/!< [0-1]$/;"	m	struct:mqtt_ctl_head
+_MQTT_FIXED_HEADER_H_	inc/mqtt_fixed_header.h	2;"	d
+mqtt_ctl_head	inc/mqtt_fixed_header.h	/^typedef struct mqtt_ctl_head{$/;"	s
+mqtt_ctl_head_pack_s	src/core/mqtt_fixed_header.c	/^void mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header){$/;"	f
+mqtt_ctl_head_t	inc/mqtt_fixed_header.h	/^} mqtt_ctl_head_t;$/;"	t	typeref:struct:mqtt_ctl_head
+mqtt_ctl_type	inc/mqtt_fixed_header.h	/^typedef enum mqtt_ctl_type{$/;"	g
+mqtt_ctl_type_t	inc/mqtt_fixed_header.h	/^} mqtt_ctl_type_t; $/;"	t	typeref:enum:mqtt_ctl_type
+type	inc/mqtt_fixed_header.h	/^        mqtt_ctl_type_t type;$/;"	m	struct:mqtt_ctl_head
