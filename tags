@@ -4,6 +4,7 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+COUNT_OF_ARRAY	src/toolkit/array.h	4;"	d
 DUP	inc/mqtt_fixed_header.h	/^        uint8_t DUP;  \/\/!< [0-1]$/;"	m	struct:mqtt_ctl_head
 MQTT_CTL_FLAG_DUP_CHECK	inc/mqtt_fixed_header.h	75;"	d
 MQTT_CTL_FLAG_DUP_EVAL	inc/mqtt_fixed_header.h	78;"	d
@@ -40,9 +41,12 @@ MQTT_CTL_TYPE_UPPER_BORDER	inc/mqtt_fixed_header.h	/^        MQTT_CTL_TYPE_UPPER
 QoS	inc/mqtt_fixed_header.h	/^        uint8_t QoS;  \/\/!< [0-2]$/;"	m	struct:mqtt_ctl_head
 RETAIN	inc/mqtt_fixed_header.h	/^        uint8_t RETAIN;  \/\/!< [0-1]$/;"	m	struct:mqtt_ctl_head
 _MQTT_FIXED_HEADER_H_	inc/mqtt_fixed_header.h	2;"	d
+main	src/core/test.c	/^int main(int argc, char * argv[]){$/;"	f
+mqtt_ctl_decode_remaining_len	src/core/mqtt_fixed_header.c	/^uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code){$/;"	f
 mqtt_ctl_head	inc/mqtt_fixed_header.h	/^typedef struct mqtt_ctl_head{$/;"	s
 mqtt_ctl_head_pack_s	src/core/mqtt_fixed_header.c	/^void mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header){$/;"	f
 mqtt_ctl_head_t	inc/mqtt_fixed_header.h	/^} mqtt_ctl_head_t;$/;"	t	typeref:struct:mqtt_ctl_head
 mqtt_ctl_type	inc/mqtt_fixed_header.h	/^typedef enum mqtt_ctl_type{$/;"	g
 mqtt_ctl_type_t	inc/mqtt_fixed_header.h	/^} mqtt_ctl_type_t; $/;"	t	typeref:enum:mqtt_ctl_type
+objs	src/core/Makefile	/^objs = test.o mqtt_fixed_header.o $/;"	m
 type	inc/mqtt_fixed_header.h	/^        mqtt_ctl_type_t type;$/;"	m	struct:mqtt_ctl_head
