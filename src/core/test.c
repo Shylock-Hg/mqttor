@@ -4,8 +4,10 @@
  * */
 
 #include "../../inc/mqtt_fixed_header.h"
-#include <stdio.h>
 #include "../toolkit/array.h"
+
+#include <stdio.h>
+#include <string.h>
 
 int main(int argc, char * argv[]){
 	//!< control packet header byte 
@@ -34,7 +36,9 @@ int main(int argc, char * argv[]){
 	for(int i=0; i<COUNT_OF_ARRAY(length); i++){
 		mqtt_ctl_encode_remaining_len(code,length[i]);
 		uint32_t len = mqtt_ctl_decode_remaining_len(code);
-		printf("[info]:origin=%d,encode_decode=%d.\r\n",length[i],len);
+		printf("[info]:origin=%u,encode=%2x-%2x-%2x-%2x,decode=%u.\r\n",
+				length[i],*(code+0),*(code+1),*(code+2),*(code+3),len);
+		memset(code,0x00,sizeof(code));
 	}
 
 	return 0;

@@ -44,11 +44,9 @@ int mqtt_ctl_encode_remaining_len(uint8_t * code, uint32_t length){
 		*code = length % 128;
 		length /= 128;
 		if(0 < length)
-			*code = *code | 128;
-		else{
-			code++;
-			count++;
-		}
+			*code |= 128;
+		code++;
+		count++;
 	}while(0 < length);
 	
 	return count;
