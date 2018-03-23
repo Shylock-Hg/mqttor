@@ -3,8 +3,9 @@ The simple mqtt protocol implement.
 
 ## Feature 
 
-  - std c language.
+  - -std=c99.
   - easy port.
+  - easy using.
 
 ## Project Structure
 
