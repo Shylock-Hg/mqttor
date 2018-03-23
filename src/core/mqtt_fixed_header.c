@@ -20,7 +20,7 @@ uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header){
 
 uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code){
 	int multiplier = 1;
-	int value = 0;
+	uint32_t value = 0;
 	do{
 		value += ((*code) & 127) * multiplier;
 		multiplier *= 128;
@@ -28,11 +28,17 @@ uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code){
 			//!< err `Malformaed Remaining Length`
 			return -1;
 	}while(((*code++) & 128) != 0);
+
+	//!< check length range
+	MQTT_CTL_REMAINING_LEN_CHECK(value);
 	
 	return value;
 }
 
 int mqtt_ctl_encode_remaining_len(uint8_t * code, uint32_t length){
+	//!< check length range
+	MQTT_CTL_REMAINING_LEN_CHECK(length);
+
 	int count = 0;
 	do{
 		*code = length % 128;
