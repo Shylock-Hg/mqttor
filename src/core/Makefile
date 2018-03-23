@@ -1,3 +1,5 @@
+CFLAGS = -std=c99
+
 DIR_INC = ../../inc
 DIR_BUILD = ./build
 OBJS = $(DIR_BUILD)/test.o $(DIR_BUILD)/mqtt_fixed_header.o 
@@ -6,15 +8,15 @@ OBJS = $(DIR_BUILD)/test.o $(DIR_BUILD)/mqtt_fixed_header.o
 all : $(DIR_BUILD)/test
 
 $(DIR_BUILD)/test : $(OBJS) output
-	cc -o $@ $(OBJS)
+	cc $(CFLAGS) -o $@ $(OBJS)
 
 $(DIR_BUILD)/test.o : test.c mqtt_fixed_header.c $(DIR_INC)/mqtt_fixed_header.h \
 	output
-	cc -o $@ -c $<
+	cc $(CFLAGS) -o $@ -c $<
 
 $(DIR_BUILD)/mqtt_fixed_header.o : mqtt_fixed_header.c $(DIR_INC)/mqtt_fixed_header.h \
 	output
-	cc -o $@ -c $<
+	cc $(CFLAGS) -o $@ -c $<
 
 #create build directory
 .PHONY : output
