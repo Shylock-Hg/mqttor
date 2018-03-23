@@ -116,6 +116,10 @@ typedef struct mqtt_ctl_head{
 uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header);
 
 /*********** encoding & decoding remaining length ***********/
+
+#define MQTT_CTL_REMAINING_LEN_CHECK(length) \
+	assert(0xFFFFFF7F >= length)
+
 /*  \brief decode remaining length
  *  \param code[in] the encoded code 
  *  \retval the value of remaining length
