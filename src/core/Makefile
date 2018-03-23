@@ -1,14 +1,28 @@
 DIR_INC = ../../inc
-OBJS = test.o mqtt_fixed_header.o 
+DIR_BUILD = ./build
+OBJS = $(DIR_BUILD)/test.o $(DIR_BUILD)/mqtt_fixed_header.o 
 
 .PHONY : all
-all : $(OBJS)
-	cc -o test $(OBJS)
+all : $(DIR_BUILD)/test
 
-test.o : $(DIR_INC)/mqtt_fixed_header.h
-mqtt_fixed_header.o : $(DIR_INC)/mqtt_fixed_header.h
+$(DIR_BUILD)/test : $(OBJS) output
+	cc -o $@ $(OBJS)
 
+$(DIR_BUILD)/test.o : test.c mqtt_fixed_header.c $(DIR_INC)/mqtt_fixed_header.h \
+	output
+	cc -o $@ -c $<
+
+$(DIR_BUILD)/mqtt_fixed_header.o : mqtt_fixed_header.c $(DIR_INC)/mqtt_fixed_header.h \
+	output
+	cc -o $@ -c $<
+
+#create build directory
+.PHONY : output
+output : 
+	mkdir -p ./build
+
+#clean outputs
 .PHONY : clean
 clean : 
-	rm test $(OBJS)
+	rm $(DIR_BUILD)/test $(OBJS)
 
