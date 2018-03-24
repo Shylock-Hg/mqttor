@@ -25,6 +25,9 @@
 	#error "undefined endian of target!"
 #endif
 
+/*  \brief caculate bit mask by offset[0:]
+ * */
+#define BIT(offset) (1<<offset)
 
 #endif
 
