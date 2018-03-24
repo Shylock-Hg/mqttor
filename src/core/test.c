@@ -10,7 +10,17 @@
 #include <stdio.h>
 #include <string.h>
 
+void test_fixed_header(void);
+void test_var_header(void);
+
 int main(int argc, char * argv[]){
+	test_fixed_header();
+	test_var_header();
+
+	return 0;
+}
+
+void test_fixed_header(void){
 	//!< control packet header byte 
 	printf("\n\n");
 	printf("**********mqtt fixed header test**********\n");
@@ -43,7 +53,9 @@ int main(int argc, char * argv[]){
 				length[i],size,*(code+0),*(code+1),*(code+2),*(code+3),len);
 		memset(code,0x00,sizeof(code));
 	}
+}
 
+void test_var_header(void){
 	printf("\n\n");
 	printf("**********mqtt variable header test**********\n");
 	struct mqtt_connect_flag conn_flag = {
@@ -65,6 +77,4 @@ int main(int argc, char * argv[]){
 			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_W_FLAG_Msk,MQTT_CONNECT_FLAG_W_FLAG_OFFSET),
 			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_CLEAN_SESSION_Msk,MQTT_CONNECT_FLAG_CLEAN_SESSION_OFFSET),
 			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_RESERVED_Msk,MQTT_CONNECT_FLAG_RESERVED_OFFSET));
-
-	return 0;
 }
