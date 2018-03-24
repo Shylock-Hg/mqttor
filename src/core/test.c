@@ -34,10 +34,10 @@ int main(int argc, char * argv[]){
 	uint32_t length[] = {0,127,128,16383,16384,2097151,2097152,268435455};
 	uint8_t code[4] = {0};
 	for(int i=0; i<COUNT_OF_ARRAY(length); i++){
-		mqtt_ctl_encode_remaining_len(code,length[i]);
+		int size = mqtt_ctl_encode_remaining_len(code,length[i]);
 		uint32_t len = mqtt_ctl_decode_remaining_len(code);
-		printf("[info]:origin=%u,encode=%2x-%2x-%2x-%2x,decode=%u.\r\n",
-				length[i],*(code+0),*(code+1),*(code+2),*(code+3),len);
+		printf("[info]:origin=%u,encode=[%d]-%2x-%2x-%2x-%2x,decode=%u.\r\n",
+				length[i],size,*(code+0),*(code+1),*(code+2),*(code+3),len);
 		memset(code,0x00,sizeof(code));
 	}
 
