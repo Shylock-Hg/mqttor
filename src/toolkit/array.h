@@ -1,7 +1,30 @@
 #ifndef _ARRAY_H_
 #define _ARRAY_H_
 
+#include "../../port/config.h"
+
 #define COUNT_OF_ARRAY(array) (sizeof(array)/sizeof(array[0]))
+
+#if (ENDIAN == 0)  //!< ENDIAN_BIG
+/*  \brief convert bytes[2] to uint16  
+ *  \note bigendian
+ * */
+#define BYTES_2_UINT16(bytes) ((bytes[0]<<8) | (bytes[1]))
+
+/*  \brief convert uint16 to bytes[2]
+ *  \note bigendian
+ * */
+#define UINT16_2_BYTES(num,bytes) do{\
+		bytes[0] = num>>8;\
+		bytes[1] = num&0x00FF;\
+	}while(0)
+
+#elif (ENDIAN == 1)  //!< ENDIAN_LITTLE
+
+#else
+	#error "undefined endian of target!"
+#endif
+
 
 #endif
 
