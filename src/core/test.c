@@ -4,6 +4,7 @@
  * */
 
 #include "../../inc/mqtt_fixed_header.h"
+#include "../../inc/mqtt_var_header.h"
 #include "../toolkit/array.h"
 
 #include <stdio.h>
@@ -11,6 +12,8 @@
 
 int main(int argc, char * argv[]){
 	//!< control packet header byte 
+	printf("\n\n");
+	printf("**********mqtt fixed header test**********\n");
 	struct mqtt_ctl_head header = {
 		MQTT_CTL_TYPE_CONNACK,  //!< type
 		1,  //!< DUP
@@ -40,6 +43,28 @@ int main(int argc, char * argv[]){
 				length[i],size,*(code+0),*(code+1),*(code+2),*(code+3),len);
 		memset(code,0x00,sizeof(code));
 	}
+
+	printf("\n\n");
+	printf("**********mqtt variable header test**********\n");
+	struct mqtt_connect_flag conn_flag = {
+		1,  //!< flag user name
+		0,  //!< flag password
+		1,  //!< flag will retain
+		2,  //!< flag will QoS
+		1,  //!< flag will flag
+		0,  //!< flag clean session
+		1,  //!< flag reserved
+	};
+	uint8_t conn_flag_byte = mqtt_connect_flag_pack_s(&conn_flag);
+	printf("conn_flag_byte = %2x\n",conn_flag_byte);
+	printf("evaluate vlaue of flags by order = %2x,%2x,%2x,%2x,%2x,%2x,%2x\n",
+			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_USER_NAME_Msk,MQTT_CONNECT_FLAG_USER_NAME_OFFSET),
+			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_PWD_Msk,MQTT_CONNECT_FLAG_PWD_OFFSET),
+			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_W_RETAIN_Msk,MQTT_CONNECT_FLAG_W_RETAIN_OFFSET),
+			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_W_QoS_Msk,MQTT_CONNECT_FLAG_W_QoS_OFFSET),
+			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_W_FLAG_Msk,MQTT_CONNECT_FLAG_W_FLAG_OFFSET),
+			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_CLEAN_SESSION_Msk,MQTT_CONNECT_FLAG_CLEAN_SESSION_OFFSET),
+			MQTT_CONNECT_FLAG_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_RESERVED_Msk,MQTT_CONNECT_FLAG_RESERVED_OFFSET));
 
 	return 0;
 }
