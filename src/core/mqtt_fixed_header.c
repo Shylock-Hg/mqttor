@@ -22,11 +22,12 @@ uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code){
 	int multiplier = 1;
 	uint32_t value = 0;
 	do{
-		value += ((*code) & 127) * multiplier;
-		multiplier *= 128;
-		if(multiplier > 128*128*128)
+		if(multiplier > 128*128*128){
 			//!< err `Malformaed Remaining Length`
 			return -1;
+		}
+		value += ((*code) & 127) * multiplier;
+		multiplier *= 128;
 	}while(((*code++) & 128) != 0);
 
 	//!< check length range
