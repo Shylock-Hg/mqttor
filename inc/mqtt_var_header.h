@@ -93,12 +93,22 @@ typedef struct mqtt_connect_flag {
 uint8_t mqtt_connect_flag_pack_s(struct mqtt_connect_flag * p_mqtt_connect_flag); 
 
 /***********connect acknowledge flags***********/
-#define MQTT_CONNACK_FLAG_SP_OFFSET 0
-#define MQTT_CONNACK_FLAG_SP_Msk    BIT(MQTT_CONNACK_FLAG_SP_OFFSET)
+typedef struct mqtt_connack_flag {
+	uint8_t SP;  //!< 0-1
+} mqtt_connack_flag_t;
+
+#define MQTT_CONNACK_FLAG_SP_OFFSET  0
+#define MQTT_CONNACK_FLAG_SP_Msk     BIT(MQTT_CONNACK_FLAG_SP_OFFSET)
+#define MQTT_CONNACK_FLAG_PACK(p_mqtt_connack_flag) (\
+		(p_mqtt_connack_flag->SP & MQTT_CONNACK_FLAG_SP_Msk) \
+		<< MQTT_CONNACK_FLAG_SP_OFFSET)
+
+uint8_t mqtt_connack_falg_pack_s(struct mqtt_connack_flag * p_flag);
+
 //!< evaluate bit value by universal API
 
 /***********connect return code***********/
-typedef enum conn_ret_code {
+typedef enum mqtt_conn_ret_code {
 	CONN_RET_CODE_ACCEPTED,  //!< accepte the connect
 	CONN_RET_CODE_REF_VER,  //!< unavailable protocol version suported by server
 	CONN_RET_CODE_REF_ID,  //!< identifier is format-legal but not allowed by server
@@ -106,9 +116,11 @@ typedef enum conn_ret_code {
 	CONN_RET_CODE_REF_VALI,  //!< bad user name or password
 	CONN_RET_CODE_REF_AUTH,  //!< not authoried 
 	CONN_RET_CODE_RESERVED  //!< more value reserved
-} conn_ret_code_t;
+} mqtt_conn_ret_code_t;
 
 #define MQTT_CONN_RET_CODE_CHECK(conn_ret_code) assert(CONN_RET_CODE_RESERVED > conn_ret_code)
+
+
 
 #ifdef __cplusplus
 	}
