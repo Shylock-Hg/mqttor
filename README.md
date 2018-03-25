@@ -3,6 +3,7 @@ The simple mqtt protocol implement.
 
 ## Feature 
 
+  - mqtt specification v3.1.1
   - -std=c99.
   - easy port.
   - easy using.
