@@ -62,7 +62,7 @@ void test_var_header(void){
 		2,  //!< flag will QoS
 		1,  //!< flag will flag
 		0,  //!< flag clean session
-		1,  //!< flag reserved
+		//1,  //!< flag reserved
 	};
 	uint8_t conn_flag_byte = mqtt_connect_flag_pack_s(&conn_flag);
 	printf("conn_flag_byte = %2x\n",conn_flag_byte);

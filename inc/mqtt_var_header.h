@@ -59,7 +59,7 @@ typedef struct mqtt_connect_flag {
 	uint8_t flag_w_QoS;  //!< 0-3
 	uint8_t flag_w_flag;  //!< 0-1
 	uint8_t flag_clean_session;  //!< 0-1
-	uint8_t flag_reserved;  //!< 0-1
+	//uint8_t flag_reserved;  //!< 0-1
 } mqtt_connect_flag_t;
 
 #define MQTT_CONNECT_FLAG_CHECK_BOOL(byte) assert(0 == byte || 1 == byte)
@@ -83,8 +83,8 @@ typedef struct mqtt_connect_flag {
 		(p_mqtt_connect_flag->flag_w_retain) << MQTT_CONNECT_FLAG_W_RETAIN_OFFSET | \
 		(p_mqtt_connect_flag->flag_w_QoS) << MQTT_CONNECT_FLAG_W_QoS_OFFSET | \
 		(p_mqtt_connect_flag->flag_w_flag) << MQTT_CONNECT_FLAG_W_FLAG_OFFSET | \
-		(p_mqtt_connect_flag->flag_clean_session) << MQTT_CONNECT_FLAG_CLEAN_SESSION_OFFSET | \
-		(p_mqtt_connect_flag->flag_reserved) << MQTT_CONNECT_FLAG_RESERVED_OFFSET)
+		(p_mqtt_connect_flag->flag_clean_session) << MQTT_CONNECT_FLAG_CLEAN_SESSION_OFFSET)
+		/*(p_mqtt_connect_flag->flag_reserved) << MQTT_CONNECT_FLAG_RESERVED_OFFSET)*/
 
 /*  \brief pack mqtt connect flags to byte
  *  \param p_mqtt_connect_flag pointer to mqtt connect flags structure
@@ -92,6 +92,23 @@ typedef struct mqtt_connect_flag {
  * */
 uint8_t mqtt_connect_flag_pack_s(struct mqtt_connect_flag * p_mqtt_connect_flag); 
 
+/***********connect acknowledge flags***********/
+#define MQTT_CONNACK_FLAG_SP_OFFSET 0
+#define MQTT_CONNACK_FLAG_SP_Msk    BIT(MQTT_CONNACK_FLAG_SP_OFFSET)
+//!< evaluate bit value by universal API
+
+/***********connect return code***********/
+typedef enum conn_ret_code {
+	CONN_RET_CODE_ACCEPTED,  //!< accepte the connect
+	CONN_RET_CODE_REF_VER,  //!< unavailable protocol version suported by server
+	CONN_RET_CODE_REF_ID,  //!< identifier is format-legal but not allowed by server
+	CONN_RET_CODE_REF_SERVER,  //!< server unavailable
+	CONN_RET_CODE_REF_VALI,  //!< bad user name or password
+	CONN_RET_CODE_REF_AUTH,  //!< not authoried 
+	CONN_RET_CODE_RESERVED  //!< more value reserved
+} conn_ret_code_t;
+
+#define MQTT_CONN_RET_CODE_CHECK(conn_ret_code) assert(CONN_RET_CODE_RESERVED > conn_ret_code)
 
 #ifdef __cplusplus
 	}
