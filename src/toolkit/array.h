@@ -5,7 +5,7 @@
 
 #define COUNT_OF_ARRAY(array) (sizeof(array)/sizeof(array[0]))
 
-#if (ENDIAN == 0)  //!< ENDIAN_BIG
+#if (configENDIAN == 0)  //!< ENDIAN_BIG
 /*  \brief convert bytes[2] to uint16  
  *  \note bigendian
  * */
@@ -19,7 +19,7 @@
 		bytes[1] = num&0x00FF;\
 	}while(0)
 
-#elif (ENDIAN == 1)  //!< ENDIAN_LITTLE
+#elif (configENDIAN == 1)  //!< ENDIAN_LITTLE
 
 #else
 	#error "undefined endian of target!"
