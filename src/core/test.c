@@ -5,6 +5,7 @@
 
 #include "../../inc/mqtt_fixed_header.h"
 #include "../../inc/mqtt_var_header.h"
+#include "../../inc/mqtt_payload.h"
 #include "../../inc/mqtt_packet.h"
 #include "../toolkit/array.h"
 
@@ -14,11 +15,13 @@
 void test_fixed_header(void);
 void test_var_header(void);
 void test_toolkit(void);
+void test_payload(void);
 
 int main(int argc, char * argv[]){
 	test_fixed_header();
 	test_var_header();
 	test_toolkit();
+	test_payload();
 
 	return 0;
 }
@@ -74,6 +77,20 @@ void test_var_header(void){
 			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_W_FLAG_Msk,MQTT_CONNECT_FLAG_W_FLAG_OFFSET),
 			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_CLEAN_SESSION_Msk,MQTT_CONNECT_FLAG_CLEAN_SESSION_OFFSET),
 			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_RESERVED_Msk,MQTT_CONNECT_FLAG_RESERVED_OFFSET));
+}
+
+void test_payload(void){
+	printf("\n\n");
+	printf("**********mqtt payload test**********\n");
+	struct mqtt_payload_suback_flag suback_flag = {
+		1,  //!< ok
+		2,  //!< QoS
+	};
+	uint8_t suback_flag_byte = mqtt_payload_suback_flag_pack_s(&suback_flag);
+	printf("suback_flag_byte=%2x\n",suback_flag_byte);
+	printf("evaluate value of suback flags `ok=%2x` , `QoS=%2x`\n",
+			MQTT_PACKET_SEGMENT_EVAL(suback_flag_byte,MQTT_PAYLOAD_SUBACK_FLAG_OK_Msk,MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET),
+			MQTT_PACKET_SEGMENT_EVAL(suback_flag_byte,MQTT_PAYLOAD_SUBACK_FLAG_QoS_Msk,MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET));
 }
 
 void test_toolkit(void){
