@@ -19,11 +19,11 @@
 
 /*  \brief evaluate identifier value `uint16_t`
  * */
-#define MQTT_PACKET_IDENTIFIER_EVAL(identifier) BYTES_2_UINT16(identifier)
+//#define MQTT_PACKET_IDENTIFIER_EVAL(identifier) BYTES_2_UINT16(identifier)
 
 /*  \brief pack identifier value to bytes[2]
  * */
-#define MQTT_PACKET_IDENTIFIER_PACK(identifier,bytes) UINT16_2_BYTES(identifier,bytes)
+//#define MQTT_PACKET_IDENTIFIER_PACK(identifier,bytes) UINT16_2_BYTES(identifier,bytes)
 
 /*  \brief check packet type with identifier
  * */
@@ -71,7 +71,7 @@ typedef struct mqtt_connect_flag {
  *  \offset offset of mqtt connect flags
  *  \retval value of mqtt connect flags
  * */
-#define MQTT_CONNECT_FLAG_EVAL(byte,msk,offset)   ((byte & msk) >> offset)
+//#define MQTT_CONNECT_FLAG_EVAL(byte,msk,offset)   ((byte & msk) >> offset)
 
 /*  \brief pack mqtt connect flags to byte
  *  \param p_mqtt_connect_flag pointer to mqtt connect flags structure

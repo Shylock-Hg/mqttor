@@ -15,3 +15,4 @@ uint8_t mqtt_connect_flag_pack_s(struct mqtt_connect_flag * p_mqtt_connect_flag)
 	//!< pack mqtt connect flags
 	return MQTT_CONNECT_FLAG_PACK(p_mqtt_connect_flag);
 }
+
