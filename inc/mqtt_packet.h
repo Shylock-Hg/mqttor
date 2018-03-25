@@ -25,7 +25,7 @@
 /*  \brief check packet flag value of boolean type
  *  \param byte value of boolean
  * */
-#define MQTT_PACKET_FLAG_VAL_BOOL_CHECK(byte) assert(0 == byte && 1 == byte)
+#define MQTT_PACKET_FLAG_VAL_BOOL_CHECK(byte) assert(0 == byte || 1 == byte)
 
 /*  \brief check packet flag QoS value 
  *  \param byte value of QoS
@@ -150,7 +150,7 @@ struct mqtt_packet * mqtt_packet_subscribe(
 		//!< variable header
 		uint16_t id_packet,
 		//!< payload
-		struct mqtt_packet_subscribe_content sub_content[],
+		struct mqtt_payload_subscribe_content sub_content[],
 		uint16_t sub_count
 		);
 
@@ -165,7 +165,7 @@ struct mqtt_packet * mqtt_packet_suback(
 		//!< variable header
 		uint16_t id_packet,
 		//!< payload
-		struct mqtt_suback_flag suback_flag[],
+		struct mqtt_payload_suback_flag suback_flag[],
 		uint16_t suback_flag_count
 		);
 
@@ -178,7 +178,7 @@ struct mqtt_packet * mqtt_packet_suback(
 struct mqtt_packet * mqtt_packet_unsubscribe(
 		//!< fixed header
 		//!< variable header
-		uint16_t id_packet
+		uint16_t id_packet,
 		//!< payload
 		const char * top_filter[],
 		uint16_t top_filter_count
@@ -190,7 +190,7 @@ struct mqtt_packet * mqtt_packet_unsubscribe(
 struct mqtt_packet * mqtt_packet_unsuback(
 		//!< fixed header
 		//!< variable header
-		uint16_t id_packet,
+		uint16_t id_packet
 		//!< payload
 		);
 
