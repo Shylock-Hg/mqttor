@@ -56,3 +56,6 @@ tags
 
 #program
 test
+
+#doxygen generated docs
+doc/
