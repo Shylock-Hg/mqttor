@@ -1,4 +1,4 @@
-/*  \brief API to pack&unpack payload segment of mqtt packet
+/*! \brief API to pack&unpack payload segment of mqtt packet
  *
  * */
 
@@ -15,7 +15,7 @@
 #include <stdint.h>
 
 /***********if packet with payload***********/
-/*  \brief check if packet type with payload
+/*! \brief check if packet type with payload
  * */
 #define MQTT_PAYLOAD_CHECK(mqtt_ctl_type) assert(\
 		MQTT_CTL_TYPE_CONNECT == mqtt_ctl_type || \
@@ -25,7 +25,7 @@
 
 
 /***********mqtt subscribe acknowledge flag***********/
-/*  \brief mqtt subscribe acknowledge flags
+/*! \brief mqtt subscribe acknowledge flags
  *
  * */
 typedef struct mqtt_payload_suback_flag {
@@ -44,7 +44,7 @@ typedef struct mqtt_payload_suback_flag {
 		(p_mqtt_payload_suback_flag->ok << MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET) | \
 		(p_mqtt_payload_suback_flag->QoS << MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET))
 
-/*  \brief pack suback flags byte
+/*! \brief pack suback flags byte
  *  \param p_flag flags structure
  *  \retval suback flags byte
  * */

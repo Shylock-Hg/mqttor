@@ -5,7 +5,7 @@
 	extern "C" {
 #endif
 
-/*  \brief endian of bytes
+/*! \brief endian of bytes
  *  \value ENDIAN_BIG(0) or ENDIAN_LITTLE(1)
  * */
 #define configENDIAN 0

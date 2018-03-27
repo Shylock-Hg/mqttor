@@ -1,4 +1,4 @@
-/*  \brief API of pack&unpack variable header of mqtt packet
+/*! \brief API of pack&unpack variable header of mqtt packet
  *
  * */
 
@@ -17,15 +17,15 @@
 
 /*********** packet identifier ***********/
 
-/*  \brief evaluate identifier value `uint16_t`
+/*! \brief evaluate identifier value `uint16_t`
  * */
 //#define MQTT_PACKET_IDENTIFIER_EVAL(identifier) BYTES_2_UINT16(identifier)
 
-/*  \brief pack identifier value to bytes[2]
+/*! \brief pack identifier value to bytes[2]
  * */
 //#define MQTT_PACKET_IDENTIFIER_PACK(identifier,bytes) UINT16_2_BYTES(identifier,bytes)
 
-/*  \brief check packet type with identifier
+/*! \brief check packet type with identifier
  * */
 #define MQTT_PACKET_IDENTIFIER_CHECK(mqtt_ctl_type) assert(\
 		MQTT_CTL_TYPE_PUBLISH <= mqtt_ctl_type && \
@@ -65,7 +65,7 @@ typedef struct mqtt_connect_flag {
 #define MQTT_CONNECT_FLAG_CHECK_BOOL(byte) assert(0 == byte || 1 == byte)
 #define MQTT_CONNECT_FLAG_CHECK_QoS(byte)  assert(0 <= byte || 2 >= byte)
 
-/*  \brief evaluate mqtt connect flag value
+/*! \brief evaluate mqtt connect flag value
  *  \param byte mqtt connect flag byte
  *  \param msk mask of mqtt connect flags
  *  \offset offset of mqtt connect flags
@@ -73,7 +73,7 @@ typedef struct mqtt_connect_flag {
  * */
 //#define MQTT_CONNECT_FLAG_EVAL(byte,msk,offset)   ((byte & msk) >> offset)
 
-/*  \brief pack mqtt connect flags to byte
+/*! \brief pack mqtt connect flags to byte
  *  \param p_mqtt_connect_flag pointer to mqtt connect flags structure
  *  \retval mqtt connect flags byte value
  * */
@@ -86,7 +86,7 @@ typedef struct mqtt_connect_flag {
 		(p_mqtt_connect_flag->flag_clean_session) << MQTT_CONNECT_FLAG_CLEAN_SESSION_OFFSET)
 		/*(p_mqtt_connect_flag->flag_reserved) << MQTT_CONNECT_FLAG_RESERVED_OFFSET)*/
 
-/*  \brief pack mqtt connect flags to byte
+/*! \brief pack mqtt connect flags to byte
  *  \param p_mqtt_connect_flag pointer to mqtt connect flags structure
  *  \retval mqtt connect flags byte value
  * */

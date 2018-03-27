@@ -1,4 +1,4 @@
-/*  \brief API to upper layer 
+/*! \brief API to upper layer 
  *         - pack&unpack fixed header , variable header and payload
  * */
 
@@ -15,19 +15,19 @@
 
 #include <assert.h>
 
-/*  \brief evaluate the value of bits in uint variable
+/*! \brief evaluate the value of bits in uint variable
  *  \param uint the packed uint value
  *  \param msk the and operator mask
  *  \param offset the bits offset to bit 0
  * */
 #define MQTT_PACKET_SEGMENT_EVAL(uint,msk,offset) ((uint&msk) >> offset)
 
-/*  \brief check packet flag value of boolean type
+/*! \brief check packet flag value of boolean type
  *  \param byte value of boolean
  * */
 #define MQTT_PACKET_FLAG_VAL_BOOL_CHECK(byte) assert(0 == byte || 1 == byte)
 
-/*  \brief check packet flag QoS value 
+/*! \brief check packet flag QoS value 
  *  \param byte value of QoS
  * */
 #define MQTT_PACKET_FLAG_VAL_QoS_CHECK(byte)  assert(0 <= byte && 2 >= byte)
@@ -38,7 +38,7 @@ typedef struct mqtt_packet {
 	uint32_t length;  //!< length of the whole packet
 } mqtt_packet_t;
 
-/*  \brief pack connect packet 
+/*! \brief pack connect packet 
  *  \param p_conn_flag pointer to conn_flag structure
  *  \param keep_alive time limit to keep alive measured by seconds 
  *  \param id_client client identifier string
@@ -63,7 +63,7 @@ struct mqtt_packet * mqtt_packet_connect(
 		const char * pwd
 		);
 
-/*  \brief pack mqtt connack packet
+/*! \brief pack mqtt connack packet
  *  \param p_connack_flag flags of connack
  *  \param ret_code return code of connect
  *  \retval mqtt packet
@@ -77,7 +77,7 @@ struct mqtt_packet * mqtt_packet_connack(
 		//!< payload
 		);
 
-/*  \brief pack mqtt publish packet
+/*! \brief pack mqtt publish packet
  *  \param p_ctl_flag flag of mqtt packet control
  *  \param topic_name name of topic publish to 
  *  \param id_packet identifier of packet
@@ -94,7 +94,7 @@ struct mqtt_packet * mqtt_packet_publish(
 		const char * app_msg
 		);
 
-/*  \brief pack mqtt publish acknowledge packet
+/*! \brief pack mqtt publish acknowledge packet
  *  \param id_packet identifier of packet
  *  \retval mqtt packet
  * */
@@ -106,7 +106,7 @@ struct mqtt_packet * mqtt_packet_puback(
 		//!< payload
 		);
 
-/*  \brief pack mqtt publish received packet
+/*! \brief pack mqtt publish received packet
  *  \param id_packet identifier of packet
  *  \retval mqtt packet
  * */
@@ -117,7 +117,7 @@ struct mqtt_packet * mqtt_packet_pubrec(
 		//!< payload
 		);
 
-/*  \brief pack mqtt publish release packet
+/*! \brief pack mqtt publish release packet
  *  \param id_packet identifier of packet
  *  \retval mqtt packet
  * */
@@ -128,7 +128,7 @@ struct mqtt_packet * mqtt_packet_pubrel(
 		//!< payload
 		);
 
-/*  \brief pack mqtt publish complete packet
+/*! \brief pack mqtt publish complete packet
  *  \param id_packet identifier of packet
  *  \retval mqtt packet
  * */
@@ -139,7 +139,7 @@ struct mqtt_packet * mqtt_packet_pubcomp(
 		//!< payload
 		);
 
-/*  \brief pack mqtt subscribe packet
+/*! \brief pack mqtt subscribe packet
  *  \param id_packet identifier of packet
  *  \param sub_content content array to subscribe 
  *  \param sub_count count of subscribe
@@ -154,7 +154,7 @@ struct mqtt_packet * mqtt_packet_subscribe(
 		uint16_t sub_count
 		);
 
-/*  \brief pack mqtt suback packet
+/*! \brief pack mqtt suback packet
  *  \param id_packet identifier of packet
  *  \param suback_flag[] flags of suback array
  *  \param suback_flag_count count of suback
@@ -169,7 +169,7 @@ struct mqtt_packet * mqtt_packet_suback(
 		uint16_t suback_flag_count
 		);
 
-/*  \brief pack mqtt unsubscribe packet
+/*! \brief pack mqtt unsubscribe packet
  *  \param id_packet identifier of packet
  *  \param top_filter[] array of top_filter string
  *  \param to_filter_count count of top_filter string
@@ -184,7 +184,7 @@ struct mqtt_packet * mqtt_packet_unsubscribe(
 		uint16_t top_filter_count
 		);
 
-/*  \brief pack mqtt unsuback packet
+/*! \brief pack mqtt unsuback packet
  *  \param id_packet identifier of packet
  * */
 struct mqtt_packet * mqtt_packet_unsuback(
@@ -194,7 +194,7 @@ struct mqtt_packet * mqtt_packet_unsuback(
 		//!< payload
 		);
 
-/*  \brief pack mqtt pingreq packet
+/*! \brief pack mqtt pingreq packet
  *  \retval mqtt packet
  * */
 struct mqtt_packet * mqtt_packet_pingreq(
@@ -203,7 +203,7 @@ struct mqtt_packet * mqtt_packet_pingreq(
 		//!< payload
 		);
 
-/*  \brief pack mqtt pingresp packet
+/*! \brief pack mqtt pingresp packet
  *  \retval mqtt packet
  * */
 struct mqtt_packet * mqtt_packet_pingresp(
@@ -212,7 +212,7 @@ struct mqtt_packet * mqtt_packet_pingresp(
 		//!< payload
 		);
 
-/*  \brief pack mqtt disconnect packet
+/*! \brief pack mqtt disconnect packet
  *  \retval mqtt packet
  * */
 struct mqtt_packet * mqtt_packet_disconnect(

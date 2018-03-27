@@ -6,12 +6,12 @@
 #define COUNT_OF_ARRAY(array) (sizeof(array)/sizeof(array[0]))
 
 #if (configENDIAN == 0)  //!< ENDIAN_BIG
-/*  \brief convert bytes[2] to uint16  
+/*! \brief convert bytes[2] to uint16  
  *  \note bigendian
  * */
 #define BYTES_2_UINT16(bytes) ((bytes[0]<<8) | (bytes[1]))
 
-/*  \brief convert uint16 to bytes[2]
+/*! \brief convert uint16 to bytes[2]
  *  \note bigendian
  * */
 #define UINT16_2_BYTES(num,bytes) do{\
@@ -25,7 +25,7 @@
 	#error "undefined endian of target!"
 #endif
 
-/*  \brief caculate bit mask by offset[0:]
+/*! \brief caculate bit mask by offset[0:]
  * */
 #define BIT(offset) (1<<(offset))
 

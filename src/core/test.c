@@ -1,4 +1,4 @@
-/*  \brief unit test for core/mqtt_fixed_header
+/*! \brief unit test for core/mqtt_fixed_header
  *  \author Shylock Hg
  *  \data 2018-03-21
  * */
