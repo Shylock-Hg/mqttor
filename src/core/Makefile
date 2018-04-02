@@ -5,7 +5,7 @@ DIR_BUILD = ./build
 OBJS = $(DIR_BUILD)/test.o $(DIR_BUILD)/mqtt_fixed_header.o $(DIR_BUILD)/mqtt_var_header.o \
        $(DIR_BUILD)/mqtt_payload.o
 
-.PHONY : all
+.PHONY : all output clean
 all : $(DIR_BUILD)/test
 
 $(DIR_BUILD)/test : $(OBJS) output
@@ -24,12 +24,10 @@ $(DIR_BUILD)/mqtt_payload.o : mqtt_payload.c output
 	cc $(CFLAGS) -o $@ -c $<
 
 #create build directory
-.PHONY : output
 output : 
 	mkdir -p ./build
 
 #clean outputs
-.PHONY : clean
 clean : 
 	rm $(DIR_BUILD)/test $(OBJS)
 
