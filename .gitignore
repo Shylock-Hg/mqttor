@@ -55,7 +55,7 @@ dkms.conf
 tags
 
 #program
-test
+**/build
 
 #doxygen generated docs
 doc/
