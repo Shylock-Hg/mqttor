@@ -1,5 +1,6 @@
 #include "../../inc/mqtt_payload.h"
-#include "../../inc/mqtt_packet.h"
+#include "../../inc/mqtt_packet_segment.h"
+//#include "../../inc/mqtt_packet.h"
 
 #include <stdint.h>
 

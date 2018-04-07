@@ -6,7 +6,7 @@
 #include "../../inc/mqtt_fixed_header.h"
 #include "../../inc/mqtt_var_header.h"
 #include "../../inc/mqtt_payload.h"
-#include "../../inc/mqtt_packet.h"
+//#include "../../inc/mqtt_packet.h"
 #include "../toolkit/array.h"
 
 #include <stdio.h>

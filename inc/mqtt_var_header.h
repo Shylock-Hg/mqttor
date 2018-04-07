@@ -10,7 +10,7 @@
 #endif
 
 #include "../src/toolkit/array.h"
-#include "mqtt_fixed_header.h"
+#include "mqtt_packet_segment.h"
 
 #include <assert.h>
 #include <stdint.h>
