@@ -201,6 +201,7 @@ struct mqtt_packet * mqtt_packet_pingreq(
 		//!< fixed header
 		//!< variable header
 		//!< payload
+		void
 		);
 
 /*! \brief pack mqtt pingresp packet
@@ -210,6 +211,7 @@ struct mqtt_packet * mqtt_packet_pingresp(
 		//!< fixed header
 		//!< variable header
 		//!< payload
+		void
 		);
 
 /*! \brief pack mqtt disconnect packet
@@ -219,6 +221,7 @@ struct mqtt_packet * mqtt_packet_disconnect(
 		//!< fixed header
 		//!< variable header
 		//!< payload
+		void
 		);
 
 
