@@ -35,6 +35,10 @@
 #define MQTT_PROTOCOL_NAME "MQTT"
 
 /*********** connect flags ***********/
+
+///! \defgroup mqtt_connect_flag
+///  @{
+
 #define MQTT_CONNECT_FLAG_USER_NAME_OFFSET     7
 #define MQTT_CONNECT_FLAG_PWD_OFFSET           6
 #define MQTT_CONNECT_FLAG_W_RETAIN_OFFSET      5
@@ -92,7 +96,13 @@ typedef struct mqtt_connect_flag {
  * */
 uint8_t mqtt_connect_flag_pack_s(struct mqtt_connect_flag * p_mqtt_connect_flag); 
 
+///  @}
+
 /***********connect acknowledge flags***********/
+
+///! \defgroup mqtt_connack_flag
+///  @{
+
 typedef struct mqtt_connack_flag {
 	uint8_t SP;  //!< 0-1
 } mqtt_connack_flag_t;
@@ -105,9 +115,15 @@ typedef struct mqtt_connack_flag {
 
 uint8_t mqtt_connack_falg_pack_s(struct mqtt_connack_flag * p_flag);
 
+///  @}
+
 //!< evaluate bit value by universal API
 
 /***********connect return code***********/
+
+///! \defgroup mqtt_conn_ret_code
+///  @{
+
 typedef enum mqtt_conn_ret_code {
 	CONN_RET_CODE_ACCEPTED,  //!< accepte the connect
 	CONN_RET_CODE_REF_VER,  //!< unavailable protocol version suported by server
@@ -120,7 +136,7 @@ typedef enum mqtt_conn_ret_code {
 
 #define MQTT_CONN_RET_CODE_CHECK(conn_ret_code) assert(CONN_RET_CODE_RESERVED > conn_ret_code)
 
-
+///  @}
 
 #ifdef __cplusplus
 	}

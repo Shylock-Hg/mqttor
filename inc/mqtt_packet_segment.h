@@ -7,6 +7,9 @@
 
 #include <assert.h>
 
+///! \defgroup mqtt_packet_segment mqtt segment bits api(check,eval)
+///  @{
+
 /*! \brief evaluate the value of bits in uint variable
  *  \param uint the packed uint value
  *  \param msk the and operator mask
@@ -23,6 +26,8 @@
  *  \param byte value of QoS
  * */
 #define MQTT_PACKET_FLAG_VAL_QoS_CHECK(byte)  assert(0 <= byte && 2 >= byte)
+
+///  @}
 
 #ifdef __cplusplus
 	}

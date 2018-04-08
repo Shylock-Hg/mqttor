@@ -26,6 +26,9 @@
 
 /*********** MQTT control packet type ***********/
 
+///! \defgroup mqtt_ctl_flag mqtt control byte pack&eval api
+///  @{
+
 /*! \brief MQTT contorl packet type macro
  *
  * */
@@ -114,7 +117,12 @@ typedef struct mqtt_ctl_head{
  * */
 uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header);
 
+///  @}
+
 /*********** encoding & decoding remaining length ***********/
+
+///! \defgroup mqtt_remainig_len  remaining length code&decode api
+///  @{
 
 #define MQTT_CTL_REMAINING_LEN_CHECK(length) \
 	assert(0xFFFFFF7F >= length)
@@ -132,6 +140,8 @@ uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code);
  *  \retval the length of the encoded bytes
  * */
 int mqtt_ctl_encode_remaining_len(uint8_t * code, uint32_t length);
+
+///  @}
 
 #ifdef __cplusplus
         }  //!< extern "C"
