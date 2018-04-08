@@ -3,6 +3,9 @@
 
 #include "../../port/config.h"
 
+///! \defgroup toolkit_array
+/// @{
+
 #define COUNT_OF_ARRAY(array) (sizeof(array)/sizeof(array[0]))
 
 #if (configENDIAN == 0)  //!< ENDIAN_BIG
@@ -28,6 +31,8 @@
 /*! \brief caculate bit mask by offset[0:]
  * */
 #define BIT(offset) (1<<(offset))
+
+/// @}
 
 #endif
 

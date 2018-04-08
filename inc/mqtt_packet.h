@@ -17,7 +17,6 @@
 
 ///! \defgroup mqtt_err mqtt error definition
 ///  @{
-
 typedef enum mqtt_err {
 	E_NONE,  //!< error : none error
 	E_FORMAT_CHECK,  //!< error format : flag value check fail
@@ -28,13 +27,11 @@ typedef enum mqtt_err {
  *  \retval pointer to error prompt string
  * */
 const char * mqtt_str_error(mqtt_err_t err);
-
 /// @}
 
 
 ///! \defgroup mqtt_packet mqtt pack & unpack packet
 ///  @{
-
 
 typedef struct mqtt_packet {
 	const uint8_t * packet;  //!< pointer to all packet data
