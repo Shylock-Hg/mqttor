@@ -15,11 +15,29 @@
 
 #include <assert.h>
 
+///! \defgroup mqtt_err mqtt error definition
+///  @{
+
+typedef enum mqtt_err {
+	E_FORMAT_CHECK,  //!< error format : flag value check fail
+} mqtt_err_t;
+
+/*! \brief convert err to coressponding prompt string
+ *  \param err error index
+ *  \retval pointer to error prompt string
+ * */
+const char * mqtt_str_error(mqtt_err_t err);
+
+/// @}
+
+
+///! \defgroup mqtt_packet mqtt pack & unpack packet
+///  @{
 
 
 typedef struct mqtt_packet {
 	const uint8_t * packet;  //!< pointer to all packet data
-	uint32_t length;  //!< length of the whole packet
+	size_t length;  //!< length of the whole packet
 } mqtt_packet_t;
 
 
@@ -27,7 +45,7 @@ typedef struct mqtt_packet_connect {
 	//!< fixed header
 	
 	//!< variable header
-	const struct mqtt_connect_flag * p_conn_flag,  //!< p_conn_flag pointer to conn_flag structure
+	struct mqtt_connect_flag p_conn_flag,  //!< p_conn_flag pointer to conn_flag structure
 	uint16_t keep_alive,  //!< keep_alive time limit to keep alive measured by seconds
 
 	//!< payload
@@ -39,10 +57,12 @@ typedef struct mqtt_packet_connect {
 } mqtt_packet_connect_t;
 
 /*! \brief pack connect packet 
+ *  \param p_packet  mqtt packet
  *  \param p_packet_connect pointer to connect packect 
- *  \retval mqtt packet
+ *  \
  * */
-struct mqtt_packet * mqtt_pack_connect(
+mqtt_pack_connect(
+		struct mqtt_packet * p_packet,
 		struct mqtt_packet_connect * p_packet_connect
 		);
 
@@ -339,6 +359,8 @@ struct mqtt_packet * mqtt_pack_disconnect(
 		//!< payload
 		void
 		);
+
+/// @}
 
 
 #ifdef __cplusplus
