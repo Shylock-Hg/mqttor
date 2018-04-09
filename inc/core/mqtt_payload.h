@@ -9,7 +9,7 @@
 	extern "C" {
 #endif
 
-#include "../src/toolkit/array.h"
+#include "../toolkit/array.h"
 
 #include <assert.h>
 #include <stdint.h>

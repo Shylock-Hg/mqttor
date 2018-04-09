@@ -3,11 +3,10 @@
  *  \data 2018-03-21
  * */
 
-#include "../../inc/mqtt_fixed_header.h"
-#include "../../inc/mqtt_var_header.h"
-#include "../../inc/mqtt_payload.h"
-//#include "../../inc/mqtt_packet.h"
-#include "../toolkit/array.h"
+#include "../../inc/core/mqtt_fixed_header.h"
+#include "../../inc/core/mqtt_var_header.h"
+#include "../../inc/core/mqtt_payload.h"
+#include "../../inc/toolkit/array.h"
 
 #include <stdio.h>
 #include <string.h>

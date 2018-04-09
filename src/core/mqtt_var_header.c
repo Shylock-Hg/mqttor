@@ -1,5 +1,4 @@
-#include "../../inc/mqtt_var_header.h"
-//#include "../../inc/mqtt_packet.h"
+#include "../../inc/core/mqtt_var_header.h"
 
 #include <stdint.h>
 

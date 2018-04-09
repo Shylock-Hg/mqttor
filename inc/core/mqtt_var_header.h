@@ -9,7 +9,7 @@
 	extern "C" {
 #endif
 
-#include "../src/toolkit/array.h"
+#include "../toolkit/array.h"
 #include "mqtt_packet_segment.h"
 
 #include <assert.h>

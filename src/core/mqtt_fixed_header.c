@@ -1,4 +1,4 @@
-#include "../../inc/mqtt_fixed_header.h"
+#include "../../inc/core/mqtt_fixed_header.h"
 
 uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header){
         //!< check parameters

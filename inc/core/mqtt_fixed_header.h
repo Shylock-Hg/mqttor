@@ -124,6 +124,9 @@ uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header);
 ///! \defgroup mqtt_remainig_len  remaining length code&decode api
 ///  @{
 
+/*! \brief check mqtt remaining lenght
+ *  \param length length value of remaining lenght
+ * */
 #define MQTT_CTL_REMAINING_LEN_CHECK(length) \
 	assert(0xFFFFFF7F >= length)
 
