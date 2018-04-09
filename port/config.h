@@ -5,10 +5,15 @@
 	extern "C" {
 #endif
 
+///! \defgroup mqtt_config configuration of mqttor 
+/// @{
+
 /*! \brief endian of bytes
  *  \value ENDIAN_BIG(0) or ENDIAN_LITTLE(1)
  * */
 #define configENDIAN 0
+
+/// @}
 
 #ifdef __cplusplus
 	}
