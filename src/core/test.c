@@ -8,6 +8,8 @@
 #include "../../inc/core/mqtt_payload.h"
 #include "../../inc/toolkit/array.h"
 
+#include "../../inc/core/mqtt_packet_segment.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -16,11 +18,14 @@ void test_var_header(void);
 void test_toolkit(void);
 void test_payload(void);
 
+void test_packet_segment(void);
+
 int main(int argc, char * argv[]){
-	test_fixed_header();
-	test_var_header();
-	test_toolkit();
-	test_payload();
+//	test_fixed_header();
+//	test_var_header();
+//	test_toolkit();
+//	test_payload();
+	test_packet_segment();
 
 	return 0;
 }
@@ -101,5 +106,20 @@ void test_toolkit(void){
 	UINT16_2_BYTES(value,bytes);
 	value = BYTES_2_UINT16(bytes);
 	printf("endecode=%x\n",value);
+}
+
+void test_packet_segment(void){
+	printf("\n\n");
+	printf("**********mqtt packet segment test**********\n");
+	char * str = "hello world!";
+	printf("[info]:origin string `%s`.\n",str);
+
+	const uint8_t * code = mqtt_packet_str_encode(str);
+	const char * _str = mqtt_packet_str_decode(code);
+
+	printf("[info]:decode string `%s`.\n",_str);
+
+	free(code);
+	free(_str);
 }
 

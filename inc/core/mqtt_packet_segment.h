@@ -5,6 +5,7 @@
 	extern "C" {
 #endif
 
+#include <stdint.h>
 #include <assert.h>
 
 ///! \defgroup mqtt_packet_segment mqtt segment bits api(check,eval)
@@ -26,6 +27,19 @@
  *  \param byte value of QoS
  * */
 #define MQTT_PACKET_FLAG_VAL_QoS_CHECK(byte)  assert(0 <= byte && 2 >= byte)
+
+
+/*! \brief encode c-string to mqtt string 
+ *  \param str c-string
+ *  \retval mqtt string
+ * */
+const uint8_t * mqtt_packet_str_encode(const char * str);
+
+/*! \brief decode mqtt string to c-string
+ *  \parma code mqtt string |LEN_MSB|LEN_LSB|...|
+ *  \retval c-string
+ * */
+const char * mqtt_packet_str_decode(const uint8_t *code);
 
 ///  @}
 

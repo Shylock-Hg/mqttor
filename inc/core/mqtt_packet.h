@@ -18,8 +18,8 @@
 ///! \defgroup mqtt_err mqtt error definition
 ///  @{
 typedef enum mqtt_err {
-	E_NONE,  //!< error : none error
-	E_FORMAT_CHECK,  //!< error format : flag value check fail
+	E_NONE         = 0,  //!< error : none error
+	E_FORMAT_CHECK = -1,  //!< error format : flag value check fail
 } mqtt_err_t;
 
 /*! \brief convert err to coressponding prompt string
