@@ -1,6 +1,6 @@
 #include "../../inc/core/mqtt_fixed_header.h"
 
-uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header){
+uint8_t mqtt_ctl_flag_pack_s(struct mqtt_ctl_flag * p_header){
         //!< check parameters
 	MQTT_CTL_TYPE_CHECK(p_header->type);
 	MQTT_CTL_FLAG_DUP_CHECK(p_header->DUP);
@@ -15,7 +15,7 @@ uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header){
 		(p_header->QoS << MQTT_CTL_FLAG_QoS_OFFSET) |  //!< QoS
 		(p_header->RETAIN << MQTT_CTL_FLAG_RETAIN_OFFSET);  //!< RETAIN
 	*/
-	return MQTT_CTL_HEAD_PACK(p_header);
+	return MQTT_CTL_FLAG_PACK(p_header);
 }
 
 uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code){

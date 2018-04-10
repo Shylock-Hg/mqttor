@@ -28,6 +28,8 @@
 
 ///! \defgroup mqtt_ctl_flag mqtt control byte pack&eval api
 ///  @{
+//
+#define MQTT_CTL_FLAG_MAX_LEN_BYTE 1
 
 /*! \brief MQTT contorl packet type macro
  *
@@ -95,27 +97,27 @@ typedef enum mqtt_ctl_type{
 //#define MQTT_CTL_FLAG_RETAIN_EVAL(byte)    ((byte & MQTT_CTL_FLAG_RETAIN_Msk) >> MQTT_CTL_FLAG_RETAIN_OFFSET)
 
 /*********** pack mqtt control packet head ***********/
-typedef struct mqtt_ctl_head{
+typedef struct mqtt_ctl_flag{
         mqtt_ctl_type_t type;
         uint8_t DUP;  //!< [0-1]
         uint8_t QoS;  //!< [0-2]
         uint8_t RETAIN;  //!< [0-1]
-} mqtt_ctl_head_t;
+} mqtt_ctl_flag_t;
 
 /*! \brief pack MQTT control head without check
  *  \param p_header[in] the header struct
  * */
-#define MQTT_CTL_HEAD_PACK(p_mqtt_ctl_head) (\
-		((p_mqtt_ctl_head->type) << MQTT_CTL_TYPE_OFFSET) | \
-		((p_mqtt_ctl_head->DUP) << MQTT_CTL_FLAG_DUP_OFFSET) | \
-		((p_mqtt_ctl_head->QoS) << MQTT_CTL_FLAG_QoS_OFFSET) | \
-		((p_mqtt_ctl_head->RETAIN) << MQTT_CTL_FLAG_RETAIN_OFFSET))
+#define MQTT_CTL_FLAG_PACK(p_mqtt_ctl_flag) (\
+		((p_mqtt_ctl_flag->type) << MQTT_CTL_TYPE_OFFSET) | \
+		((p_mqtt_ctl_flag->DUP) << MQTT_CTL_FLAG_DUP_OFFSET) | \
+		((p_mqtt_ctl_flag->QoS) << MQTT_CTL_FLAG_QoS_OFFSET) | \
+		((p_mqtt_ctl_flag->RETAIN) << MQTT_CTL_FLAG_RETAIN_OFFSET))
 
 /*! \brief pack mqtt control packet head with check
  *  \param p_header[in] the header struct
  *  \retval the byte packed
  * */
-uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header);
+uint8_t mqtt_ctl_flag_pack_s(struct mqtt_ctl_flag * p_header);
 
 ///  @}
 
@@ -127,6 +129,7 @@ uint8_t mqtt_ctl_head_pack_s(struct mqtt_ctl_head * p_header);
 /*! \brief check mqtt remaining lenght
  *  \param length length value of remaining lenght
  * */
+#define MQTT_CTL_REMAINING_MAX_LEN_BYTE      4
 #define MQTT_CTL_REMAINING_LEN_CHECK(length) \
 	assert(0xFFFFFF7F >= length)
 
