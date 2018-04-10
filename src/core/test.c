@@ -3,15 +3,16 @@
  *  \data 2018-03-21
  * */
 
+#include "../../inc/core/mqtt_packet_segment.h"
+
 #include "../../inc/core/mqtt_fixed_header.h"
 #include "../../inc/core/mqtt_var_header.h"
 #include "../../inc/core/mqtt_payload.h"
 #include "../../inc/toolkit/array.h"
 
-#include "../../inc/core/mqtt_packet_segment.h"
-
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void test_fixed_header(void);
 void test_var_header(void);
@@ -21,10 +22,10 @@ void test_payload(void);
 void test_packet_segment(void);
 
 int main(int argc, char * argv[]){
-//	test_fixed_header();
-//	test_var_header();
-//	test_toolkit();
-//	test_payload();
+	test_fixed_header();
+	test_var_header();
+	test_toolkit();
+	test_payload();
 	test_packet_segment();
 
 	return 0;
@@ -34,13 +35,13 @@ void test_fixed_header(void){
 	//!< control packet header byte 
 	printf("\n\n");
 	printf("**********mqtt fixed header test**********\n");
-	struct mqtt_ctl_head header = {
+	struct mqtt_ctl_flag header = {
 		MQTT_CTL_TYPE_CONNACK,  //!< type
 		1,  //!< DUP
 		1,  //!< QoS
 		0,  //!< RETAIN
 	};
-	uint8_t s_head = mqtt_ctl_head_pack_s(&header);
+	uint8_t s_head = mqtt_ctl_flag_pack_s(&header);
 	printf("eval:type=%d,DUP=%d,QoS=%d,RETAIN=%d\n",
 			MQTT_PACKET_SEGMENT_EVAL(s_head,MQTT_CTL_TYPE_Msk,MQTT_CTL_TYPE_OFFSET),
 			MQTT_PACKET_SEGMENT_EVAL(s_head,MQTT_CTL_FLAG_DUP_Msk,MQTT_CTL_FLAG_DUP_OFFSET),
@@ -119,7 +120,7 @@ void test_packet_segment(void){
 
 	printf("[info]:decode string `%s`.\n",_str);
 
-	free(code);
-	free(_str);
+	free((void*)code);
+	free((void*)_str);
 }
 
