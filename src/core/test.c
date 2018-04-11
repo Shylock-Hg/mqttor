@@ -115,12 +115,14 @@ void test_packet_segment(void){
 	char * str = "hello world!";
 	printf("[info]:origin string `%s`.\n",str);
 
-	const uint8_t * code = mqtt_packet_str_encode(str);
-	const char * _str = mqtt_packet_str_decode(code);
+	const struct mqtt_str * mq_str = mqtt_packet_str_encode(str);
+	printf("[info]:code length `%ld`\n",mq_str->len);
+	const char * _str = mqtt_packet_str_decode(mq_str);
 
 	printf("[info]:decode string `%s`.\n",_str);
 
-	free((void*)code);
+	free((void*)mq_str->code);
+	free((void*)mq_str);
 	free((void*)_str);
 }
 

@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 #include <assert.h>
+#include <stddef.h>
 
 ///! \defgroup mqtt_packet_segment mqtt segment bits api(check,eval)
 ///  @{
@@ -29,17 +30,22 @@
 #define MQTT_PACKET_FLAG_VAL_QoS_CHECK(byte)  assert(0 <= byte && 2 >= byte)
 
 
+typedef struct mqtt_str {
+	uint8_t * code;
+	size_t    len;  //!< length of code
+} mqtt_str_t;
+
 /*! \brief encode c-string to mqtt string 
  *  \param str c-string
- *  \retval mqtt string
+ *  \retval pointer to mqtt string
  * */
-const uint8_t * mqtt_packet_str_encode(const char * str);
+struct mqtt_str * mqtt_packet_str_encode(const char * str);
 
 /*! \brief decode mqtt string to c-string
  *  \parma code mqtt string |LEN_MSB|LEN_LSB|...|
  *  \retval c-string
  * */
-const char * mqtt_packet_str_decode(const uint8_t *code);
+char * mqtt_packet_str_decode(const struct mqtt_str * mq_str);
 
 ///  @}
 

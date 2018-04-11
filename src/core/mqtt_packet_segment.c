@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "../../inc/core/mqtt_packet_segment.h"
+
 #include "../../inc/toolkit/array.h"
 
 #define MQTT_PACKET_STR_MAX_BYTE 2
@@ -17,30 +19,36 @@
 
 #define MQTT_PACKET_STR_LEN_CHECK(len) assert(MQTT_PACKET_STR_MAX_LEN >= len)
 
-const char * mqtt_packet_str_decode(const uint8_t * code){
-	size_t len = BYTES_2_UINT16(code);
+struct mqtt_str * mqtt_packet_str_encode(const char * str){
+	size_t len = strlen(str);  //!< c-string length
+	MQTT_PACKET_STR_LEN_CHECK(len);  //< check c-string length
 
-	char * str = malloc(len+1);
+	//< caculate buffer length
+	struct mqtt_str * mq_str = malloc(sizeof(struct mqtt_str));
+	mq_str->len = len + MQTT_PACKET_STR_MAX_BYTE;
 
-	memcpy(str,code+MQTT_PACKET_STR_MAX_BYTE,len);
-	str[len] = '\0';
-	
-	return str;
-}
-
-const uint8_t * mqtt_packet_str_encode(const char * str){
-	size_t len = strlen(str);
-	MQTT_PACKET_STR_LEN_CHECK(len);
+	//< encode c-string length
 	uint8_t code_len[MQTT_PACKET_STR_MAX_BYTE] = {0};
 	UINT16_2_BYTES(len,code_len);
 
-	uint8_t * code = malloc(len+MQTT_PACKET_STR_MAX_BYTE);
-
 	/// |MSB|LSB|DATA...|
-	memcpy(code,code_len,sizeof(code_len));
-	memcpy(code+sizeof(code_len),str,len);
+	mq_str->code = malloc(mq_str->len);
+	memcpy(mq_str->code,code_len,sizeof(code_len));
+	memcpy((mq_str->code)+sizeof(code_len),str,len);
 
-	return code;
+	return mq_str;
+}
+
+char * mqtt_packet_str_decode(const struct mqtt_str * mq_str){
+	//< c-string length with '\0'
+	size_t len = (mq_str->len)+1-MQTT_PACKET_STR_MAX_BYTE;
+	char * str = malloc(len);
+
+	//< copy c-string content
+	memcpy(str,mq_str->code+MQTT_PACKET_STR_MAX_BYTE,len-1);
+	str[len] = '\0';
+	
+	return str;
 }
 
 
