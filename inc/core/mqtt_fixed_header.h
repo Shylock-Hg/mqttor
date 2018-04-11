@@ -117,7 +117,13 @@ typedef struct mqtt_ctl_flag{
  *  \param p_header[in] the header struct
  *  \retval the byte packed
  * */
-uint8_t mqtt_ctl_flag_pack_s(struct mqtt_ctl_flag * p_header);
+uint8_t mqtt_ctl_flag_pack_s(struct mqtt_ctl_flag * p_flag);
+
+/*! \brief unpack mqtt control packet flags
+ *  \param flag the flags byte
+ *  \retval the flags structure
+ * */
+struct mqtt_ctl_flag * mqtt_ctl_flag_unpack(uint8_t flag);
 
 ///  @}
 

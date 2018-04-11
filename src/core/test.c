@@ -42,11 +42,13 @@ void test_fixed_header(void){
 		0,  //!< RETAIN
 	};
 	uint8_t s_head = mqtt_ctl_flag_pack_s(&header);
-	printf("eval:type=%d,DUP=%d,QoS=%d,RETAIN=%d\n",
-			MQTT_PACKET_SEGMENT_EVAL(s_head,MQTT_CTL_TYPE_Msk,MQTT_CTL_TYPE_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(s_head,MQTT_CTL_FLAG_DUP_Msk,MQTT_CTL_FLAG_DUP_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(s_head,MQTT_CTL_FLAG_QoS_Msk,MQTT_CTL_FLAG_QoS_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(s_head,MQTT_CTL_FLAG_RETAIN_Msk,MQTT_CTL_FLAG_RETAIN_OFFSET));
+	struct mqtt_ctl_flag * p_flag = mqtt_ctl_flag_unpack(s_head);
+	printf("eval:type=%d,DUP=%d,QoS=%d,RETAIN=%d\n",\
+			p_flag->type,\
+			p_flag->DUP,\
+			p_flag->QoS,\
+			p_flag->RETAIN);
+	free(p_flag);
 
 	//!< control packet header remaining length
 	uint32_t length[] = {0,127,128,16383,16384,2097151,2097152,268435455};
