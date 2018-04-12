@@ -114,12 +114,12 @@ void test_toolkit(void){
 void test_packet_segment(void){
 	printf("\n\n");
 	printf("**********mqtt packet segment test**********\n");
-	char * str = "hello world!";
+	mqtt_attr_str_t str = "hello world!";
 	printf("[info]:origin string `%s`.\n",str);
 
 	struct mqtt_buf_str * mq_str = mqtt_buf_str_encode(str);
 	printf("[info]:code length `%ld`\n",mq_str->len);
-	char * _str = mqtt_buf_str_decode(mq_str);
+	mqtt_attr_str_t _str = mqtt_buf_str_decode(mq_str);
 
 	printf("[info]:decode string `%s`.\n",_str);
 

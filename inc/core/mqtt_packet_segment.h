@@ -69,16 +69,18 @@ typedef mqtt_buf_t      mqtt_buf_re_len_t;
 //typedef struct mqtt_buf struct mqtt_buf_str;
 #define mqtt_buf_str    mqtt_buf
 typedef mqtt_buf_t      mqtt_buf_str_t;
+
+typedef char* mqtt_attr_str_t;
 /*! \brief encode c-string to mqtt string 
  *  \param str c-string
  *  \retval pointer to mqtt string
  * */
-struct mqtt_buf_str * mqtt_buf_str_encode(const char * str);
+struct mqtt_buf_str * mqtt_buf_str_encode(const mqtt_attr_str_t str);
 /*! \brief decode mqtt string to c-string
  *  \parma code mqtt string |LEN_MSB|LEN_LSB|...|
  *  \retval c-string
  * */
-char * mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str);
+mqtt_attr_str_t mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str);
 /// @}
 
 //! \defgroup mqtt_buf_uint16 uint16_t bytes buf
@@ -86,16 +88,18 @@ char * mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str);
 //typedef struct mqtt_buf struct mqtt_buf_uint16;
 #define mqtt_buf_uint16 mqtt_buf
 typedef mqtt_buf_t      mqtt_buf_uint16_t;
+
+typedef uint16_t mqtt_attr_uint16_t;
 /*! \brief encode uint16_t to mqtt_buf_uint16
- *  \param num uint16_t number
+ *  \param num mqtt_attr_uint16_t number
  *  \retval mqtt_buf_uint16 pointer
  * */
-struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(uint16_t num);
+struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(mqtt_attr_uint16_t num);
 /*! \brief decode mqtt_buf_uint16 to uint16
  *  \param mq_uint16 pointer to mqtt_buf_uint16
- *  \retval uint16_t value
+ *  \retval mqtt_attr_uint16_t value
  * */
-uint16_t mqtt_buf_uint16_decode(const struct mqtt_buf_uint16 * mq_uint16);
+mqtt_attr_uint16_t mqtt_buf_uint16_decode(const struct mqtt_buf_uint16 * mq_uint16);
 /// @}
 
 ///  @}
