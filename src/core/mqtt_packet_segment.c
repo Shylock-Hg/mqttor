@@ -27,6 +27,7 @@ void mqtt_buf_release(struct mqtt_buf * mq_buf){
 	free(mq_buf);
 }
 
+
 #define MQTT_BUF_STR_MAX_BYTE 2
 #define MQTT_BUF_STR_MAX_LEN  0xFFFF
 
@@ -37,15 +38,15 @@ struct mqtt_buf_str * mqtt_buf_str_encode(const mqtt_attr_str_t str){
 	MQTT_BUF_STR_LEN_CHECK(len);  //< check c-string length
 
 	//< caculate buffer length
-	struct mqtt_buf_str * mq_str = malloc(sizeof(struct mqtt_buf_str));
-	mq_str->len = len + MQTT_BUF_STR_MAX_BYTE;
+	//struct mqtt_buf_str * mq_str = malloc(sizeof(struct mqtt_buf_str));
+	//mq_str->len = len + MQTT_BUF_STR_MAX_BYTE;
+	struct mqtt_buf_str * mq_str = mqtt_buf_new(len+MQTT_BUF_STR_MAX_BYTE);
 
 	//< encode c-string length
 	uint8_t code_len[MQTT_BUF_STR_MAX_BYTE] = {0};
 	UINT16_2_BYTES(len,code_len);
 
 	/// |MSB|LSB|DATA...|
-	mq_str->buf = malloc(mq_str->len);
 	memcpy(mq_str->buf,code_len,sizeof(code_len));
 	memcpy((mq_str->buf)+sizeof(code_len),str,len);
 
@@ -65,4 +66,13 @@ mqtt_attr_str_t mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str){
 }
 
 
+struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(mqtt_attr_uint16_t num){
+	struct mqtt_buf_uint16 * mq_uint16 = mqtt_buf_new(sizeof(mqtt_attr_uint16_t));
+	UINT16_2_BYTES(num,mq_uint16->buf);
 
+	return mq_uint16;
+}
+
+mqtt_attr_uint16_t mqtt_buf_uint16_decode(const struct mqtt_buf_uint16 * mq_uint16){
+	return BYTES_2_UINT16(mq_uint16->buf);
+}

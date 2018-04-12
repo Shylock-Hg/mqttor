@@ -123,7 +123,7 @@ void test_packet_segment(void){
 
 	printf("[info]:decode string `%s`.\n",_str);
 
-	mqtt_buf_release(mq_str);
 	free(_str);
+	mqtt_buf_release(mq_str);
 }
 
