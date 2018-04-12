@@ -117,14 +117,13 @@ void test_packet_segment(void){
 	char * str = "hello world!";
 	printf("[info]:origin string `%s`.\n",str);
 
-	const struct mqtt_str * mq_str = mqtt_packet_str_encode(str);
+	struct mqtt_buf_str * mq_str = mqtt_buf_str_encode(str);
 	printf("[info]:code length `%ld`\n",mq_str->len);
-	const char * _str = mqtt_packet_str_decode(mq_str);
+	char * _str = mqtt_buf_str_decode(mq_str);
 
 	printf("[info]:decode string `%s`.\n",_str);
 
-	free((void*)mq_str->code);
-	free((void*)mq_str);
-	free((void*)_str);
+	mqtt_buf_release(mq_str);
+	free(_str);
 }
 

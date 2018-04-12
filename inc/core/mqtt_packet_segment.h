@@ -30,22 +30,73 @@
 #define MQTT_PACKET_FLAG_VAL_QoS_CHECK(byte)  assert(0 <= byte && 2 >= byte)
 
 
-typedef struct mqtt_str {
-	uint8_t * code;
-	size_t    len;  //!< length of code
-} mqtt_str_t;
+//! \defgroup mqtt_buf 
+/// @{
+typedef struct mqtt_buf {
+	uint8_t * buf;  //!< binary data
+	size_t    len;  //!< length of buf
+} mqtt_buf_t;
+	
+/*! \brief create empty mqtt_buf with length by alloc memory
+ *  \param len length of mqtt_buf->buf
+ *  \retval pointer to mqtt_buf created
+ * */
+struct mqtt_buf * mqtt_buf_new(size_t len);
 
+/*! \brief release mqtt_buf by free memory
+ *  \param buf mqtt_buf object pointer to release
+ * */
+void mqtt_buf_release(struct mqtt_buf * mq_buf);
+/// @} group mqtt_buf
+
+//! \defgroup mqtt_buf_flag 
+/// @{
+//typedef struct mqtt_buf struct mqtt_buf_flag;
+#define mqtt_buf_flag   mqtt_buf
+typedef mqtt_buf_t      mqtt_buf_flag_t;
+/// @}
+
+//! \defgroup mqtt_buf_re_len remaining length buf
+/// @{
+//typedef struct mqtt_buf struct mqtt_buf_re_len;
+#define mqtt_buf_re_len mqtt_buf
+typedef mqtt_buf_t      mqtt_buf_re_len_t;
+/// @}
+
+
+//! \defgroup mqtt_buf_str
+/// @{
+//typedef struct mqtt_buf struct mqtt_buf_str;
+#define mqtt_buf_str    mqtt_buf
+typedef mqtt_buf_t      mqtt_buf_str_t;
 /*! \brief encode c-string to mqtt string 
  *  \param str c-string
  *  \retval pointer to mqtt string
  * */
-struct mqtt_str * mqtt_packet_str_encode(const char * str);
-
+struct mqtt_buf_str * mqtt_buf_str_encode(const char * str);
 /*! \brief decode mqtt string to c-string
  *  \parma code mqtt string |LEN_MSB|LEN_LSB|...|
  *  \retval c-string
  * */
-char * mqtt_packet_str_decode(const struct mqtt_str * mq_str);
+char * mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str);
+/// @}
+
+//! \defgroup mqtt_buf_uint16 uint16_t bytes buf
+/// @{
+//typedef struct mqtt_buf struct mqtt_buf_uint16;
+#define mqtt_buf_uint16 mqtt_buf
+typedef mqtt_buf_t      mqtt_buf_uint16_t;
+/*! \brief encode uint16_t to mqtt_buf_uint16
+ *  \param num uint16_t number
+ *  \retval mqtt_buf_uint16 pointer
+ * */
+struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(uint16_t num);
+/*! \brief decode mqtt_buf_uint16 to uint16
+ *  \param mq_uint16 pointer to mqtt_buf_uint16
+ *  \retval uint16_t value
+ * */
+uint16_t mqtt_buf_uint16_decode(const struct mqtt_buf_uint16 * mq_uint16);
+/// @}
 
 ///  @}
 
