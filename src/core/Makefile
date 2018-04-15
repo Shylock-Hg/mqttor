@@ -36,5 +36,5 @@ output :
 
 #clean outputs
 clean : 
-	rm $(DIR_BUILD)/test $(OBJS)
+	rm -rf $(DIR_BUILD)
 
