@@ -120,15 +120,25 @@ void test_var_header(void){
 void test_payload(void){
 	printf("\n\n");
 	printf("**********mqtt payload test**********\n");
-	struct mqtt_payload_suback_flag suback_flag = {
-		1,  //!< ok
-		2,  //!< QoS
+	union mqtt_attr_payload_suback_flag suback_flag = {
+		.bits = {
+			1,  //!< ok
+			0,
+			2,  //!< QoS
+		}
 	};
-	uint8_t suback_flag_byte = mqtt_payload_suback_flag_pack_s(&suback_flag);
-	printf("suback_flag_byte=%2x\n",suback_flag_byte);
+	struct mqtt_buf_payload_suback_flag *  p_buf_flag = 
+		mqtt_payload_suback_flag_pack(suback_flag);
+	union mqtt_attr_payload_suback_flag suback_attr_flag = 
+		mqtt_payload_suback_flag_unpack(
+			p_buf_flag
+			);
+	printf("suback_flag_byte=%2x\n",p_buf_flag->buf[0]);
 	printf("evaluate value of suback flags `ok=%2x` , `QoS=%2x`\n",
-			MQTT_BUF_SEGMENT_EVAL(suback_flag_byte,MQTT_PAYLOAD_SUBACK_FLAG_OK_Msk,MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET),
-			MQTT_BUF_SEGMENT_EVAL(suback_flag_byte,MQTT_PAYLOAD_SUBACK_FLAG_QoS_Msk,MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET));
+			suback_attr_flag.bits.ok,
+			suback_attr_flag.bits.QoS);
+
+	mqtt_buf_release(p_buf_flag);
 }
 
 void test_toolkit(void){

@@ -9,10 +9,11 @@
 	extern "C" {
 #endif
 
-#include "../toolkit/array.h"
-
 #include <assert.h>
 #include <stdint.h>
+
+#include "../toolkit/array.h"
+#include "mqtt_packet_segment.h"
 
 /***********if packet with payload***********/
 
@@ -34,10 +35,25 @@
 /*! \brief mqtt subscribe acknowledge flags
  *
  * */
+/*
 typedef struct mqtt_payload_suback_flag {
 	uint8_t ok;  //!< fail or success
 	uint8_t QoS;  //!< quality of delivery
 } mqtt_payload_suback_flag_t;
+*/
+typedef struct mqtt_payload_suback_flag {
+	uint8_t ok:1;
+	uint8_t reserved:5;
+	uint8_t QoS:2;
+} mqtt_payload_sub_ack_flag_t;
+
+typedef union mqtt_attr_payload_suback_flag {
+	uint8_t all;
+	struct mqtt_payload_suback_flag bits;
+} mqtt_attr_payload_suback_flag_t;
+
+#define mqtt_buf_payload_suback_flag mqtt_buf
+typedef mqtt_buf_t mqtt_buf_payload_suback_flag_t;
 
 #define MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET  7
 #define MQTT_PAYLOAD_SUBACK_FLAG_OK_Msk     (BIT(MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET))
@@ -46,15 +62,19 @@ typedef struct mqtt_payload_suback_flag {
 #define MQTT_PAYLOAD_SUBACK_FLAG_QoS_Msk    (BIT(MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET) | \
 		BIT(MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET+1))
 
-#define MQTT_PAYLOAD_SUBACK_FLAG_PACK(p_mqtt_payload_suback_flag) (\
-		(p_mqtt_payload_suback_flag->ok << MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET) | \
-		(p_mqtt_payload_suback_flag->QoS << MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET))
+#define MQTT_PAYLOAD_SUBACK_FLAG_PACK(flag)         ((uint8_t)(flag.all))
+#define MQTT_PAYLOAD_SUBACK_FLAG_UNPACK(p_buf_flag) \
+	((union mqtt_attr_payload_suback_flag)(p_buf_flag->buf[0]))
 
 /*! \brief pack suback flags byte
  *  \param p_flag flags structure
  *  \retval suback flags byte
  * */
-uint8_t mqtt_payload_suback_flag_pack_s(struct mqtt_payload_suback_flag * p_flag);
+struct mqtt_buf_payload_suback_flag * mqtt_payload_suback_flag_pack(
+		union mqtt_attr_payload_suback_flag flag);
+union mqtt_attr_payload_suback_flag mqtt_payload_suback_flag_unpack(
+		const struct mqtt_buf_payload_suback_flag * p_buf_flag);
+
 
 ///  @}
 
