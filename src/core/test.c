@@ -78,25 +78,30 @@ void test_fixed_header(void){
 void test_var_header(void){
 	printf("\n\n");
 	printf("**********mqtt variable header test**********\n");
-	struct mqtt_connect_flag conn_flag = {
-		1,  //!< flag user name
-		0,  //!< flag password
-		1,  //!< flag will retain
-		2,  //!< flag will QoS
-		1,  //!< flag will flag
-		0,  //!< flag clean session
-		//1,  //!< flag reserved
+	union mqtt_attr_conn_flag conn_flag = {
+		.bits = {
+			1,  //!< flag user name
+			0,  //!< flag password
+			1,  //!< flag will retain
+			2,  //!< flag will QoS
+			1,  //!< flag will flag
+			0,  //!< flag clean session
+			0,  //!< flag reserved
+		}
 	};
-	uint8_t conn_flag_byte = mqtt_connect_flag_pack_s(&conn_flag);
-	printf("conn_flag_byte = %2x\n",conn_flag_byte);
+	struct mqtt_buf_conn_flag * p_conn_buf_flag = mqtt_conn_flag_pack(conn_flag);
+	union mqtt_attr_conn_flag conn_attr_flag = mqtt_conn_flag_unpack(p_conn_buf_flag);
+	printf("conn_flag_byte = 0x%2x\n",p_conn_buf_flag->buf[0]);
 	printf("evaluate vlaue of flags by order = %2x,%2x,%2x,%2x,%2x,%2x,%2x\n",
-			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_USER_NAME_Msk,MQTT_CONNECT_FLAG_USER_NAME_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_PWD_Msk,MQTT_CONNECT_FLAG_PWD_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_W_RETAIN_Msk,MQTT_CONNECT_FLAG_W_RETAIN_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_W_QoS_Msk,MQTT_CONNECT_FLAG_W_QoS_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_W_FLAG_Msk,MQTT_CONNECT_FLAG_W_FLAG_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_CLEAN_SESSION_Msk,MQTT_CONNECT_FLAG_CLEAN_SESSION_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(conn_flag_byte,MQTT_CONNECT_FLAG_RESERVED_Msk,MQTT_CONNECT_FLAG_RESERVED_OFFSET));
+			conn_attr_flag.bits.flag_user_name,
+			conn_attr_flag.bits.flag_pwd,
+			conn_attr_flag.bits.flag_w_retain,
+			conn_attr_flag.bits.flag_w_QoS,
+			conn_attr_flag.bits.flag_w_flag,
+			conn_attr_flag.bits.flag_clean_session,
+			conn_attr_flag.bits.flag_reserved);
+
+	mqtt_buf_release(p_conn_buf_flag);
 }
 
 void test_payload(void){
@@ -109,8 +114,8 @@ void test_payload(void){
 	uint8_t suback_flag_byte = mqtt_payload_suback_flag_pack_s(&suback_flag);
 	printf("suback_flag_byte=%2x\n",suback_flag_byte);
 	printf("evaluate value of suback flags `ok=%2x` , `QoS=%2x`\n",
-			MQTT_PACKET_SEGMENT_EVAL(suback_flag_byte,MQTT_PAYLOAD_SUBACK_FLAG_OK_Msk,MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET),
-			MQTT_PACKET_SEGMENT_EVAL(suback_flag_byte,MQTT_PAYLOAD_SUBACK_FLAG_QoS_Msk,MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET));
+			MQTT_BUF_SEGMENT_EVAL(suback_flag_byte,MQTT_PAYLOAD_SUBACK_FLAG_OK_Msk,MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET),
+			MQTT_BUF_SEGMENT_EVAL(suback_flag_byte,MQTT_PAYLOAD_SUBACK_FLAG_QoS_Msk,MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET));
 }
 
 void test_toolkit(void){
