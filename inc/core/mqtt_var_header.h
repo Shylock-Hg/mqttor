@@ -67,7 +67,7 @@ typedef struct mqtt_connect_flag {
 	//uint8_t flag_reserved;  //!< 0-1
 } mqtt_connect_flag_t;
 */
-typedef struct mqtt_conn_flag {
+typedef struct mqtt_connect_flag {
 	uint8_t flag_user_name    :1;  //!< 0-1
 	uint8_t flag_pwd          :1;  //!< 0-1
 	uint8_t flag_w_retain     :1;  //!< 0-1
@@ -75,15 +75,15 @@ typedef struct mqtt_conn_flag {
 	uint8_t flag_w_flag       :1; //!< 0-1
 	uint8_t flag_clean_session:1;  //!< 0-1
 	uint8_t flag_reserved     :1;  //!< 0-1
-} mqtt_conn_flag;
+} mqtt_connect_flag;
 
-typedef union mqtt_attr_conn_flag {
+typedef union mqtt_attr_connect_flag {
 	uint8_t all;
-	struct mqtt_conn_flag bits;
-} mqtt_attr_conn_flag_t;
+	struct mqtt_connect_flag bits;
+} mqtt_attr_connect_flag_t;
 
-typedef mqtt_buf_t mqtt_buf_conn_flag_t;
-#define mqtt_buf_conn_flag mqtt_buf
+typedef mqtt_buf_t mqtt_buf_connect_flag_t;
+#define mqtt_buf_connect_flag mqtt_buf
 
 
 /*! \brief evaluate mqtt connect flag value
@@ -98,20 +98,20 @@ typedef mqtt_buf_t mqtt_buf_conn_flag_t;
  *  \param p_mqtt_connect_flag pointer to mqtt connect flags structure
  *  \retval mqtt connect flags byte value
  * */
-#define MQTT_CONN_FLAG_PACK(flag)         ((uint8_t)flag.all)
-#define MQTT_CONN_FLAG_UNPACK(p_buf_flag) ((union mqtt_attr_conn_flag)(p_buf_flag->buf[0]))
+#define MQTT_CONNECT_FLAG_PACK(flag)         ((uint8_t)flag.all)
+#define MQTT_CONNECT_FLAG_UNPACK(p_buf_flag) ((union mqtt_attr_connect_flag)(p_buf_flag->buf[0]))
 
 /*! \brief pack mqtt connect flags to byte
  *  \param flag mqtt connect flags bits field
  *  \retval mqtt connect flag buffer
  * */
-struct mqtt_buf_conn_flag * mqtt_conn_flag_pack(union mqtt_attr_conn_flag flag); 
+struct mqtt_buf_connect_flag * mqtt_connect_flag_pack(union mqtt_attr_connect_flag flag); 
 
 /* \brief unpack mqtt connect flags buffer
  * \param p_buf_flag pointer to mqtt connect flags buffer
  * \retval mqtt connect flags bits field
  * */
-union mqtt_attr_conn_flag mqtt_conn_flag_unpack(const struct mqtt_buf_conn_flag * p_buf_flag); 
+union mqtt_attr_connect_flag mqtt_connect_flag_unpack(const struct mqtt_buf_connect_flag * p_buf_flag); 
 
 ///  @}
 
@@ -147,20 +147,20 @@ union mqtt_attr_connack_flag mqtt_connack_flag_unpack(const struct mqtt_buf_conn
 
 /***********connect return code***********/
 
-///! \defgroup mqtt_conn_ret_code
+///! \defgroup mqtt_connect_ret_code
 ///  @{
 
-typedef enum mqtt_conn_ret_code {
-	CONN_RET_CODE_ACCEPTED,  //!< accepte the connect
-	CONN_RET_CODE_REF_VER,  //!< unavailable protocol version suported by server
-	CONN_RET_CODE_REF_ID,  //!< identifier is format-legal but not allowed by server
-	CONN_RET_CODE_REF_SERVER,  //!< server unavailable
-	CONN_RET_CODE_REF_VALI,  //!< bad user name or password
-	CONN_RET_CODE_REF_AUTH,  //!< not authoried 
-	CONN_RET_CODE_RESERVED  //!< more value reserved
-} mqtt_conn_ret_code_t;
+typedef enum mqtt_connect_ret_code {
+	CONNECT_RET_CODE_ACCEPTED,  //!< accepte the connect
+	CONNECT_RET_CODE_REF_VER,  //!< unavailable protocol version suported by server
+	CONNECT_RET_CODE_REF_ID,  //!< identifier is format-legal but not allowed by server
+	CONNECT_RET_CODE_REF_SERVER,  //!< server unavailable
+	CONNECT_RET_CODE_REF_VALI,  //!< bad user name or password
+	CONNECT_RET_CODE_REF_AUTH,  //!< not authoried 
+	CONNECT_RET_CODE_RESERVED  //!< more value reserved
+} mqtt_connect_ret_code_t;
 
-#define MQTT_CONN_RET_CODE_CHECK(conn_ret_code) assert(CONN_RET_CODE_RESERVED > conn_ret_code)
+#define MQTT_CONNECT_RET_CODE_CHECK(conn_ret_code) assert(CONNECT_RET_CODE_RESERVED > conn_ret_code)
 
 ///  @}
 

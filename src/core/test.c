@@ -78,7 +78,7 @@ void test_fixed_header(void){
 void test_var_header(void){
 	printf("\n\n");
 	printf("**********mqtt variable header test**********\n");
-	union mqtt_attr_conn_flag conn_flag = {
+	union mqtt_attr_connect_flag conn_flag = {
 		.bits = {
 			1,  //!< flag user name
 			0,  //!< flag password
@@ -89,8 +89,8 @@ void test_var_header(void){
 			0,  //!< flag reserved
 		}
 	};
-	struct mqtt_buf_conn_flag * p_conn_buf_flag = mqtt_conn_flag_pack(conn_flag);
-	union mqtt_attr_conn_flag conn_attr_flag = mqtt_conn_flag_unpack(p_conn_buf_flag);
+	struct mqtt_buf_connect_flag * p_conn_buf_flag = mqtt_connect_flag_pack(conn_flag);
+	union mqtt_attr_connect_flag conn_attr_flag = mqtt_connect_flag_unpack(p_conn_buf_flag);
 	printf("conn_flag_byte = 0x%2x\n",p_conn_buf_flag->buf[0]);
 	printf("evaluate vlaue of flags by order = %2x,%2x,%2x,%2x,%2x,%2x,%2x\n",
 			conn_attr_flag.bits.flag_user_name,
