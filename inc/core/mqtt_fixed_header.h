@@ -8,6 +8,8 @@
 #include <assert.h>
 #include <stdint.h>
 
+#include "mqtt_packet_segment.h"
+
 /*********** macro of MQTT protocol datagram  ***********/
 
 /*! \brief overview of MQTT protocol datagram
@@ -144,14 +146,16 @@ struct mqtt_ctl_flag * mqtt_ctl_flag_unpack(uint8_t flag);
  *  \retval the value of remaining length
  *          0xFFFFFFFF for err
  * */
-uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code);
+//uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code);
+mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(const struct mqtt_buf_re_len * mq_buf_re_len);
 
 /*! \brief encode the remaining length
  *  \param code[out] the code bytes encoded from length
  *  \param length the value of remaining length to encode
  *  \retval the length of the encoded bytes
  * */
-int mqtt_ctl_encode_remaining_len(uint8_t * code, uint32_t length);
+//int mqtt_ctl_encode_remaining_len(uint8_t * code, uint32_t length);
+struct mqtt_buf_re_len * mqtt_ctl_encode_remaining_len(mqtt_attr_re_len_t mq_attr_re_len);
 
 ///  @}
 

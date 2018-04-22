@@ -2,6 +2,7 @@
 #include "../../inc/core/mqtt_packet_segment.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 uint8_t mqtt_ctl_flag_pack_s(struct mqtt_ctl_flag * p_flag){
         //!< check parameters
@@ -31,9 +32,13 @@ struct mqtt_ctl_flag * mqtt_ctl_flag_unpack(uint8_t flag){
 	return p_flag;
 }
 
-uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code){
+
+mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(const struct mqtt_buf_re_len * mq_buf_re_len){
 	int multiplier = 1;
-	uint32_t value = 0;
+	mqtt_attr_re_len_t value = 0;
+	uint8_t * data = calloc(MQTT_CTL_REMAINING_MAX_LEN_BYTE,sizeof(uint8_t));
+	uint8_t * code = data;
+	memcpy(code,mq_buf_re_len->buf,mq_buf_re_len->len);
 	do{
 		if(multiplier > 128*128*128){
 			//!< err `Malformaed Remaining Length`
@@ -45,24 +50,35 @@ uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code){
 
 	//!< check length range
 	MQTT_CTL_REMAINING_LEN_CHECK(value);
+
+	free(data);
 	
 	return value;
 }
 
-int mqtt_ctl_encode_remaining_len(uint8_t * code, uint32_t length){
+struct mqtt_buf_re_len * mqtt_ctl_encode_remaining_len(mqtt_attr_re_len_t mq_attr_re_len){
 	//!< check length range
-	MQTT_CTL_REMAINING_LEN_CHECK(length);
+	MQTT_CTL_REMAINING_LEN_CHECK(mq_attr_re_len);
+
+	uint8_t * data = calloc(MQTT_CTL_REMAINING_MAX_LEN_BYTE,sizeof(uint8_t));
+	uint8_t * code = data;
 
 	int count = 0;
 	do{
-		*code = length % 128;
-		length /= 128;
-		if(0 < length)
+		*code = mq_attr_re_len % 128;
+		mq_attr_re_len /= 128;
+		if(0 < mq_attr_re_len)
 			*code |= 128;
 		code++;
 		count++;
-	}while(0 < length);
+	}while(0 < mq_attr_re_len);
+
+
+	struct mqtt_buf_re_len * mq_buf_re_len = mqtt_buf_new(count);
+	memcpy(mq_buf_re_len->buf,data,count);
 	
-	return count;
+	free(data);
+
+	return mq_buf_re_len;
 }
 
