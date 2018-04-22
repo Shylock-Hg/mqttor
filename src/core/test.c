@@ -100,8 +100,21 @@ void test_var_header(void){
 			conn_attr_flag.bits.flag_w_flag,
 			conn_attr_flag.bits.flag_clean_session,
 			conn_attr_flag.bits.flag_reserved);
-
 	mqtt_buf_release(p_conn_buf_flag);
+
+	union mqtt_attr_connack_flag connack_flag = {
+		.bits = {
+			0,
+			1
+		}
+	};
+	struct mqtt_buf_connack_flag * p_buf_connack_flag = mqtt_connack_flag_pack(connack_flag);
+	union mqtt_attr_connack_flag connack_attr_flag = mqtt_connack_flag_unpack(p_buf_connack_flag);
+	printf("connack_flag_byte = 0x%2x\n",p_buf_connack_flag->buf[0]);
+	printf("evaluete value of flags by order = 0x%2x,0x%2x\n",
+			connack_attr_flag.bits.reserved,
+			connack_attr_flag.bits.SP);
+	mqtt_buf_release(p_buf_connack_flag);
 }
 
 void test_payload(void){

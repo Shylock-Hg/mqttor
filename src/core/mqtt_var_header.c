@@ -12,17 +12,29 @@ struct mqtt_buf_conn_flag * mqtt_conn_flag_pack(union mqtt_attr_conn_flag flag){
 	return p_buf_flag;
 }
 
-union mqtt_attr_conn_flag mqtt_conn_flag_unpack(struct mqtt_buf_conn_flag * p_buf_flag){
+union mqtt_attr_conn_flag mqtt_conn_flag_unpack(const struct mqtt_buf_conn_flag * p_buf_flag){
 	//!< 
 	
 	return MQTT_CONN_FLAG_UNPACK(p_buf_flag);
 }
 
 
-uint8_t mqtt_connack_flag_pack_s(struct mqtt_connack_flag * p_flag){
+struct mqtt_buf_connack_flag * mqtt_connack_flag_pack(union mqtt_attr_connack_flag flag){
 	//!< chekc parameter
-	MQTT_ATTR_FLAG_VAL_BOOL_CHECK(p_flag->SP);
+	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(flag.bits.reserved);
+
+	struct mqtt_buf_connack_flag * p_buf_flag = mqtt_buf_new(sizeof(uint8_t));
+	p_buf_flag->buf[0] = MQTT_CONNACK_FLAG_PACK(flag);
 
 	//!< pack matt connack flag byte
-	return MQTT_CONNACK_FLAG_PACK(p_flag);
+	return p_buf_flag;
 }
+
+union mqtt_attr_connack_flag mqtt_connack_flag_unpack(
+		const struct mqtt_buf_connack_flag * p_buf_flag){
+	
+	return MQTT_CONNACK_FLAG_UNPACK(p_buf_flag);
+}
+
+
+

@@ -111,7 +111,7 @@ struct mqtt_buf_conn_flag * mqtt_conn_flag_pack(union mqtt_attr_conn_flag flag);
  * \param p_buf_flag pointer to mqtt connect flags buffer
  * \retval mqtt connect flags bits field
  * */
-union mqtt_attr_conn_flag mqtt_conn_flag_unpack(struct mqtt_buf_conn_flag * p_buf_flag); 
+union mqtt_attr_conn_flag mqtt_conn_flag_unpack(const struct mqtt_buf_conn_flag * p_buf_flag); 
 
 ///  @}
 
@@ -121,16 +121,25 @@ union mqtt_attr_conn_flag mqtt_conn_flag_unpack(struct mqtt_buf_conn_flag * p_bu
 ///  @{
 
 typedef struct mqtt_connack_flag {
-	uint8_t SP;  //!< 0-1
+	uint8_t reserved:7;
+	uint8_t SP:1;  //!< 0-1
 } mqtt_connack_flag_t;
 
-#define MQTT_CONNACK_FLAG_SP_OFFSET  0
-#define MQTT_CONNACK_FLAG_SP_Msk     BIT(MQTT_CONNACK_FLAG_SP_OFFSET)
-#define MQTT_CONNACK_FLAG_PACK(p_mqtt_connack_flag) (\
-		(p_mqtt_connack_flag->SP & MQTT_CONNACK_FLAG_SP_Msk) \
-		<< MQTT_CONNACK_FLAG_SP_OFFSET)
+typedef union mqtt_attr_connack_flag {
+	uint8_t all;
+	struct mqtt_connack_flag bits;
+} mqtt_attr_connack_flag_t;
 
-uint8_t mqtt_connack_falg_pack_s(struct mqtt_connack_flag * p_flag);
+#define mqtt_buf_connack_flag mqtt_buf
+typedef mqtt_buf_t mqtt_buf_connack_flag_t;
+
+#define MQTT_CONNACK_FLAG_SP_OFFSET          0
+#define MQTT_CONNACK_FLAG_SP_Msk             BIT(MQTT_CONNACK_FLAG_SP_OFFSET)
+#define MQTT_CONNACK_FLAG_PACK(flag)         ((uint8_t)flag.all)
+#define MQTT_CONNACK_FLAG_UNPACK(p_buf_flag) ((union mqtt_attr_connack_flag)(p_buf_flag->buf[0]))
+
+struct mqtt_buf_connack_flag * mqtt_connack_flag_pack(union mqtt_attr_connack_flag flag);
+union mqtt_attr_connack_flag mqtt_connack_flag_unpack(const struct mqtt_buf_connack_flag * p_buf_flag);
 
 ///  @}
 
