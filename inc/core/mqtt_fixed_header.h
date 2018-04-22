@@ -100,32 +100,51 @@ typedef enum mqtt_ctl_type{
 
 /*********** pack mqtt control packet head ***********/
 typedef struct mqtt_ctl_flag{
+	/*
         mqtt_ctl_type_t type;
         uint8_t DUP;  //!< [0-1]
         uint8_t QoS;  //!< [0-2]
         uint8_t RETAIN;  //!< [0-1]
+	*/
+	mqtt_ctl_type_t type:4;
+	uint8_t         DUP:1;
+	uint8_t         QoS:2;
+	uint8_t         RETAIN:1;
 } mqtt_ctl_flag_t;
+
+typedef union mqtt_attr_ctl_flag {
+	uint8_t all;
+	struct mqtt_ctl_flag bits;
+} mqtt_attr_ctl_flag_t;
+
+#define mqtt_buf_ctl_flag mqtt_buf
+typedef mqtt_buf_t        mqtt_buf_ctl_flag_t;
 
 /*! \brief pack MQTT control head without check
  *  \param p_header[in] the header struct
  * */
-#define MQTT_CTL_FLAG_PACK(p_mqtt_ctl_flag) (\
-		((p_mqtt_ctl_flag->type) << MQTT_CTL_TYPE_OFFSET) | \
-		((p_mqtt_ctl_flag->DUP) << MQTT_CTL_FLAG_DUP_OFFSET) | \
-		((p_mqtt_ctl_flag->QoS) << MQTT_CTL_FLAG_QoS_OFFSET) | \
-		((p_mqtt_ctl_flag->RETAIN) << MQTT_CTL_FLAG_RETAIN_OFFSET))
+/*
+#define MQTT_CTL_FLAG_PACK(p_mqtt_attr_ctl_flag) (\
+		((p_mqtt_attr_ctl_flag->type) << MQTT_CTL_TYPE_OFFSET) | \
+		((p_mqtt_attr_ctl_flag->DUP) << MQTT_CTL_FLAG_DUP_OFFSET) | \
+		((p_mqtt_attr_ctl_flag->QoS) << MQTT_CTL_FLAG_QoS_OFFSET) | \
+		((p_mqtt_attr_ctl_flag->RETAIN) << MQTT_CTL_FLAG_RETAIN_OFFSET))
+*/
+#define MQTT_CTL_FLAG_PACK(mqtt_attr_ctl_flag) (mqtt_attr_ctl_flag.all)
+#define MQTT_CTL_FLAG_UNPACK(p_mqtt_buf_ctl_flag) \
+	((union mqtt_attr_ctl_flag)(p_mqtt_buf_ctl_flag->buf[0]))
 
 /*! \brief pack mqtt control packet head with check
- *  \param p_header[in] the header struct
- *  \retval the byte packed
+ *  \param p_flag[in] the header bits field
+ *  \retval the byte buf
  * */
-uint8_t mqtt_ctl_flag_pack_s(struct mqtt_ctl_flag * p_flag);
+struct mqtt_buf_ctl_flag * mqtt_ctl_flag_pack(const union mqtt_attr_ctl_flag flag);
 
 /*! \brief unpack mqtt control packet flags
- *  \param flag the flags byte
- *  \retval the flags structure
+ *  \param p_buf the pointer to buf
+ *  \retval the flags bits field
  * */
-struct mqtt_ctl_flag * mqtt_ctl_flag_unpack(uint8_t flag);
+union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(const struct mqtt_buf_ctl_flag * p_buf_ctl_flag);
 
 ///  @}
 

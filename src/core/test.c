@@ -3,16 +3,17 @@
  *  \data 2018-03-21
  * */
 
-#include "../../inc/core/mqtt_packet_segment.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+//#include "../../inc/core/mqtt_packet_segment.h"
 
 #include "../../inc/core/mqtt_fixed_header.h"
 #include "../../inc/core/mqtt_var_header.h"
 #include "../../inc/core/mqtt_payload.h"
-#include "../../inc/toolkit/array.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+//#include "../../inc/core/mqtt_packet.h"
+//#include "../../inc/toolkit/array.h"
 
 void test_fixed_header(void);
 void test_var_header(void);
@@ -35,20 +36,23 @@ void test_fixed_header(void){
 	//!< control packet header byte 
 	printf("\n\n");
 	printf("**********mqtt fixed header test**********\n");
-	struct mqtt_ctl_flag header = {
-		MQTT_CTL_TYPE_CONNACK,  //!< type
-		1,  //!< DUP
-		1,  //!< QoS
-		0,  //!< RETAIN
+	union mqtt_attr_ctl_flag flag = {
+		.bits = { 
+			MQTT_CTL_TYPE_SUBSCRIBE,  //!< type
+			1,  //!< DUP
+			2,  //!< QoS
+			0,  //!< RETAIN
+		}
 	};
-	uint8_t s_head = mqtt_ctl_flag_pack_s(&header);
-	struct mqtt_ctl_flag * p_flag = mqtt_ctl_flag_unpack(s_head);
+	struct mqtt_buf_ctl_flag * p_buf_ctl_flag = mqtt_ctl_flag_pack(flag);
+	union mqtt_attr_ctl_flag  flag2 = mqtt_ctl_flag_unpack(p_buf_ctl_flag);
+	printf("[info]:sizeof(union mqtt_attr_ctl_flag)=%lu\n",sizeof(union mqtt_attr_ctl_flag));
 	printf("eval:type=%d,DUP=%d,QoS=%d,RETAIN=%d\n",\
-			p_flag->type,\
-			p_flag->DUP,\
-			p_flag->QoS,\
-			p_flag->RETAIN);
-	free(p_flag);
+			flag2.bits.type,\
+			flag2.bits.DUP,\
+			flag2.bits.QoS,\
+			flag2.bits.RETAIN);
+	mqtt_buf_release(p_buf_ctl_flag);
 
 	//!< control packet header remaining length
 	mqtt_attr_re_len_t length[] = {0,127,128,16383,16384,2097151,2097152,268435455};
