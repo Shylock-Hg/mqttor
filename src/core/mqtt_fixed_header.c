@@ -4,36 +4,25 @@
 #include "../../inc/core/mqtt_fixed_header.h"
 
 struct mqtt_buf_ctl_flag * mqtt_ctl_flag_pack(union mqtt_attr_ctl_flag flag){
-        //!< check parameters
+        //< check parameters
 	MQTT_CTL_TYPE_CHECK(flag.bits.type);
-	//MQTT_CTL_FLAG_DUP_CHECK(p_flag.DUP);
 	MQTT_CTL_FLAG_QoS_CHECK(flag.bits.QoS);
-	//MQTT_CTL_FLAG_RETAIN_CHECK(p_flag.RETAIN);
 
+	//< new mqtt buf
 	struct mqtt_buf_ctl_flag * p_buf_ctl_flag = mqtt_buf_new(sizeof(uint8_t));
-	memcpy(p_buf_ctl_flag->buf,&flag,sizeof(flag));
+	p_buf_ctl_flag->buf[0] = MQTT_CTL_FLAG_PACK(flag);
 
-	//!< pack parameter
-	/*
-	head = (p_flag->type << MQTT_CTL_TYPE_OFFSET) |  //!< type
-		(p_flag->DUP << MQTT_CTL_FLAG_DUP_OFFSET) |  //!< DUP
-		(p_flag->QoS << MQTT_CTL_FLAG_QoS_OFFSET) |  //!< QoS
-		(p_flag->RETAIN << MQTT_CTL_FLAG_RETAIN_OFFSET);  //!< RETAIN
-	*/
-	//return MQTT_CTL_FLAG_PACK(p_flag);
 	return p_buf_ctl_flag;
 }
 
 union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(const struct mqtt_buf_ctl_flag * p_buf_ctl_flag){
-	/*
-	struct mqtt_ctl_flag * p_flag = malloc(sizeof(struct mqtt_ctl_flag));
+	union mqtt_attr_ctl_flag flag = MQTT_CTL_FLAG_UNPACK(p_buf_ctl_flag);
 
-	p_flag->type   = MQTT_PACKET_SEGMENT_EVAL(flag,MQTT_CTL_TYPE_Msk,MQTT_CTL_TYPE_OFFSET);
-	p_flag->DUP    = MQTT_PACKET_SEGMENT_EVAL(flag,MQTT_CTL_FLAG_DUP_Msk,MQTT_CTL_FLAG_DUP_OFFSET);
-	p_flag->QoS    = MQTT_PACKET_SEGMENT_EVAL(flag,MQTT_CTL_FLAG_QoS_Msk,MQTT_CTL_FLAG_QoS_OFFSET);
-	p_flag->RETAIN = MQTT_PACKET_SEGMENT_EVAL(flag,MQTT_CTL_FLAG_RETAIN_Msk,MQTT_CTL_FLAG_RETAIN_OFFSET);
-*/
-	return MQTT_CTL_FLAG_UNPACK(p_buf_ctl_flag);
+        //< check parameters
+	MQTT_CTL_TYPE_CHECK(flag.bits.type);
+	MQTT_CTL_FLAG_QoS_CHECK(flag.bits.QoS);
+
+	return flag;
 }
 
 

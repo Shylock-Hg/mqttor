@@ -139,6 +139,22 @@ void test_payload(void){
 			suback_attr_flag.bits.QoS);
 
 	mqtt_buf_release(p_buf_flag);
+
+	union mqtt_attr_payload_subscribe_content_QoS subscribe_qos = {
+		.bits = {
+			0,  //!< reserved
+			2   //!< QoS
+		}
+	};
+	struct mqtt_buf_payload_subscribe_content_QoS * p_buf_subscribe_flag = 
+		mqtt_payload_subscribe_content_QoS_pack(subscribe_qos);
+	union mqtt_attr_payload_subscribe_content_QoS subscribe_attr_flag =
+		mqtt_payload_subscribe_content_QoS_unpack(p_buf_subscribe_flag);
+	printf("subscribe QoS flag byte=0x%2x\n",p_buf_subscribe_flag->buf[0]);
+	printf("evaluate value of subscribe content flags `reserved=0x%2x`,`QoS=0x%2x`",
+			subscribe_attr_flag.bits.reserved,
+			subscribe_attr_flag.bits.QoS);
+	mqtt_buf_release(p_buf_subscribe_flag);
 }
 
 void test_toolkit(void){

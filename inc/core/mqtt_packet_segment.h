@@ -17,17 +17,22 @@
  *  \param msk the and operator mask
  *  \param offset the bits offset to bit 0
  * */
-#define MQTT_PACKET_SEGMENT_EVAL(uint,msk,offset) ((uint&msk) >> offset)
+#define MQTT_BUF_SEGMENT_EVAL(uint,msk,offset) ((uint&msk) >> offset)
+
+/*  \brief check reserved value attributes
+ *  \param byte value to check
+ * */
+#define MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(byte) assert(0 == byte)
 
 /*! \brief check packet flag value of boolean type
  *  \param byte value of boolean
  * */
-#define MQTT_PACKET_FLAG_VAL_BOOL_CHECK(byte) assert(0 == byte || 1 == byte)
+#define MQTT_ATTR_FLAG_VAL_BOOL_CHECK(byte) assert(0 == byte || 1 == byte)
 
 /*! \brief check packet flag QoS value 
  *  \param byte value of QoS
  * */
-#define MQTT_PACKET_FLAG_VAL_QoS_CHECK(byte)  assert(0 <= byte && 2 >= byte)
+#define MQTT_ATTR_FLAG_VAL_QoS_CHECK(byte)  assert(0 <= byte && 2 >= byte)
 
 
 //! \defgroup mqtt_buf 
@@ -54,6 +59,8 @@ void mqtt_buf_release(struct mqtt_buf * mq_buf);
 //typedef struct mqtt_buf struct mqtt_buf_flag;
 #define mqtt_buf_flag   mqtt_buf
 typedef mqtt_buf_t      mqtt_buf_flag_t;
+
+typedef uint8_t         mqtt_attr_flag_t;
 /// @}
 
 //! \defgroup mqtt_buf_re_len remaining length buf
@@ -61,6 +68,8 @@ typedef mqtt_buf_t      mqtt_buf_flag_t;
 //typedef struct mqtt_buf struct mqtt_buf_re_len;
 #define mqtt_buf_re_len mqtt_buf
 typedef mqtt_buf_t      mqtt_buf_re_len_t;
+
+typedef uint32_t        mqtt_attr_re_len_t;
 /// @}
 
 

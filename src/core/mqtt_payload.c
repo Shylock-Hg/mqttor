@@ -30,3 +30,31 @@ union mqtt_attr_payload_suback_flag mqtt_payload_suback_flag_unpack(
 	return flag;
 }
 
+
+struct mqtt_buf_payload_subscribe_content_QoS * mqtt_payload_subscribe_content_QoS_pack(
+		union mqtt_attr_payload_subscribe_content_QoS flag){
+	//< check parameters
+	MQTT_ATTR_FLAG_VAL_QoS_CHECK(flag.bits.QoS);
+	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(flag.bits.reserved);
+
+	//< new mqtt buf
+	struct mqtt_buf_payload_subscribe_content_QoS * p_buf_flag = 
+		mqtt_buf_new(sizeof(uint8_t));
+	p_buf_flag->buf[0] = MQTT_PAYLOAD_SUBSCRIBE_CONTENT_QoS_PACK(flag);
+
+	return p_buf_flag;
+}
+
+union mqtt_attr_payload_subscribe_content_QoS mqtt_payload_subscribe_content_QoS_unpack(
+		const struct mqtt_buf_payload_subscribe_content_QoS * p_buf_flag){
+
+	union mqtt_attr_payload_subscribe_content_QoS flag = 
+		MQTT_PAYLOAD_SUBSCRIBE_CONTENT_QoS_UNPACK(p_buf_flag);
+
+	//< check parameters
+	MQTT_ATTR_FLAG_VAL_QoS_CHECK(flag.bits.QoS);
+	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(flag.bits.reserved);
+		
+	return flag;
+}
+

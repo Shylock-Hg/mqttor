@@ -14,10 +14,12 @@
 #include "../../inc/toolkit/array.h"
 
 struct mqtt_buf * mqtt_buf_new(size_t len){
-	uint8_t * buf = malloc(len);
+	//uint8_t * buf = malloc(len);
+	uint8_t * buf = calloc(len,sizeof(uint8_t));
 	struct mqtt_buf * mq_buf = malloc(sizeof(struct mqtt_buf));
 	mq_buf->buf = buf;
 	mq_buf->len = len;
+	//memset(mq_buf->buf,0x00,mq_buf->len);
 
 	return mq_buf;
 }
@@ -76,3 +78,4 @@ struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(mqtt_attr_uint16_t num){
 mqtt_attr_uint16_t mqtt_buf_uint16_decode(const struct mqtt_buf_uint16 * mq_uint16){
 	return BYTES_2_UINT16(mq_uint16->buf);
 }
+
