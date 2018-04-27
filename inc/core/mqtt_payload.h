@@ -41,15 +41,15 @@ typedef struct mqtt_payload_suback_flag {
 	uint8_t QoS;  //!< quality of delivery
 } mqtt_payload_suback_flag_t;
 */
-typedef struct mqtt_payload_suback_flag {
-	uint8_t ok:1;
-	uint8_t reserved:5;
-	uint8_t QoS:2;
-} mqtt_payload_sub_ack_flag_t;
+//typedef struct mqtt_payload_suback_flag  mqtt_payload_sub_ack_flag_t;
 
 typedef union mqtt_attr_payload_suback_flag {
 	uint8_t all;
-	struct mqtt_payload_suback_flag bits;
+	struct {
+		uint8_t ok:1;
+		uint8_t reserved:5;
+		uint8_t QoS:2;
+	} bits;
 } mqtt_attr_payload_suback_flag_t;
 
 #define mqtt_buf_payload_suback_flag mqtt_buf
@@ -84,14 +84,14 @@ union mqtt_attr_payload_suback_flag mqtt_payload_suback_flag_unpack(
 ///! \defgroup mqtt_payload_subscribe_content 
 ///  @{
 
-typedef struct mqtt_payload_subscribe_content_QoS {
-	uint8_t reserved:6;
-	uint8_t QoS:2;
-} mqtt_payload_subscribe_content_QoS_t;
+//typedef struct mqtt_payload_subscribe_content_QoS  mqtt_payload_subscribe_content_QoS_t;
 
 typedef union mqtt_attr_payload_subscribe_content_QoS {
 	uint8_t all;
-	struct mqtt_payload_subscribe_content_QoS bits;
+	struct {
+		uint8_t reserved:6;
+		uint8_t QoS:2;
+	} bits;
 } mqtt_attr_payload_subscribe_content_QoS_t;
 
 #define mqtt_buf_payload_subscribe_content_QoS mqtt_buf
@@ -109,7 +109,7 @@ union mqtt_attr_payload_subscribe_content_QoS mqtt_payload_subscribe_content_QoS
 		);
 
 typedef struct mqtt_payload_subscribe_content {
-	char * top_filter;  //!< topic filter
+	const mqtt_attr_str_t top_filter;  //!< topic filter
 	union mqtt_attr_payload_subscribe_content_QoS QoS;  //!< requested QoS
 } mqtt_payload_subscribe_content_t;
 

@@ -2,6 +2,7 @@
  *         - pack&unpack fixed header , variable header and payload
  * */
 
+
 #ifndef _MQTT_PACKET_H_
 #define _MQTT_PACKET_H_
 
@@ -20,6 +21,7 @@
 typedef enum mqtt_err {
 	E_NONE         = 0,  //!< error : none error
 	E_FORMAT_CHECK = -1,  //!< error format : flag value check fail
+	E_MEM_FAIL     = -2
 } mqtt_err_t;
 
 /*! \brief convert err to coressponding prompt string
@@ -39,33 +41,32 @@ typedef struct mqtt_buf_packet {
 } mqtt_buf_packet_t;
 */
 #define mqtt_buf_packet mqtt_buf
-typedef mqtt_buf mqtt_buf_packet
+typedef mqtt_buf_t mqtt_buf_packet_t;
 
 ///! \defgroup mqtt_buf_packet_connect 
 /// @{
-typedef struct mqtt_buf_packet_connect {
+typedef struct mqtt_attr_packet_connect {
 	//!< fixed header
 	
 	//!< variable header
-	struct mqtt_connect_flag p_conn_flag,  //!< p_conn_flag pointer to conn_flag structure
-	uint16_t keep_alive,  //!< keep_alive time limit to keep alive measured by seconds
+	union mqtt_attr_connect_flag flag;  //!< p_conn_flag pointer to conn_flag structure
+	mqtt_attr_uint16_t keep_alive;  //!< keep_alive time limit to keep alive measured by seconds
 
 	//!< payload
-	const char * id_client,  //!< id_client client identifier string
-	const char * w_topic,  //!< w_topic will topic string
-	const char * w_msg,  //!< w_msg will message string
-	const char * user,  //!< user_name user name string
-	const char * pwd  //!< pwd password string
-} mqtt_buf_packet_connect_t;
+	const mqtt_attr_str_t id_client;  //!< id_client client identifier string
+	const mqtt_attr_str_t w_topic;  //!< w_topic will topic string
+	const mqtt_attr_str_t w_msg;  //!< w_msg will message string
+	const mqtt_attr_str_t user;  //!< user_name user name string
+	const mqtt_attr_str_t pwd;  //!< pwd password string
+} mqtt_attr_packet_connect_t;
 
 /*! \brief pack connect packet 
  *  \param p_packet[out]  mqtt packet
  *  \param p_packet_connect[in] pointer to connect packect 
  *  \retval mqtt_err_t 
  * */
-mqtt_err_t mqtt_pack_connect(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_connect * p_packet_connect
+struct mqtt_buf_packet * mqtt_pack_connect(
+		const struct mqtt_attr_packet_connect * p_packet_connect
 		);
 
 /*! \brief unpack connect packet
@@ -73,33 +74,31 @@ mqtt_err_t mqtt_pack_connect(
  *  \pram p_packet_connect[out] pointer to mqtt connect packet 
  *  \retval pointer to mqtt connect structure
  * */
-mqtt_err_t mqtt_unpack_connect(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_connect * p_packet_connect
+struct mqtt_attr_packet_connect * mqtt_unpack_connect(
+		const struct mqtt_buf_packet * p_packet
 		);
 /// @}
 
 
 ///! \defgroup mqtt_buf_packet_connack
 /// @{
-struct mqtt_buf_packet_connack {
+typedef struct mqtt_attr_packet_connack {
 	//!< fixed header
 	
 	//!< variable header
-	const struct mqtt_connack_flag p_connack_flag,  //!< p_connack_flag flags of connack
-	enum mqtt_conn_ret_code ret_code  //!< ret_code return code of connect
+	union mqtt_attr_connack_flag flag;  //!< p_connack_flag flags of connack
+	enum mqtt_connect_ret_code ret_code;  //!< ret_code return code of connect
 	//!< payload
 	
-} mqtt_buf_packet_connack_t;
+} mqtt_attr_packet_connack_t;
 
 /*! \brief pack mqtt connack packet
  *  \param p_packet[out] pointer to mqtt packet
  *  \param p_packet_connack[in] pointer to mqtt connack structure
  *  \retval mqtt_err_t
  * */
-mqtt_err_t mqtt_pack_connack(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_connack * p_packet_connack
+struct mqtt_buf_packet_connack * mqtt_pack_connack(
+		const struct mqtt_attr_packet_connack * p_packet_connack
 		);
 
 /*! \brief unpack mqtt connack packet
@@ -107,23 +106,22 @@ mqtt_err_t mqtt_pack_connack(
  *  \param p_packet_connack[out] pointer to mqtt connack structure
  *  \retval mqtt_err_t
  * */
-mqtt_err_t mqtt_unpack_connack(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_connack * p_packet_connack
+struct mqtt_attr_packet_connack * mqtt_unpack_connack(
+		const struct mqtt_buf_packet * p_packet
 		);
 /// @}
 
 
 ///! \defgroup mqtt_buf_packet_publish
 /// @{
-struct mqtt_buf_packet_publish {
+typedef struct mqtt_buf_packet_publish {
 	//!< fixed header
-	const struct mqtt_ctl_head p_ctl_flag,  //!< p_ctl_flag flag of mqtt packet control
+	union mqtt_attr_ctl_flag flag;  //!< p_ctl_flag flag of mqtt packet control
 	//!< variable header
-	const char * topic_name,  //!< topic_name name of topic publish to
-	uint16_t id_packet,  //!< id_packet identifier of packet
+	const mqtt_attr_str_t topic_name;  //!< topic_name name of topic publish to
+	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
-	const char * app_msg  //!< app_msg application specify message
+	const mqtt_attr_str_t app_msg;  //!< app_msg application specify message
 } mqtt_buf_packet_publish_t;
 
 /*! \brief pack mqtt publish packet
@@ -131,7 +129,7 @@ struct mqtt_buf_packet_publish {
  *  \param p_packet_publish[in] pointer to publish structure
  *  \retval mqtt_err_t
  * */
- mqtt_pack_publish(
+mqtt_err_t mqtt_pack_publish(
 		struct mqtt_buf_packet * p_packet,
 		const struct mqtt_buf_packet_publish * p_packet_publish
 		);
@@ -150,11 +148,11 @@ mqtt_err_t mqtt_unpack_publish(
 
 ///! \defgroup mqtt_buf_packet_puback
 /// @{
-struct mqtt_buf_packet_puback {
+typedef struct mqtt_buf_packet_puback {
 	//!< fixed header
 	
 	//!< variable header
-	uint16_t id_packet  //!< id_packet identifier of packet
+	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_puback_t;
 
@@ -182,10 +180,10 @@ mqtt_err_t mqtt_unpack_puback(
 
 ///! \defgroup mqtt_buf_packet_pubrec
 /// @{
-struct mqtt_buf_packet_pubrec {
+typedef struct mqtt_buf_packet_pubrec {
 	//!< fixed header
 	//!< variable header
-	uint16_t id_packet  //!< id_packet identifier of packet
+	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_pubrec_t;
 
@@ -213,10 +211,10 @@ mqtt_err_t mqtt_unpack_pubrec(
 
 ///! \defgroup mqtt_buf_packet_pubrel
 /// @{
-struct mqtt_buf_packet_pubrel {
+typedef struct mqtt_buf_packet_pubrel {
 	//!< fixed header
 	//!< variable header
-	uint16_t id_packet  //!< id_packet identifier of packet
+	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_pubrel_t;
 
@@ -244,10 +242,10 @@ mqtt_err_t mqtt_unpack_pubrel(
 
 ///! \defgroup mqtt_buf_packet_pubcomp
 /// @{
-struct mqtt_buf_packet_pubcomp {
+typedef struct mqtt_buf_packet_pubcomp {
 	//!< fixed header
 	//!< variable header
-	uint16_t id_packet  //!< id_packet identifier of packet
+	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_pubcomp_t;
 
@@ -275,13 +273,13 @@ mqtt_err_t mqtt_unpacke_pubcomp(
 
 ///! \defgroup mqtt_buf_packet_subscribe
 /// @{
-struct mqtt_buf_packet_subscribe {
+typedef struct mqtt_buf_packet_subscribe {
 	//!< fixed header
 	//!< variable header
-	uint16_t id_packet,  //!< id_packet identifier of packet
+	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
-	struct mqtt_payload_subscribe_content sub_content[],  //!< sub_content content array to subscribe
-	uint16_t sub_count  //!< sub_count count of subscribe
+	struct mqtt_payload_subscribe_content * sub_content;  //!< sub_content content array to subscribe
+	uint16_t sub_count;  //!< sub_count count of subscribe
 } mqtt_buf_packet_subscribe_t;
 
 /*! \brief pack mqtt subscribe packet
@@ -308,13 +306,13 @@ mqtt_err_t mqtt_unpack_subscribe(
 
 ///! \defgroup mqtt_buf_packet_suback
 /// @{
-struct mqtt_buf_packet_suback {
+typedef struct mqtt_buf_packet_suback {
 	//!< fixed header
 	//!< variable header
-	uint16_t id_packet,  //!< id_packet identifier of packet
+	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
-	struct mqtt_payload_suback_flag suback_flag[],  //!< suback_flag[] flags of suback array
-	uint16_t suback_flag_count  //!< suback_flag_count count of suback
+	struct mqtt_payload_suback_flag * suback_flag;  //!< suback_flag[] flags of suback array
+	uint16_t suback_flag_count;  //!< suback_flag_count count of suback
 } mqtt_buf_packet_suback_t;
 
 /*! \brief pack mqtt suback packet
@@ -341,13 +339,13 @@ mqtt_err_t mqtt_unpack_suback(
 
 ///! \defgroup mqtt_buf_packet_unsubscribe
 /// @{
-struct mqtt_buf_packet_unsubscribe {
+typedef struct mqtt_buf_packet_unsubscribe {
 	//!< fixed header
 	//!< variable header
-	uint16_t id_packet,  //!< id_packet identifier of packet
+	uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
-	const char * top_filter[],  //!< top_filter[] array of top_filter string
-	uint16_t top_filter_count  //!< to_filter_count count of top_filter string
+	const mqtt_attr_str_t * top_filter;  //!< top_filter[] array of top_filter string
+	uint16_t top_filter_count;  //!< to_filter_count count of top_filter string
 } mqtt_buf_packet_unsubscribe_t;
 
 /*! \brief pack mqtt unsubscribe packet
@@ -374,10 +372,10 @@ mqtt_err_t mqtt_unpack_unsubscribe(
 
 ///! \defgroup mqtt_buf_packet_unsuback
 /// @{
-struct mqtt_buf_packet_unsuback {
+typedef struct mqtt_buf_packet_unsuback {
 	//!< fixed header
 	//!< variable header
-	uint16_t id_packet  //!< id_packet identifier of packet
+	uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_unsuback_t;
 
@@ -409,7 +407,7 @@ typedef struct mqtt_buf_packet_pingreq {
 	//!< fixed header
 	//!< variable header
 	//!< payload
-	void
+	void;
 } mqtt_buf_packet_pingreq_t;
 
 /*! \brief pack mqtt pingreq packet
@@ -430,7 +428,7 @@ typedef struct mqtt_buf_packet_pingresp {
 	//!< fixed header
 	//!< variable header
 	//!< payload
-	void
+	void;
 } mqtt_buf_packet_pingresp_t;
 
 /*! \brief pack mqtt pingresp packet
@@ -451,7 +449,7 @@ typedef struct mqtt_buf_packet_disconnect {
 	//!< fixed header
 	//!< variable header
 	//!< payload
-	void
+	void;
 } mqtt_buf_packet_disconnect_t;
 
 /*! \brief pack mqtt disconnect packet

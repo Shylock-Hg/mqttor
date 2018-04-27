@@ -99,22 +99,16 @@ typedef enum mqtt_ctl_type{
 //#define MQTT_CTL_FLAG_RETAIN_EVAL(byte)    ((byte & MQTT_CTL_FLAG_RETAIN_Msk) >> MQTT_CTL_FLAG_RETAIN_OFFSET)
 
 /*********** pack mqtt control packet head ***********/
-typedef struct mqtt_ctl_flag{
-	/*
-        mqtt_ctl_type_t type;
-        uint8_t DUP;  //!< [0-1]
-        uint8_t QoS;  //!< [0-2]
-        uint8_t RETAIN;  //!< [0-1]
-	*/
-	mqtt_ctl_type_t type:4;
-	uint8_t         DUP:1;
-	uint8_t         QoS:2;
-	uint8_t         RETAIN:1;
-} mqtt_ctl_flag_t;
+//typedef struct  mqtt_ctl_flag_t;
 
 typedef union mqtt_attr_ctl_flag {
 	uint8_t all;
-	struct mqtt_ctl_flag bits;
+	struct {
+		mqtt_ctl_type_t type:4;
+		uint8_t         DUP:1;
+		uint8_t         QoS:2;
+		uint8_t         RETAIN:1;
+	} bits;
 } mqtt_attr_ctl_flag_t;
 
 #define mqtt_buf_ctl_flag mqtt_buf

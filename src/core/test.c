@@ -7,29 +7,57 @@
 #include <string.h>
 #include <stdlib.h>
 
-//#include "../../inc/core/mqtt_packet_segment.h"
-
 #include "../../inc/core/mqtt_fixed_header.h"
 #include "../../inc/core/mqtt_var_header.h"
 #include "../../inc/core/mqtt_payload.h"
-//#include "../../inc/core/mqtt_packet.h"
-//#include "../../inc/toolkit/array.h"
+
+#include "../../inc/core/mqtt_packet.h"
+
+void test_toolkit(void);
+void test_packet_segment(void);
 
 void test_fixed_header(void);
 void test_var_header(void);
-void test_toolkit(void);
 void test_payload(void);
 
-void test_packet_segment(void);
+void test_packet(void);
+
 
 int main(int argc, char * argv[]){
+	test_toolkit();
+	test_packet_segment();
 	test_fixed_header();
 	test_var_header();
-	test_toolkit();
 	test_payload();
-	test_packet_segment();
 
 	return 0;
+}
+
+void test_toolkit(void){
+	printf("\n\n");
+	printf("**********mqtt toolkit test**********\n");
+	uint16_t value = 0x1234;
+	printf("origin=%x\n",value);
+	uint8_t bytes[2] = {0};
+	UINT16_2_BYTES(value,bytes);
+	value = BYTES_2_UINT16(bytes);
+	printf("endecode=%x\n",value);
+}
+
+void test_packet_segment(void){
+	printf("\n\n");
+	printf("**********mqtt packet segment test**********\n");
+	mqtt_attr_str_t str = "hello world!";
+	printf("[info]:origin string `%s`.\n",str);
+
+	struct mqtt_buf_str * mq_str = mqtt_buf_str_encode(str);
+	printf("[info]:code length `%ld`\n",mq_str->len);
+	mqtt_attr_str_t _str = mqtt_buf_str_decode(mq_str);
+
+	printf("[info]:decode string `%s`.\n",_str);
+
+	free(_str);
+	mqtt_buf_release(mq_str);
 }
 
 void test_fixed_header(void){
@@ -157,30 +185,7 @@ void test_payload(void){
 	mqtt_buf_release(p_buf_subscribe_flag);
 }
 
-void test_toolkit(void){
-	printf("\n\n");
-	printf("**********mqtt toolkit test**********\n");
-	uint16_t value = 0x1234;
-	printf("origin=%x\n",value);
-	uint8_t bytes[2] = {0};
-	UINT16_2_BYTES(value,bytes);
-	value = BYTES_2_UINT16(bytes);
-	printf("endecode=%x\n",value);
-}
-
-void test_packet_segment(void){
-	printf("\n\n");
-	printf("**********mqtt packet segment test**********\n");
-	mqtt_attr_str_t str = "hello world!";
-	printf("[info]:origin string `%s`.\n",str);
-
-	struct mqtt_buf_str * mq_str = mqtt_buf_str_encode(str);
-	printf("[info]:code length `%ld`\n",mq_str->len);
-	mqtt_attr_str_t _str = mqtt_buf_str_decode(mq_str);
-
-	printf("[info]:decode string `%s`.\n",_str);
-
-	free(_str);
-	mqtt_buf_release(mq_str);
+void test_packet(void){
+	
 }
 
