@@ -2,12 +2,17 @@ CFLAGS = -std=c99 -Wall
 
 DIR_BUILD = ./build
 
-OBJS = $(DIR_BUILD)/test.o $(DIR_BUILD)/mqtt_fixed_header.o $(DIR_BUILD)/mqtt_var_header.o \
-       $(DIR_BUILD)/mqtt_payload.o $(DIR_BUILD)/mqtt_packet_segment.o
+PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
+
+SOURCES = $(wildcard *.c)
+
+OBJS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))
+
+DEPFILES = $(patsubst %.o, %.d, $(OBJS))
 
 # core header
-vpath %.h ../../inc/core
-vpath %.h ../../inc/toolkit
+#vpath %.h ../../inc/core
+#vpath %.h ../../inc/toolkit
 
 .PHONY : all output clean
 all : $(DIR_BUILD)/test
@@ -15,26 +20,19 @@ all : $(DIR_BUILD)/test
 $(DIR_BUILD)/test : $(OBJS) output
 	cc $(CFLAGS) -o $@ $(OBJS)
 
-$(DIR_BUILD)/test.o : test.c mqtt_fixed_header.h mqtt_var_header.h mqtt_payload.h output
-	cc $(CFLAGS) -o $@ -c $<
+$(DIR_BUILD)/%.o : %.c $(DIR_BUILD)/%.d output
+	cc $(PPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(DIR_BUILD)/mqtt_packet_segment.o : mqtt_packet_segment.c mqtt_packet_segment.h array.h output
-	cc $(CFLAGS) -o $@ -c $<
-
-$(DIR_BUILD)/mqtt_fixed_header.o : mqtt_fixed_header.c mqtt_fixed_header.h output
-	cc $(CFLAGS) -o $@ -c $<
-
-$(DIR_BUILD)/mqtt_var_header.o : mqtt_var_header.c mqtt_var_header.h output
-	cc $(CFLAGS) -o $@ -c $<
-
-$(DIR_BUILD)/mqtt_payload.o : mqtt_payload.c mqtt_payload.h mqtt_packet_segment.h output
-	cc $(CFLAGS) -o $@ -c $<
+$(DIR_BUILD)/%.d : ;
+.PRECIOUS : $(DIR_BUILD)/%.d
 
 #create build directory
 output : 
-	mkdir -p ./build
+	mkdir -p $(DIR_BUILD)
 
 #clean outputs
 clean : 
 	rm -rf $(DIR_BUILD)
+
+-include $(DEPFILES)
 
