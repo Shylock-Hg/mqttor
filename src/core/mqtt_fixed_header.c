@@ -15,7 +15,7 @@ struct mqtt_buf_ctl_flag * mqtt_ctl_flag_pack(union mqtt_attr_ctl_flag flag){
 	return p_buf_ctl_flag;
 }
 
-union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(const struct mqtt_buf_ctl_flag * p_buf_ctl_flag){
+union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack_low(const struct mqtt_buf_ctl_flag * p_buf_ctl_flag){
 	union mqtt_attr_ctl_flag flag = MQTT_CTL_FLAG_UNPACK(p_buf_ctl_flag);
 
         //< check parameters
@@ -25,8 +25,22 @@ union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(const struct mqtt_buf_ctl_flag * p
 	return flag;
 }
 
+union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(uint8_t ** p_packet){
 
-mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(const struct mqtt_buf_re_len * mq_buf_re_len){
+#define packet (*p_packet)
+	struct mqtt_buf_ctl_flag * p_buf_packet = mqtt_buf_new(sizeof(uint8_t));
+	p_buf_packet->buf[0] = packet[0];
+	packet++;  //!< scroll to next fragment
+
+	union mqtt_attr_ctl_flag flag =  mqtt_ctl_flag_unpack_low(p_buf_packet);
+	mqtt_buf_release(p_buf_packet);
+
+	return flag;
+#undef packet
+}
+
+
+mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len_low(const struct mqtt_buf_re_len * mq_buf_re_len){
 	int multiplier = 1;
 	mqtt_attr_re_len_t value = 0;
 	uint8_t * data = calloc(MQTT_CTL_REMAINING_MAX_LEN_BYTE,sizeof(uint8_t));
@@ -47,6 +61,22 @@ mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(const struct mqtt_buf_re_len * 
 	free(data);
 	
 	return value;
+}
+mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(uint8_t ** p_packet){
+#define code (*p_packet)
+	int multiplier = 1;
+	mqtt_attr_re_len_t value = 0;
+	do{
+		if(multiplier > 128*128*128){
+			//!< err `Malformaed Remaining Length`
+			return -1;
+		}
+		value += ((*code) & 127) * multiplier;
+		multiplier *= 128;
+	}while(((*code++) & 128) != 0);
+
+	return value;
+#undef code
 }
 
 struct mqtt_buf_re_len * mqtt_ctl_encode_remaining_len(mqtt_attr_re_len_t mq_attr_re_len){

@@ -73,7 +73,7 @@ void test_fixed_header(void){
 		}
 	};
 	struct mqtt_buf_ctl_flag * p_buf_ctl_flag = mqtt_ctl_flag_pack(flag);
-	union mqtt_attr_ctl_flag  flag2 = mqtt_ctl_flag_unpack(p_buf_ctl_flag);
+	union mqtt_attr_ctl_flag  flag2 = mqtt_ctl_flag_unpack_low(p_buf_ctl_flag);
 	printf("[info]:sizeof(union mqtt_attr_ctl_flag)=%lu\n",sizeof(union mqtt_attr_ctl_flag));
 	printf("eval:type=%d,DUP=%d,QoS=%d,RETAIN=%d\n",\
 			flag2.bits.type,\
@@ -88,8 +88,10 @@ void test_fixed_header(void){
 		//int size = mqtt_ctl_encode_remaining_len(code,length[i]);
 		//uint32_t len = mqtt_ctl_decode_remaining_len(code);
 		struct mqtt_buf_re_len * mq_buf_re_len = mqtt_ctl_encode_remaining_len(length[i]);
-		mqtt_attr_re_len_t len = mqtt_ctl_decode_remaining_len(mq_buf_re_len);
+		uint8_t * buf = mq_buf_re_len->buf;
+		mqtt_attr_re_len_t len = mqtt_ctl_decode_remaining_len(&buf);
 
+		printf("[info]:(int)buf-(int)->buf=`%ld`\n",(uintptr_t)buf-(uintptr_t)(mq_buf_re_len->buf));
 		printf("[info]:encode=");
 		for(int j = 0; j < mq_buf_re_len->len; j++){
 			printf("%2x,",*(mq_buf_re_len->buf+j));

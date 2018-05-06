@@ -138,7 +138,13 @@ struct mqtt_buf_ctl_flag * mqtt_ctl_flag_pack(const union mqtt_attr_ctl_flag fla
  *  \param p_buf the pointer to buf
  *  \retval the flags bits field
  * */
-union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(const struct mqtt_buf_ctl_flag * p_buf_ctl_flag);
+union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack_low(const struct mqtt_buf_ctl_flag * p_buf_ctl_flag);
+/*! \brief unpack mqtt control packet flags
+ *  \param p_packet[in] origin packet data 
+ *  \param p_buf_len[out] corresponding buf len
+ *  \retval the flags bits field
+ * */
+union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(uint8_t ** p_packet);
 
 ///  @}
 
@@ -160,7 +166,13 @@ union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(const struct mqtt_buf_ctl_flag * p
  *          0xFFFFFFFF for err
  * */
 //uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code);
-mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(const struct mqtt_buf_re_len * mq_buf_re_len);
+mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len_low(const struct mqtt_buf_re_len * mq_buf_re_len);
+/*! \brief decode remaining length from packet fragment
+ *  \param p_packet[in] pointer to packet
+ *  \param p_buf_len[out] pointer to buf length
+ *  \retval value of remaining length
+ * */
+mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(uint8_t ** p_packet);
 
 /*! \brief encode the remaining length
  *  \param code[out] the code bytes encoded from length
