@@ -36,6 +36,10 @@ void mqtt_buf_release(struct mqtt_buf * mq_buf){
 #define MQTT_BUF_STR_LEN_CHECK(len) assert(MQTT_BUF_STR_MAX_LEN >= len)
 
 struct mqtt_buf_str * mqtt_buf_str_encode(const mqtt_attr_str_t str){
+
+	if(NULL == str)
+		return NULL;
+
 	size_t len = strlen(str);  //!< c-string length
 	MQTT_BUF_STR_LEN_CHECK(len);  //< check c-string length
 
@@ -56,6 +60,9 @@ struct mqtt_buf_str * mqtt_buf_str_encode(const mqtt_attr_str_t str){
 }
 
 mqtt_attr_str_t mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str){
+	if(NULL == mq_str)
+		return NULL;
+
 	//< c-string length with '\0'
 	size_t len = (mq_str->len)+1-MQTT_BUF_STR_MAX_BYTE;
 	mqtt_attr_str_t str = malloc(len);

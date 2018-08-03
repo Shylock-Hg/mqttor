@@ -7,11 +7,19 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
 #include "../../inc/core/mqtt_fixed_header.h"
 #include "../../inc/core/mqtt_var_header.h"
 #include "../../inc/core/mqtt_payload.h"
 
 #include "../../inc/core/mqtt_packet.h"
+
+#include "../../inc/toolkit/mqtt_log.h"
 
 void test_toolkit(void);
 void test_packet_segment(void);
@@ -24,11 +32,14 @@ void test_packet(void);
 
 
 int main(int argc, char * argv[]){
+	/*
 	test_toolkit();
 	test_packet_segment();
 	test_fixed_header();
 	test_var_header();
 	test_payload();
+	*/
+	test_packet();
 
 	return 0;
 }
@@ -191,7 +202,64 @@ void test_payload(void){
 	mqtt_buf_release(p_buf_subscribe_flag);
 }
 
+#define TEST_IP   "127.0.0.1"
+#define TEST_PORT 8888
+
 void test_packet(void){
+	int sock;
+	/*
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(TEST_PORT);
+	addr.sin_addr.s_addr = in_aton(TEST_IP);//inet_addr(TEST_IP);
+	*/
+	struct sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(TEST_PORT);
+	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+	struct mqtt_attr_packet attr_connect = {
+		.attr_packet = {
+			.connect = {
+				.flag = {
+					.bits = {
+						0,  //!< flag reserved
+						0,  //!< flag clean session
+						1,  //!< flag will flag
+						2,  //!< flag will QoS
+						1,  //!< flag will retain
+						0,  //!< flag password
+						1,  //!< flag user name
+					}
+				},
+				.keep_alive = 256,
+				.id_client = "mosqpub|7183-shylock-ar",
+				.w_topic = NULL,//"/topic/test",
+				.w_msg = NULL,//"hello world",
+				.user = NULL,//"shylock",
+				.pwd = NULL,//"huangshihai",
+			}
+		}
+	};
+	struct mqtt_buf_packet * buf_packet = mqtt_pack_connect(&attr_connect);
+
+	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
+		fprintf(stderr, "Creat socket failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	if(0 != connect(sock, (struct sockaddr*)&addr, sizeof(addr))){
+		fprintf(stderr, "Connect failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
+	printf("send connect len `%d`!\n",count);
+	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	close(sock);
+
 	
 }
 

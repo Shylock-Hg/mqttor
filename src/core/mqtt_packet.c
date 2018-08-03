@@ -34,43 +34,53 @@ struct mqtt_buf_packet * mqtt_pack_connect(
 	/// payload
 	/// password
 	struct mqtt_buf_str * p_buf_password = mqtt_buf_str_encode(p_attr_packet->attr_packet.connect.pwd);
-	mqtt_buffer_array[i++] = p_buf_password;
-	remaining_length += p_buf_password->len;
+	if(NULL != p_buf_password){
+		mqtt_buffer_array[i++] = p_buf_password;
+		remaining_length += p_buf_password->len;
+	}
 	/// user
 	struct mqtt_buf_str * p_buf_user = mqtt_buf_str_encode(p_attr_packet->attr_packet.connect.user);
-	mqtt_buffer_array[i++] = p_buf_user;
-	remaining_length += p_buf_user->len;
+	if(NULL != p_buf_user){
+		mqtt_buffer_array[i++] = p_buf_user;
+		remaining_length += p_buf_user->len;
+	}
 	/// w_msg
 	struct mqtt_buf_str * p_buf_w_msg = mqtt_buf_str_encode(p_attr_packet->attr_packet.connect.w_msg);
-	mqtt_buffer_array[i++] = p_buf_w_msg;
-	remaining_length += p_buf_w_msg->len;
+	if(NULL != p_buf_w_msg){
+		mqtt_buffer_array[i++] = p_buf_w_msg;
+		remaining_length += p_buf_w_msg->len;
+	}
 	/// w_topic
 	struct mqtt_buf_str * p_buf_w_topic = mqtt_buf_str_encode(p_attr_packet->attr_packet.connect.w_topic);
-	mqtt_buffer_array[i++] = p_buf_w_topic;
-	remaining_length += p_buf_w_topic->len;
+	if(NULL != p_buf_w_topic){
+		mqtt_buffer_array[i++] = p_buf_w_topic;
+		remaining_length += p_buf_w_topic->len;
+	}
 	/// id_client
 	struct mqtt_buf_str * p_buf_id_client = mqtt_buf_str_encode(p_attr_packet->attr_packet.connect.id_client);
-	mqtt_buffer_array[i++] = p_buf_id_client;
-	remaining_length += p_buf_id_client->len;
+	if(NULL != p_buf_id_client){
+		mqtt_buffer_array[i++] = p_buf_id_client;
+		remaining_length += p_buf_id_client->len;
+	}
 
 	/// variable header
-	/// protocol name "MQTT"
-	struct mqtt_buf_str * p_buf_mqtt_name = mqtt_buf_str_encode(MQTT_PROTOCOL_NAME);
-	mqtt_buffer_array[i++] = p_buf_mqtt_name;
-	remaining_length += p_buf_mqtt_name->len;  //!< add varibale header length
+	/// keep alive
+	struct mqtt_buf_uint16 * p_buf_keep_alive = mqtt_buf_uint16_encode(p_attr_packet->attr_packet.connect.keep_alive);
+	mqtt_buffer_array[i++] = p_buf_keep_alive;
+	remaining_length += p_buf_keep_alive->len;
+	/// connect flags
+	struct mqtt_buf_connect_flag * p_buf_connect_flag = mqtt_connect_flag_pack(p_attr_packet->attr_packet.connect.flag);
+	mqtt_buffer_array[i++] = p_buf_connect_flag;
+	remaining_length += p_buf_connect_flag->len;
 	/// level 4
 	struct mqtt_buf * p_buf_level = mqtt_buf_new(sizeof(uint8_t));
 	p_buf_level->buf[0] = 4;
 	mqtt_buffer_array[i++] = p_buf_level;
 	remaining_length += p_buf_level->len;
-	/// connect flags
-	struct mqtt_buf_connect_flag * p_buf_connect_flag = mqtt_connect_flag_pack(p_attr_packet->attr_packet.connect.flag);
-	mqtt_buffer_array[i++] = p_buf_connect_flag;
-	remaining_length += p_buf_connect_flag->len;
-	/// keep alive
-	struct mqtt_buf_uint16 * p_buf_keep_alive = mqtt_buf_uint16_encode(p_attr_packet->attr_packet.connect.keep_alive);
-	mqtt_buffer_array[i++] = p_buf_keep_alive;
-	remaining_length += p_buf_keep_alive->len;
+	/// protocol name "MQTT"
+	struct mqtt_buf_str * p_buf_mqtt_name = mqtt_buf_str_encode(MQTT_PROTOCOL_NAME);
+	mqtt_buffer_array[i++] = p_buf_mqtt_name;
+	remaining_length += p_buf_mqtt_name->len;  //!< add varibale header length
 
 	/// fixed header
 	/// remaining length
@@ -87,7 +97,7 @@ struct mqtt_buf_packet * mqtt_pack_connect(
 		}
 	};
 	struct mqtt_buf_ctl_flag * p_buf_ctl_flag = mqtt_ctl_flag_pack(ctl_flag);
-	mqtt_buffer_array[i++] = p_buf_ctl_flag;
+	mqtt_buffer_array[i] = p_buf_ctl_flag;
 
 	//< |payload|var header|remaining_length_code|fixed header byte|
 	size_t total_len = remaining_length +   //!< length of [payload + var header]

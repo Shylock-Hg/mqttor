@@ -1,10 +1,10 @@
-CFLAGS = -std=c99 -Wall
+CFLAGS = -std=c99 -Wall -g
 
 DIR_BUILD = ./build
 
 PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
 
-SOURCES = $(wildcard *.c)
+SOURCES = $(wildcard *.c) ../toolkit/mqtt_log.c
 
 OBJS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))
 
@@ -25,6 +25,9 @@ $(DIR_BUILD)/%.o : %.c $(DIR_BUILD)/%.d output
 
 $(DIR_BUILD)/%.d : ;
 .PRECIOUS : $(DIR_BUILD)/%.d
+
+$(DIR_BUILD)/mqtt_log.o : ../toolkit/mqtt_log.c
+	cc $(CFLAGS) -c $< -o $@
 
 #create build directory
 output : 

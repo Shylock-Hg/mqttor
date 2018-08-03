@@ -45,7 +45,7 @@ typedef mqtt_buf_t mqtt_buf_packet_t;
 
 typedef struct mqtt_attr_packet {
 	//enum mqtt_ctl_type type;  //!< packet type
-	mqtt_attr_ctl_flag hdr;
+	mqtt_attr_ctl_flag_t hdr;
 	mqtt_attr_re_len_t remaining_length;
 
 	union {
