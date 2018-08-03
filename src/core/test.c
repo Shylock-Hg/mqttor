@@ -66,16 +66,17 @@ void test_fixed_header(void){
 	printf("**********mqtt fixed header test**********\n");
 	union mqtt_attr_ctl_flag flag = {
 		.bits = { 
-			MQTT_CTL_TYPE_SUBSCRIBE,  //!< type
-			1,  //!< DUP
-			2,  //!< QoS
-			0,  //!< RETAIN
+			.type   = MQTT_CTL_TYPE_SUBSCRIBE,  //!< type
+			.DUP    = 1,  //!< DUP
+			.QoS    = 2,  //!< QoS
+			.RETAIN = 0,  //!< RETAIN
 		}
 	};
 	struct mqtt_buf_ctl_flag * p_buf_ctl_flag = mqtt_ctl_flag_pack(flag);
 	union mqtt_attr_ctl_flag  flag2 = mqtt_ctl_flag_unpack_low(p_buf_ctl_flag);
 	printf("[info]:sizeof(union mqtt_attr_ctl_flag)=%lu\n",sizeof(union mqtt_attr_ctl_flag));
-	printf("eval:type=%d,DUP=%d,QoS=%d,RETAIN=%d\n",\
+	printf("eval:all=0x%2x,type=%d,DUP=%d,QoS=%d,RETAIN=%d\n",\
+			flag2.all,\
 			flag2.bits.type,\
 			flag2.bits.DUP,\
 			flag2.bits.QoS,\
@@ -110,18 +111,19 @@ void test_var_header(void){
 	printf("**********mqtt variable header test**********\n");
 	union mqtt_attr_connect_flag conn_flag = {
 		.bits = {
-			1,  //!< flag user name
-			0,  //!< flag password
-			1,  //!< flag will retain
-			2,  //!< flag will QoS
-			1,  //!< flag will flag
-			0,  //!< flag clean session
 			0,  //!< flag reserved
+			0,  //!< flag clean session
+			1,  //!< flag will flag
+			2,  //!< flag will QoS
+			1,  //!< flag will retain
+			0,  //!< flag password
+			1,  //!< flag user name
 		}
 	};
 	struct mqtt_buf_connect_flag * p_conn_buf_flag = mqtt_connect_flag_pack(conn_flag);
 	union mqtt_attr_connect_flag conn_attr_flag = mqtt_connect_flag_unpack(p_conn_buf_flag);
 	printf("conn_flag_byte = 0x%2x\n",p_conn_buf_flag->buf[0]);
+	printf("sizeof(conn_attr_flag)=`%lu`!\n",sizeof(conn_attr_flag));
 	printf("evaluate vlaue of flags by order = %2x,%2x,%2x,%2x,%2x,%2x,%2x\n",
 			conn_attr_flag.bits.flag_user_name,
 			conn_attr_flag.bits.flag_pwd,
@@ -134,13 +136,14 @@ void test_var_header(void){
 
 	union mqtt_attr_connack_flag connack_flag = {
 		.bits = {
-			0,
-			1
+			1,
+			0
 		}
 	};
 	struct mqtt_buf_connack_flag * p_buf_connack_flag = mqtt_connack_flag_pack(connack_flag);
 	union mqtt_attr_connack_flag connack_attr_flag = mqtt_connack_flag_unpack(p_buf_connack_flag);
 	printf("connack_flag_byte = 0x%2x\n",p_buf_connack_flag->buf[0]);
+	printf("sizeof(connack_attr_flag)=`%lu`!\n",sizeof(connack_attr_flag));
 	printf("evaluete value of flags by order = 0x%2x,0x%2x\n",
 			connack_attr_flag.bits.reserved,
 			connack_attr_flag.bits.SP);
@@ -152,9 +155,9 @@ void test_payload(void){
 	printf("**********mqtt payload test**********\n");
 	union mqtt_attr_payload_suback_flag suback_flag = {
 		.bits = {
-			1,  //!< ok
-			0,
 			2,  //!< QoS
+			0,
+			1,  //!< ok
 		}
 	};
 	struct mqtt_buf_payload_suback_flag *  p_buf_flag = 
@@ -163,8 +166,9 @@ void test_payload(void){
 		mqtt_payload_suback_flag_unpack(
 			p_buf_flag
 			);
-	printf("suback_flag_byte=%2x\n",p_buf_flag->buf[0]);
-	printf("evaluate value of suback flags `ok=%2x` , `QoS=%2x`\n",
+	printf("suback_flag_byte=0x%2x\n",p_buf_flag->buf[0]);
+	printf("evaluate value of suback flags `all=0x%2x` `ok=%2x` , `QoS=%2x`\n",
+			suback_attr_flag.all,
 			suback_attr_flag.bits.ok,
 			suback_attr_flag.bits.QoS);
 
@@ -172,8 +176,8 @@ void test_payload(void){
 
 	union mqtt_attr_payload_subscribe_content_QoS subscribe_qos = {
 		.bits = {
-			0,  //!< reserved
-			2   //!< QoS
+			2,   //!< QoS
+			0    //!< reserved
 		}
 	};
 	struct mqtt_buf_payload_subscribe_content_QoS * p_buf_subscribe_flag = 

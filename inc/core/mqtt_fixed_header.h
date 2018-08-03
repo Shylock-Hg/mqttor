@@ -104,10 +104,10 @@ typedef enum mqtt_ctl_type{
 typedef union mqtt_attr_ctl_flag {
 	uint8_t all;
 	struct {
-		mqtt_ctl_type_t type:4;
-		uint8_t         DUP:1;
-		uint8_t         QoS:2;
 		uint8_t         RETAIN:1;
+		uint8_t         QoS:2;
+		uint8_t         DUP:1;
+		mqtt_ctl_type_t type:4;
 	} bits;
 } mqtt_attr_ctl_flag_t;
 

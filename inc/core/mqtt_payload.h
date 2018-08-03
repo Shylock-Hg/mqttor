@@ -46,9 +46,9 @@ typedef struct mqtt_payload_suback_flag {
 typedef union mqtt_attr_payload_suback_flag {
 	uint8_t all;
 	struct {
-		uint8_t ok:1;
-		uint8_t reserved:5;
 		uint8_t QoS:2;
+		uint8_t reserved:5;
+		uint8_t ok:1;
 	} bits;
 } mqtt_attr_payload_suback_flag_t;
 
@@ -89,8 +89,8 @@ union mqtt_attr_payload_suback_flag mqtt_payload_suback_flag_unpack(
 typedef union mqtt_attr_payload_subscribe_content_QoS {
 	uint8_t all;
 	struct {
-		uint8_t reserved:6;
 		uint8_t QoS:2;
+		uint8_t reserved:6;
 	} bits;
 } mqtt_attr_payload_subscribe_content_QoS_t;
 

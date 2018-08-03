@@ -72,13 +72,13 @@ typedef struct mqtt_connect_flag {
 typedef union mqtt_attr_connect_flag {
 	uint8_t all;
 	struct {
-		uint8_t flag_user_name    :1;  //!< 0-1
-		uint8_t flag_pwd          :1;  //!< 0-1
-		uint8_t flag_w_retain     :1;  //!< 0-1
-		uint8_t flag_w_QoS        :2;  //!< 0-3
-		uint8_t flag_w_flag       :1; //!< 0-1
-		uint8_t flag_clean_session:1;  //!< 0-1
 		uint8_t flag_reserved     :1;  //!< 0-1
+		uint8_t flag_clean_session:1;  //!< 0-1
+		uint8_t flag_w_flag       :1; //!< 0-1
+		uint8_t flag_w_QoS        :2;  //!< 0-3
+		uint8_t flag_w_retain     :1;  //!< 0-1
+		uint8_t flag_pwd          :1;  //!< 0-1
+		uint8_t flag_user_name    :1;  //!< 0-1
 	} bits;
 } mqtt_attr_connect_flag_t;
 
@@ -125,8 +125,8 @@ union mqtt_attr_connect_flag mqtt_connect_flag_unpack(const struct mqtt_buf_conn
 typedef union mqtt_attr_connack_flag {
 	uint8_t all;
 	struct {
-		uint8_t reserved:7;
 		uint8_t SP:1;  //!< 0-1
+		uint8_t reserved:7;
 	} bits;
 } mqtt_attr_connack_flag_t;
 
