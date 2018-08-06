@@ -95,6 +95,8 @@ mqtt_attr_str_t mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str);
 //! \defgroup mqtt_buf_uint16 uint16_t bytes buf
 /// @{
 //typedef struct mqtt_buf struct mqtt_buf_uint16;
+#define MQTT_BUF_STR_MAX_BYTE 2
+#define MQTT_BUF_STR_MAX_LEN  0xFFFF
 #define mqtt_buf_uint16 mqtt_buf
 typedef mqtt_buf_t      mqtt_buf_uint16_t;
 

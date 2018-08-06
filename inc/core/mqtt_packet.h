@@ -20,8 +20,9 @@
 ///  @{
 typedef enum mqtt_err {
 	E_NONE         = 0,  //!< error : none error
-	E_FORMAT_CHECK = -1,  //!< error format : flag value check fail
-	E_MEM_FAIL     = -2
+	E_FORMAT_CHECK = 1,  //!< error format : flag value check fail
+	E_MEM_FAIL     = 2,
+	E_MEM_OUT      = 3,
 } mqtt_err_t;
 
 /*! \brief convert err to coressponding prompt string
@@ -45,6 +46,7 @@ typedef mqtt_buf_t mqtt_buf_packet_t;
 
 typedef struct mqtt_attr_packet {
 	//enum mqtt_ctl_type type;  //!< packet type
+	//!< control header
 	mqtt_attr_ctl_flag_t hdr;
 	mqtt_attr_re_len_t remaining_length;
 
@@ -58,11 +60,11 @@ typedef struct mqtt_attr_packet {
 			mqtt_attr_uint16_t keep_alive;  //!< keep_alive time limit to keep alive measured by seconds
 
 			//!< payload
-			const mqtt_attr_str_t id_client;  //!< id_client client identifier string
-			const mqtt_attr_str_t w_topic;  //!< w_topic will topic string
-			const mqtt_attr_str_t w_msg;  //!< w_msg will message string
-			const mqtt_attr_str_t user;  //!< user_name user name string
-			const mqtt_attr_str_t pwd;  //!< pwd password string
+			//const mqtt_attr_str_t id_client;  //!< id_client client identifier string
+			//const mqtt_attr_str_t w_topic;  //!< w_topic will topic string
+			//const mqtt_attr_str_t w_msg;  //!< w_msg will message string
+			//const mqtt_attr_str_t user;  //!< user_name user name string
+			//const mqtt_attr_str_t pwd;  //!< pwd password string
 		} connect;
 
 		//< connack packet
@@ -79,12 +81,12 @@ typedef struct mqtt_attr_packet {
 		//< publish packet
 		struct {
 			//!< fixed header
-			union mqtt_attr_ctl_flag flag;  //!< p_ctl_flag flag of mqtt packet control
+			//union mqtt_attr_ctl_flag flag;  //!< p_ctl_flag flag of mqtt packet control
 			//!< variable header
 			const mqtt_attr_str_t topic_name;  //!< topic_name name of topic publish to
 			mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 			//!< payload
-			const mqtt_attr_str_t app_msg;  //!< app_msg application specify message
+			//const mqtt_attr_str_t app_msg;  //!< app_msg application specify message
 		} publish;
 
 		//< puback packet
@@ -126,8 +128,8 @@ typedef struct mqtt_attr_packet {
 			//!< variable header
 			mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 			//!< payload
-			struct mqtt_payload_subscribe_content * sub_content;  //!< sub_content content array to subscribe
-			uint16_t sub_count;  //!< sub_count count of subscribe
+			//struct mqtt_payload_subscribe_content * sub_content;  //!< sub_content content array to subscribe
+			//uint16_t sub_count;  //!< sub_count count of subscribe
 		} subscribe;
 
 		//< packet suback
@@ -136,8 +138,8 @@ typedef struct mqtt_attr_packet {
 			//!< variable header
 			mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 			//!< payload
-			struct mqtt_payload_suback_flag * suback_flag;  //!< suback_flag[] flags of suback array
-			uint16_t suback_flag_count;  //!< suback_flag_count count of suback
+			//struct mqtt_payload_suback_flag * suback_flag;  //!< suback_flag[] flags of suback array
+			//uint16_t suback_flag_count;  //!< suback_flag_count count of suback
 		} suback;
 
 		//< packet unsubscribe
@@ -146,8 +148,8 @@ typedef struct mqtt_attr_packet {
 			//!< variable header
 			uint16_t id_packet;  //!< id_packet identifier of packet
 			//!< payload
-			const mqtt_attr_str_t * top_filter;  //!< top_filter[] array of top_filter string
-			uint16_t top_filter_count;  //!< to_filter_count count of top_filter string
+			//const mqtt_attr_str_t * top_filter;  //!< top_filter[] array of top_filter string
+			//uint16_t top_filter_count;  //!< to_filter_count count of top_filter string
 		} unsubscribe;
 
 		//< packet unsuback
@@ -159,7 +161,43 @@ typedef struct mqtt_attr_packet {
 		} unsuback;
 
 	} attr_packet;
+
+	//!< payload
+	mqtt_attr_payload_t * payload;
 } mqtt_attr_packet_t;
+
+/*! \brief create a mqtt packet attribute
+ *  \param len_payload lenght of payload buffer
+ *  \retval pointer to mqtt attribute packet
+ * */
+mqtt_attr_packet_t * mqtt_attr_packet_new(size_t len_payload);
+/*! \brief release a mqtt attribute packet
+ *  \param pointer to mqtt attribute packet
+ * */
+void mqtt_attr_packet_release(mqtt_attr_packet_t * packet);
+
+//!< matt packet payload writer
+/*! \brief write string to mqtt packet payload |LEN_MSB|LEN_LSB|string...|
+ *  \param packet pointer to mqtt packet
+ *  \param string string to write
+ *  \retval len of string to write or negtive number for error
+ * */
+int mqtt_packet_payload_write_string(mqtt_attr_packet_t * packet, 
+		mqtt_attr_str_t string);
+/*! \brief write byte to mqtt packet payload |BYTE|
+ *  \param packet pointer to mqtt packet
+ *  \param byte byte to write
+ *  \retval len of byte to write or negtive number for error
+ * */
+int mqtt_packet_payload_write_byte(mqtt_attr_packet_t * packet, uint8_t byte);
+/*! \brief wirte bytes to mqtt packet payload |BYTE...|
+ *  \param packet pointer to mqtt packet
+ *  \param bytes pointer to bytes
+ *  \param len length of bytes
+ *  \retval len of bytes to write or negtive number for error
+ * */
+int mqtt_packet_payload_write_bytes(mqtt_attr_packet_t * packet, uint8_t * bytes,
+		size_t len);
 
 ///! \defgroup mqtt_buf_packet_connect 
 /// @{

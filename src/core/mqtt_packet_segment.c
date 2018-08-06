@@ -30,8 +30,6 @@ void mqtt_buf_release(struct mqtt_buf * mq_buf){
 }
 
 
-#define MQTT_BUF_STR_MAX_BYTE 2
-#define MQTT_BUF_STR_MAX_LEN  0xFFFF
 
 #define MQTT_BUF_STR_LEN_CHECK(len) assert(MQTT_BUF_STR_MAX_LEN >= len)
 

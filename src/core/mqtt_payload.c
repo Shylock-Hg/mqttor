@@ -1,8 +1,38 @@
 //#include "../../inc/core/mqtt_packet_segment.h"
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "../../inc/core/mqtt_payload.h"
+
+mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len){
+	assert(len);
+
+	mqtt_attr_payload_t * payload = malloc(sizeof(mqtt_attr_payload_t));
+	assert(payload);
+	payload->len = len;
+	payload->len_valid = 0;
+	payload->buf = malloc(len);
+	assert(payload->buf);
+	
+	return payload;
+	
+}
+
+void mqtt_attr_payload_release(mqtt_attr_payload_t * payload){
+	assert(payload);
+
+	free(payload->buf);
+	free(payload);
+}
+
+mqtt_buf_t * mqtt_attr_payload_2_buf(mqtt_attr_payload_t * payload){
+	assert(payload);
+
+	payload->len = payload->len_valid;
+
+	return (mqtt_buf_t*)payload;
+}
 
 struct mqtt_buf_payload_suback_flag * mqtt_payload_suback_flag_pack(
 		union mqtt_attr_payload_suback_flag flag){

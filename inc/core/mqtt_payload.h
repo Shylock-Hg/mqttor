@@ -26,6 +26,28 @@
 		(MQTT_CTL_TYPE_SUBSCRIBE <= mqtt_ctl_type && \
 		 MQTT_CTL_TYPE_UNSUBSCRIBE >= mqtt_ctl_type))
 
+//!< representation of mqtt payload attribute
+typedef struct mqtt_attr_payload {
+	uint8_t * buf;
+	size_t len;
+	size_t len_valid;
+} mqtt_attr_payload_t;
+
+/*! \brief create a mqtt attribute payload
+ *  \param len length of paylod buffer
+ *  \retval created object
+ * */
+mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len);
+/*! \brief release a mqtt attribute payload
+ *  \param payload pointer of mqtt attribute paylod
+ * */
+void mqtt_attr_payload_release(mqtt_attr_payload_t * payload);
+/*! \brief convert mqtt attribute payload to mqtt buffer
+ *  \param payload pointer to mqtt attribute payload
+ *  \retval pointer to mqtt buffer
+ *  \note don't alloc new memory, just convert , and can release by mqtt_buf_release
+ * */
+mqtt_buf_t * mqtt_attr_payload_2_buf(mqtt_attr_payload_t * payload);
 
 /***********mqtt subscribe acknowledge flag***********/
 

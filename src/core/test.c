@@ -232,16 +232,36 @@ void test_packet(void){
 						1,  //!< flag user name
 					}
 				},
-				.keep_alive = 256,
-				.id_client = "shylock-archlinux",
-				.w_topic = "/topic/test",
-				.w_msg = "hello world",
-				.user = "shylock",
-				.pwd = "huangshihai",
+				//.keep_alive = 256,
+				//.id_client = "shylock-archlinux",
+				//.w_topic = "/topic/test",
+				//.w_msg = "hello world",
+				//.user = "shylock",
+				//.pwd = "huangshihai",
 			}
 		}
 	};
+	attr_connect.payload = mqtt_attr_payload_new(1024);
+	//!< keep alive
+	mqtt_buf_t * buf_keepalive = mqtt_buf_uint16_encode(256);
+	mqtt_log_print_buf(buf_keepalive->buf, buf_keepalive->len);
+	mqtt_packet_payload_write_bytes(&attr_connect,buf_keepalive->buf, 
+			buf_keepalive->len);
+	mqtt_buf_release(buf_keepalive);
+	//!< id client
+	mqtt_packet_payload_write_string(&attr_connect,"shylock");
+	//!< w_topic
+	mqtt_packet_payload_write_string(&attr_connect, "topic/test");
+	//!< w_msg
+	mqtt_packet_payload_write_string(&attr_connect, "hello world");
+	//!< user
+	mqtt_packet_payload_write_string(&attr_connect, "shylock");
+	//!< pwd
+	mqtt_packet_payload_write_string(&attr_connect, "huangshihai");
+
 	struct mqtt_buf_packet * buf_packet = mqtt_pack_connect(&attr_connect);
+
+	//mqtt_attr_payload_release(attr_connect.payload);
 
 	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
 		fprintf(stderr, "Creat socket failed!\n");
