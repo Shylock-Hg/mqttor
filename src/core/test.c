@@ -203,7 +203,7 @@ void test_payload(void){
 }
 
 #define TEST_IP   "127.0.0.1"
-#define TEST_PORT 8888
+#define TEST_PORT 1883
 
 void test_packet(void){
 	int sock;
@@ -228,16 +228,16 @@ void test_packet(void){
 						1,  //!< flag will flag
 						2,  //!< flag will QoS
 						1,  //!< flag will retain
-						0,  //!< flag password
+						1,  //!< flag password
 						1,  //!< flag user name
 					}
 				},
 				.keep_alive = 256,
-				.id_client = "mosqpub|7183-shylock-ar",
-				.w_topic = NULL,//"/topic/test",
-				.w_msg = NULL,//"hello world",
-				.user = NULL,//"shylock",
-				.pwd = NULL,//"huangshihai",
+				.id_client = "shylock-archlinux",
+				.w_topic = "/topic/test",
+				.w_msg = "hello world",
+				.user = "shylock",
+				.pwd = "huangshihai",
 			}
 		}
 	};
@@ -260,6 +260,6 @@ void test_packet(void){
 	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
 	close(sock);
 
-	
+	mqtt_buf_release(buf_packet);
 }
 
