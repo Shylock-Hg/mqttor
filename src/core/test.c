@@ -218,6 +218,7 @@ void test_packet(void){
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
 	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+	/*
 	struct mqtt_attr_packet attr_connect = {
 		.attr_packet = {
 			.connect = {
@@ -242,23 +243,28 @@ void test_packet(void){
 			}
 		}
 	};
-	attr_connect.payload = mqtt_attr_payload_new(1024);
+	*/
+	mqtt_attr_packet_t * attr_connect = mqtt_attr_packet_new(1024);
+	attr_connect->attr_packet.connect.flag.all = 0xF4;
+	attr_connect->attr_packet.connect.keep_alive = 256;
+	//attr_connect->payload = mqtt_attr_payload_new(1024);
 	//!< id client
-	mqtt_attr_payload_write_string(attr_connect.payload,"mosqpub|2177-shylock-ar");
-	//mqtt_log_print_buf(attr_connect.payload->buf, attr_connect.payload->len_valid);
+	mqtt_attr_payload_write_string(attr_connect->payload,"shylock-archlinux");
+	//mqtt_log_print_buf(attr_connect->payload->buf, attr_connect->payload->len_valid);
 	//!< w_topic
-	mqtt_attr_payload_write_string(attr_connect.payload, "topic/test");
+	mqtt_attr_payload_write_string(attr_connect->payload, "topic/test");
 	//!< w_msg
-	mqtt_attr_payload_write_string(attr_connect.payload, "hello world");
+	mqtt_attr_payload_write_string(attr_connect->payload, "hello world");
 	//!< user
-	mqtt_attr_payload_write_string(attr_connect.payload, "shylock");
+	mqtt_attr_payload_write_string(attr_connect->payload, "shylock");
 	//!< pwd
-	mqtt_attr_payload_write_string(attr_connect.payload, "huangshihai");
+	mqtt_attr_payload_write_string(attr_connect->payload, "huangshihai");
 
-	struct mqtt_buf_packet * buf_packet = mqtt_pack_connect(&attr_connect);
+	struct mqtt_buf_packet * buf_packet = mqtt_pack_connect(attr_connect);
 
 	//!< don't free in mqtt_pack_connect
-	mqtt_attr_payload_release(attr_connect.payload); 
+	//mqtt_attr_payload_release(attr_connect->payload); 
+	mqtt_attr_packet_release(attr_connect);
 
 	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
 		fprintf(stderr, "Creat socket failed!\n");
