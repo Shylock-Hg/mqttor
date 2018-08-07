@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../../inc/core/mqtt_payload.h"
 
@@ -32,6 +33,16 @@ mqtt_buf_t * mqtt_attr_payload_2_buf(mqtt_attr_payload_t * payload){
 	payload->len = payload->len_valid;
 
 	return (mqtt_buf_t*)payload;
+}
+
+mqtt_buf_t * mqtt_attr_payload_deep2_buf(mqtt_attr_payload_t * payload){
+	assert(payload);
+
+	mqtt_buf_t * mq_buf = mqtt_buf_new(payload->len_valid);
+	assert(mq_buf);
+	memcpy(mq_buf->buf, payload->buf, payload->len_valid);
+
+	return mq_buf;
 }
 
 struct mqtt_buf_payload_suback_flag * mqtt_payload_suback_flag_pack(

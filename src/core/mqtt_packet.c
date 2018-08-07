@@ -135,7 +135,16 @@ struct mqtt_buf_packet * mqtt_pack_connect(
 		remaining_length += p_buf_id_client->len;
 	}
 	*/
+	/*
 	mqtt_buf_t * p_buf_payload = mqtt_attr_payload_2_buf(p_attr_packet->payload);
+	assert(p_buf_payload);
+	if(NULL != p_buf_payload){
+		mqtt_buffer_array[i++] = p_buf_payload;
+		remaining_length += p_buf_payload->len;
+	}
+	*/
+	mqtt_buf_t * p_buf_payload = mqtt_attr_payload_deep2_buf(
+			p_attr_packet->payload);
 	assert(p_buf_payload);
 	if(NULL != p_buf_payload){
 		mqtt_buffer_array[i++] = p_buf_payload;

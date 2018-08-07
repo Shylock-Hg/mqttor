@@ -48,6 +48,11 @@ void mqtt_attr_payload_release(mqtt_attr_payload_t * payload);
  *  \note don't alloc new memory, just convert , and can release by mqtt_buf_release
  * */
 mqtt_buf_t * mqtt_attr_payload_2_buf(mqtt_attr_payload_t * payload);
+/*! \brief create a mqtt buffer from a payload buffer
+ *  \param payload payload buffer
+ *  \retval created mqtt buffer
+ * */
+mqtt_buf_t * mqtt_attr_payload_deep2_buf(mqtt_attr_payload_t * payload);
 
 /***********mqtt subscribe acknowledge flag***********/
 

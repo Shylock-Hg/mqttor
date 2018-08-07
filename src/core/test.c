@@ -257,7 +257,7 @@ void test_packet(void){
 
 	struct mqtt_buf_packet * buf_packet = mqtt_pack_connect(&attr_connect);
 
-	//mqtt_attr_payload_release(attr_connect.payload); free in mqtt_pack_connect
+	mqtt_attr_payload_release(attr_connect.payload); //free in mqtt_pack_connect
 
 	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
 		fprintf(stderr, "Creat socket failed!\n");
