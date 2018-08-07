@@ -263,10 +263,15 @@ void test_packet(void){
 	//!< pwd
 	mqtt_attr_payload_write_string(attr_connect->payload, "huangshihai");
 
-	mqtt_buf_packet_t * buf_packet = mqtt_pack_connect(attr_connect);
+	//< pack packet
+	//mqtt_buf_packet_t * buf_packet = mqtt_pack_connect(attr_connect);
+	mqtt_buf_packet_t * buf_packet;
+	mqtt_pack_connect(attr_connect, &buf_packet);
 
 	//< unpack packet
-	mqtt_attr_packet_t * attr_packet = mqtt_unpack_connect(buf_packet);
+	//mqtt_attr_packet_t * attr_packet = mqtt_unpack_connect(buf_packet);
+	mqtt_attr_packet_t * attr_packet;
+	mqtt_unpack_connect(buf_packet, &attr_packet);
 	printf("header = `0x%2x`\n", attr_packet->hdr.all);
 	printf("remaining length = `%d`\n", attr_packet->remaining_length);
 	printf("connect flag = `0x%2x`\n",attr_packet->attr_packet.connect.flag.all);

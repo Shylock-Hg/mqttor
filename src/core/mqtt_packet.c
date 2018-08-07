@@ -35,8 +35,9 @@ void mqtt_attr_packet_release(mqtt_attr_packet_t * packet){
 
 //#define MQTT_PACK_CONNECT_VAR_LEN 10
 
-struct mqtt_buf_packet * mqtt_pack_connect(
-		const struct mqtt_attr_packet * p_attr_packet
+int mqtt_pack_connect(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		){
 	mqtt_attr_re_len_t remaining_length = 0;
 	struct mqtt_buf * mqtt_buffer_array[20] = {NULL};
@@ -131,25 +132,29 @@ struct mqtt_buf_packet * mqtt_pack_connect(
 			   p_buf_re_len->len +   //!< length of [remaining_length]
 			   p_buf_ctl_flag->len;    //!< length of [fixed header byte]
 
-	struct mqtt_buf_packet * p_buf_packet = mqtt_buf_new(total_len);
+	//struct mqtt_buf_packet * p_buf_packet = mqtt_buf_new(total_len);
+	*pp_buf_packet = mqtt_buf_new(total_len);
 
 	//// copy buffers to mqtt packet then release buffers
-	if(NULL != p_buf_packet){
+	if(NULL != *pp_buf_packet){
 		size_t offset = 0;
 		for(; i>=0; i--){
-			memcpy(p_buf_packet->buf+offset,mqtt_buffer_array[i]->buf,mqtt_buffer_array[i]->len);
+			memcpy((*pp_buf_packet)->buf+offset,
+					mqtt_buffer_array[i]->buf,
+					mqtt_buffer_array[i]->len);
 			offset += mqtt_buffer_array[i]->len;
 			mqtt_buf_release(mqtt_buffer_array[i]);
 		}
-		return p_buf_packet;
+		return E_NONE;
 	}else{
 		printf("[err]:malloc fail!\n");
-		return NULL;
+		return E_MEM_FAIL;
 	}
 }
 
-struct mqtt_attr_packet * mqtt_unpack_connect(
-		const struct mqtt_buf_packet * p_buf_packet
+int mqtt_unpack_connect(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		){
 
 	size_t offset = 0;
@@ -186,18 +191,18 @@ struct mqtt_attr_packet * mqtt_unpack_connect(
 	offset += sizeof(mqtt_attr_uint16_t);
 
 	//< payload
-	mqtt_attr_packet_t * attr_packet = mqtt_attr_packet_new(
+	*pp_attr_packet = mqtt_attr_packet_new(
 			p_buf_packet->len-offset);
-	memcpy(attr_packet->payload->buf, p_buf_packet->buf+offset, 
+	memcpy((*pp_attr_packet)->payload->buf, p_buf_packet->buf+offset, 
 			p_buf_packet->len-offset);
 	
 	//< filling packet attributes
-	attr_packet->hdr = attr_hdr;
-	attr_packet->remaining_length = attr_remaining_length;
-	attr_packet->attr_packet.connect.flag = attr_connect_flag;
-	attr_packet->attr_packet.connect.keep_alive = attr_keepalive;
+	(*pp_attr_packet)->hdr = attr_hdr;
+	(*pp_attr_packet)->remaining_length = attr_remaining_length;
+	(*pp_attr_packet)->attr_packet.connect.flag = attr_connect_flag;
+	(*pp_attr_packet)->attr_packet.connect.keep_alive = attr_keepalive;
 
-	return attr_packet;
+	return E_NONE;
 }
 
 

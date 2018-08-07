@@ -186,8 +186,9 @@ typedef struct mqtt_attr_packet_connect {
  *  \param p_packet_connect[in] pointer to connect packect 
  *  \retval mqtt_err_t 
  * */
-struct mqtt_buf_packet * mqtt_pack_connect(
-		const struct mqtt_attr_packet * p_attr_packet
+int mqtt_pack_connect(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
 /*! \brief unpack connect packet
@@ -195,8 +196,9 @@ struct mqtt_buf_packet * mqtt_pack_connect(
  *  \pram p_packet_connect[out] pointer to mqtt connect packet 
  *  \retval pointer to mqtt connect structure
  * */
-struct mqtt_attr_packet * mqtt_unpack_connect(
-		const struct mqtt_buf_packet * p_buf_packet
+int mqtt_unpack_connect(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
 /// @}
 
