@@ -54,6 +54,29 @@ mqtt_buf_t * mqtt_attr_payload_2_buf(mqtt_attr_payload_t * payload);
  * */
 mqtt_buf_t * mqtt_attr_payload_deep2_buf(mqtt_attr_payload_t * payload);
 
+//!< matt packet payload writer
+/*! \brief write string to mqtt packet payload |LEN_MSB|LEN_LSB|string...|
+ *  \param packet pointer to mqtt packet
+ *  \param string string to write
+ *  \retval len of string to write or negtive number for error
+ * */
+int mqtt_attr_payload_write_string(mqtt_attr_payload_t * payload, 
+		mqtt_attr_str_t string);
+/*! \brief write byte to mqtt packet payload |BYTE|
+ *  \param packet pointer to mqtt packet
+ *  \param byte byte to write
+ *  \retval len of byte to write or negtive number for error
+ * */
+int mqtt_attr_payload_write_byte(mqtt_attr_payload_t * payload, uint8_t byte);
+/*! \brief wirte bytes to mqtt payload payload |BYTE...|
+ *  \param payload pointer to mqtt payload
+ *  \param bytes pointer to bytes
+ *  \param len length of bytes
+ *  \retval len of bytes to write or negtive number for error
+ * */
+int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes,
+		size_t len);
+
 /***********mqtt subscribe acknowledge flag***********/
 
 ///!  \defgroup mqtt_payload_suback_flag mqtt suback payload flags byte

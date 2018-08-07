@@ -16,21 +16,6 @@
 #include "mqtt_var_header.h"
 #include "mqtt_payload.h"
 
-///! \defgroup mqtt_err mqtt error definition
-///  @{
-typedef enum mqtt_err {
-	E_NONE         = 0,  //!< error : none error
-	E_FORMAT_CHECK = 1,  //!< error format : flag value check fail
-	E_MEM_FAIL     = 2,
-	E_MEM_OUT      = 3,
-} mqtt_err_t;
-
-/*! \brief convert err to coressponding prompt string
- *  \param err error index
- *  \retval pointer to error prompt string
- * */
-const char * mqtt_str_error(mqtt_err_t err);
-/// @}
 
 
 ///! \defgroup mqtt_buf_packet mqtt pack & unpack packet
@@ -176,28 +161,6 @@ mqtt_attr_packet_t * mqtt_attr_packet_new(size_t len_payload);
  * */
 void mqtt_attr_packet_release(mqtt_attr_packet_t * packet);
 
-//!< matt packet payload writer
-/*! \brief write string to mqtt packet payload |LEN_MSB|LEN_LSB|string...|
- *  \param packet pointer to mqtt packet
- *  \param string string to write
- *  \retval len of string to write or negtive number for error
- * */
-int mqtt_packet_payload_write_string(mqtt_attr_packet_t * packet, 
-		mqtt_attr_str_t string);
-/*! \brief write byte to mqtt packet payload |BYTE|
- *  \param packet pointer to mqtt packet
- *  \param byte byte to write
- *  \retval len of byte to write or negtive number for error
- * */
-int mqtt_packet_payload_write_byte(mqtt_attr_packet_t * packet, uint8_t byte);
-/*! \brief wirte bytes to mqtt packet payload |BYTE...|
- *  \param packet pointer to mqtt packet
- *  \param bytes pointer to bytes
- *  \param len length of bytes
- *  \retval len of bytes to write or negtive number for error
- * */
-int mqtt_packet_payload_write_bytes(mqtt_attr_packet_t * packet, uint8_t * bytes,
-		size_t len);
 
 ///! \defgroup mqtt_buf_packet_connect 
 /// @{

@@ -13,16 +13,6 @@
 #include "../../inc/toolkit/mqtt_log.h"
 
 
-static const char * errstr[] = {
-	"E_NONE",
-	"E_FORMAT_CHECK",
-	"E_MEM_FAIL",
-	"E_MEM_OUT"
-};
-
-const char * mqtt_str_error(mqtt_err_t err){
-	return errstr[err];
-}
 
 mqtt_attr_packet_t * mqtt_attr_packet_new(size_t len_payload){
 	assert(len_payload);
@@ -42,57 +32,6 @@ void mqtt_attr_packet_release(mqtt_attr_packet_t * packet){
 	free(packet);
 }
 
-//!< matt packet payload writer
-int mqtt_packet_payload_write_string(mqtt_attr_packet_t * packet, 
-		mqtt_attr_str_t string){
-	assert(packet);
-	assert(string);
-
-	mqtt_attr_uint16_t len = strlen(string);
-	if(len + MQTT_BUF_STR_MAX_BYTE + packet->payload->len_valid > 
-			packet->payload->len){
-		return -E_MEM_OUT;
-	}
-	mqtt_buf_uint16_t * buf_uint16 = mqtt_buf_uint16_encode(len);
-	//mqtt_log_print_buf(buf_uint16->buf, buf_uint16->len);
-	memcpy(packet->payload->buf+packet->payload->len_valid, buf_uint16->buf, 
-			buf_uint16->len);
-	packet->payload->len_valid += buf_uint16->len;
-	//mqtt_log_print_buf(packet->payload->buf, packet->payload->len_valid);
-	mqtt_buf_release(buf_uint16);
-
-	strcpy((char*)packet->payload->buf+packet->payload->len_valid, string);
-	packet->payload->len_valid += len;
-
-	return len+MQTT_BUF_STR_MAX_BYTE;
-}
-
-int mqtt_packet_payload_write_byte(mqtt_attr_packet_t * packet, uint8_t byte){
-	assert(packet);
-
-	if(packet->payload->len == packet->payload->len_valid){
-		return -E_MEM_OUT;
-	}
-
-	packet->payload->buf[packet->payload->len_valid++] = byte;
-	
-	return sizeof(byte);
-}
-
-int mqtt_packet_payload_write_bytes(mqtt_attr_packet_t * packet, uint8_t * bytes,
-		size_t len){
-	assert(packet);
-	assert(bytes);
-
-	if(len + packet->payload->len_valid > packet->payload->len){
-		return -E_MEM_OUT;
-	}
-
-	memcpy(packet->payload->buf+packet->payload->len_valid, bytes, len);
-	packet->payload->len_valid += len;
-
-	return len;
-}
 
 //#define MQTT_PACK_CONNECT_VAR_LEN 10
 

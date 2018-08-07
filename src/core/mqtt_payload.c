@@ -45,6 +45,58 @@ mqtt_buf_t * mqtt_attr_payload_deep2_buf(mqtt_attr_payload_t * payload){
 	return mq_buf;
 }
 
+//!< matt packet payload writer
+int mqtt_attr_payload_write_string(mqtt_attr_payload_t * payload, 
+		mqtt_attr_str_t string){
+	assert(payload);
+	assert(string);
+
+	mqtt_attr_uint16_t len = strlen(string);
+	if(len + MQTT_BUF_STR_MAX_BYTE + payload->len_valid > 
+			payload->len){
+		return -E_MEM_OUT;
+	}
+	mqtt_buf_uint16_t * buf_uint16 = mqtt_buf_uint16_encode(len);
+	//mqtt_log_print_buf(buf_uint16->buf, buf_uint16->len);
+	memcpy(payload->buf+payload->len_valid, buf_uint16->buf, 
+			buf_uint16->len);
+	payload->len_valid += buf_uint16->len;
+	//mqtt_log_print_buf(payload->buf, payload->len_valid);
+	mqtt_buf_release(buf_uint16);
+
+	strcpy((char*)payload->buf+payload->len_valid, string);
+	payload->len_valid += len;
+
+	return len+MQTT_BUF_STR_MAX_BYTE;
+}
+
+int mqtt_attr_payload_write_byte(mqtt_attr_payload_t * payload, uint8_t byte){
+	assert(payload);
+
+	if(payload->len == payload->len_valid){
+		return -E_MEM_OUT;
+	}
+
+	payload->buf[payload->len_valid++] = byte;
+	
+	return sizeof(byte);
+}
+
+int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes,
+		size_t len){
+	assert(payload);
+	assert(bytes);
+
+	if(len + payload->len_valid > payload->len){
+		return -E_MEM_OUT;
+	}
+
+	memcpy(payload->buf+payload->len_valid, bytes, len);
+	payload->len_valid += len;
+
+	return len;
+}
+
 struct mqtt_buf_payload_suback_flag * mqtt_payload_suback_flag_pack(
 		union mqtt_attr_payload_suback_flag flag){
 	//!< chekc parameter

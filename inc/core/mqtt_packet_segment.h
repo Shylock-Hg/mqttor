@@ -9,6 +9,22 @@
 #include <assert.h>
 #include <stddef.h>
 
+///! \defgroup mqtt_err mqtt error definition
+///  @{
+typedef enum mqtt_err {
+	E_NONE         = 0,  //!< error : none error
+	E_FORMAT_CHECK = 1,  //!< error format : flag value check fail
+	E_MEM_FAIL     = 2,
+	E_MEM_OUT      = 3,
+} mqtt_err_t;
+
+/*! \brief convert err to coressponding prompt string
+ *  \param err error index
+ *  \retval pointer to error prompt string
+ * */
+const char * mqtt_str_error(mqtt_err_t err);
+/// @}
+
 ///! \defgroup mqtt_packet_segment mqtt segment bits api(check,eval)
 ///  @{
 

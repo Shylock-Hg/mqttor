@@ -244,20 +244,21 @@ void test_packet(void){
 	};
 	attr_connect.payload = mqtt_attr_payload_new(1024);
 	//!< id client
-	mqtt_packet_payload_write_string(&attr_connect,"mosqpub|2177-shylock-ar");
+	mqtt_attr_payload_write_string(attr_connect.payload,"mosqpub|2177-shylock-ar");
 	//mqtt_log_print_buf(attr_connect.payload->buf, attr_connect.payload->len_valid);
 	//!< w_topic
-	mqtt_packet_payload_write_string(&attr_connect, "topic/test");
+	mqtt_attr_payload_write_string(attr_connect.payload, "topic/test");
 	//!< w_msg
-	mqtt_packet_payload_write_string(&attr_connect, "hello world");
+	mqtt_attr_payload_write_string(attr_connect.payload, "hello world");
 	//!< user
-	mqtt_packet_payload_write_string(&attr_connect, "shylock");
+	mqtt_attr_payload_write_string(attr_connect.payload, "shylock");
 	//!< pwd
-	mqtt_packet_payload_write_string(&attr_connect, "huangshihai");
+	mqtt_attr_payload_write_string(attr_connect.payload, "huangshihai");
 
 	struct mqtt_buf_packet * buf_packet = mqtt_pack_connect(&attr_connect);
 
-	mqtt_attr_payload_release(attr_connect.payload); //free in mqtt_pack_connect
+	//!< don't free in mqtt_pack_connect
+	mqtt_attr_payload_release(attr_connect.payload); 
 
 	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
 		fprintf(stderr, "Creat socket failed!\n");

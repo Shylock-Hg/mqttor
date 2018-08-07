@@ -13,6 +13,18 @@
 
 #include "../../inc/toolkit/array.h"
 
+//
+static const char * errstr[] = {
+	"E_NONE",
+	"E_FORMAT_CHECK",
+	"E_MEM_FAIL",
+	"E_MEM_OUT"
+};
+
+const char * mqtt_str_error(mqtt_err_t err){
+	return errstr[err];
+}
+
 struct mqtt_buf * mqtt_buf_new(size_t len){
 	//uint8_t * buf = malloc(len);
 	uint8_t * buf = calloc(len,sizeof(uint8_t));
