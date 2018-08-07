@@ -64,6 +64,13 @@ typedef struct mqtt_buf {
  * */
 struct mqtt_buf * mqtt_buf_new(size_t len);
 
+/*! \brief create a new mqtt buffer from simple buffer
+ *  \param buf pointer to buffer
+ *  \param len length of buffer
+ *  \retval pointer to created mqtt buffer
+ * */
+mqtt_buf_t * mqtt_buf_new_4_buf(uint8_t * buf, size_t len);
+
 /*! \brief release mqtt_buf by free memory
  *  \param buf mqtt_buf object pointer to release
  * */

@@ -32,13 +32,15 @@ void test_packet(void);
 
 
 int main(int argc, char * argv[]){
+	/*
 	test_toolkit();
 	test_packet_segment();
 	test_fixed_header();
 	test_var_header();
 	test_payload();
+	*/
 
-	//test_packet();
+	test_packet();
 
 	return 0;
 }
@@ -261,10 +263,19 @@ void test_packet(void){
 	//!< pwd
 	mqtt_attr_payload_write_string(attr_connect->payload, "huangshihai");
 
-	struct mqtt_buf_packet * buf_packet = mqtt_pack_connect(attr_connect);
+	mqtt_buf_packet_t * buf_packet = mqtt_pack_connect(attr_connect);
+
+	//< unpack packet
+	mqtt_attr_packet_t * attr_packet = mqtt_unpack_connect(buf_packet);
+	printf("header = `0x%2x`\n", attr_packet->hdr.all);
+	printf("remaining length = `%d`\n", attr_packet->remaining_length);
+	printf("connect flag = `0x%2x`\n",attr_packet->attr_packet.connect.flag.all);
+	printf("keepalive = `%d`\n", attr_packet->attr_packet.connect.keep_alive);
+	mqtt_log_print_buf(attr_packet->payload->buf,attr_packet->payload->len);
 
 	//!< don't free in mqtt_pack_connect
 	//mqtt_attr_payload_release(attr_connect->payload); 
+	mqtt_attr_packet_release(attr_packet);
 	mqtt_attr_packet_release(attr_connect);
 
 	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
