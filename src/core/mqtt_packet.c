@@ -15,12 +15,13 @@
 
 
 mqtt_attr_packet_t * mqtt_attr_packet_new(size_t len_payload){
-	assert(len_payload);
+	//assert(len_payload);
 
 	mqtt_attr_packet_t * packet = malloc(sizeof(mqtt_attr_packet_t));
 	assert(packet);
 	packet->payload = mqtt_attr_payload_new(len_payload);
-	assert(packet->payload);
+	if(0 != len_payload)
+		assert(packet->payload);
 
 	return packet;
 }
@@ -205,13 +206,91 @@ int mqtt_unpack_connect(
 	return E_NONE;
 }
 
+/*
+		//< connack packet
+		struct {
+			//!< fixed header
+			
+			//!< variable header
+			union mqtt_attr_connack_flag flag;  //!< p_connack_flag flags of connack
+			enum mqtt_connect_ret_code ret_code;  //!< ret_code return code of connect
+			//!< payload
+		
+		} connack;
+*/
 
-struct mqtt_buf_packet_connack * mqtt_pack_connack(
-		const struct mqtt_attr_packet_connack * p_packet_connack
-		);
+int mqtt_pack_connack(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
+		){
+	
+	mqtt_attr_re_len_t remaining_length = 0;
+	struct mqtt_buf * mqtt_buffer_array[20] = {NULL};
+	int i = 0;
 
-struct mqtt_attr_packet_connack * mqtt_unpack_connack(
-		const struct mqtt_buf_packet * p_packet
+	//< payload 
+	
+	//< variable header
+	//< connack return code
+	mqtt_buf_t * buf_ret_code = mqtt_buf_new(
+			sizeof(mqtt_attr_connack_ret_code_t));
+	buf_ret_code->buf[0] = p_attr_packet->attr_packet.connack.ret_code;
+	remaining_length++;
+	mqtt_buffer_array[i++] = buf_ret_code;
+	//< connack flag
+	mqtt_buf_t * buf_connack_flag = mqtt_buf_new(
+			sizeof(mqtt_attr_connack_flag_t));
+	buf_connack_flag->buf[0] = p_attr_packet->attr_packet.connack.flag.all;
+	remaining_length++;
+	mqtt_buffer_array[i++] = buf_connack_flag;
+
+	//< fixed header
+	//< remaining length
+	MQTT_CTL_REMAINING_LEN_CHECK(remaining_length);
+	struct mqtt_buf_re_len * p_buf_re_len = mqtt_ctl_encode_remaining_len(
+			remaining_length);
+	mqtt_buffer_array[i++] = p_buf_re_len;
+	//< header
+	union mqtt_attr_ctl_flag ctl_flag = {
+		.bits = {
+			.type   = MQTT_CTL_TYPE_CONNACK,
+			.DUP    = 0,
+			.QoS    = 0,
+			.RETAIN = 0
+		}
+	};
+	struct mqtt_buf_ctl_flag * p_buf_ctl_flag = mqtt_ctl_flag_pack(ctl_flag);
+	mqtt_buffer_array[i] = p_buf_ctl_flag;
+
+	//< |payload|var header|remaining_length_code|fixed header byte|
+	size_t total_len = remaining_length +   //!< length of [payload + var header]
+			   p_buf_re_len->len +   //!< length of [remaining_length]
+			   p_buf_ctl_flag->len;    //!< length of [fixed header byte]
+
+	//struct mqtt_buf_packet * p_buf_packet = mqtt_buf_new(total_len);
+	*pp_buf_packet = mqtt_buf_new(total_len);
+
+	//// copy buffers to mqtt packet then release buffers
+	if(NULL != *pp_buf_packet){
+		size_t offset = 0;
+		for(; i>=0; i--){
+			memcpy((*pp_buf_packet)->buf+offset,
+					mqtt_buffer_array[i]->buf,
+					mqtt_buffer_array[i]->len);
+			offset += mqtt_buffer_array[i]->len;
+			mqtt_buf_release(mqtt_buffer_array[i]);
+		}
+		return E_NONE;
+	}else{
+		printf("[err]:malloc fail!\n");
+		return E_MEM_FAIL;
+	}
+	
+}
+
+int mqtt_unpack_connack(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
 
 

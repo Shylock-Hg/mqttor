@@ -150,7 +150,7 @@ union mqtt_attr_connack_flag mqtt_connack_flag_unpack(const struct mqtt_buf_conn
 ///! \defgroup mqtt_connect_ret_code
 ///  @{
 
-typedef enum mqtt_connect_ret_code {
+typedef enum mqtt_attr_connack_ret_code {
 	CONNECT_RET_CODE_ACCEPTED,  //!< accepte the connect
 	CONNECT_RET_CODE_REF_VER,  //!< unavailable protocol version suported by server
 	CONNECT_RET_CODE_REF_ID,  //!< identifier is format-legal but not allowed by server
@@ -158,7 +158,7 @@ typedef enum mqtt_connect_ret_code {
 	CONNECT_RET_CODE_REF_VALI,  //!< bad user name or password
 	CONNECT_RET_CODE_REF_AUTH,  //!< not authoried 
 	CONNECT_RET_CODE_RESERVED  //!< more value reserved
-} mqtt_connect_ret_code_t;
+} mqtt_attr_connack_ret_code_t;
 
 #define MQTT_CONNECT_RET_CODE_CHECK(conn_ret_code) assert(CONNECT_RET_CODE_RESERVED > conn_ret_code)
 

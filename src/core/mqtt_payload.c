@@ -7,7 +7,9 @@
 #include "../../inc/core/mqtt_payload.h"
 
 mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len){
-	assert(len);
+	//assert(len);
+	if(0 == len)
+		return NULL;
 
 	mqtt_attr_payload_t * payload = malloc(sizeof(mqtt_attr_payload_t));
 	assert(payload);
@@ -21,10 +23,11 @@ mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len){
 }
 
 void mqtt_attr_payload_release(mqtt_attr_payload_t * payload){
-	assert(payload);
-
-	free(payload->buf);
-	free(payload);
+	//assert(payload);
+	if(NULL != payload){
+		free(payload->buf);
+		free(payload);
+	}
 }
 
 mqtt_buf_t * mqtt_attr_payload_2_buf(mqtt_attr_payload_t * payload){

@@ -58,7 +58,7 @@ typedef struct mqtt_attr_packet {
 			
 			//!< variable header
 			union mqtt_attr_connack_flag flag;  //!< p_connack_flag flags of connack
-			enum mqtt_connect_ret_code ret_code;  //!< ret_code return code of connect
+			enum mqtt_attr_connack_ret_code ret_code;  //!< ret_code return code of connect
 			//!< payload
 		
 		} connack;
@@ -182,9 +182,9 @@ typedef struct mqtt_attr_packet_connect {
 */
 
 /*! \brief pack connect packet 
- *  \param p_packet[out]  mqtt packet
- *  \param p_packet_connect[in] pointer to connect packect 
- *  \retval mqtt_err_t 
+ *  \param p_attr_packet[in]  mqtt packet
+ *  \param p_buf_packet[out] pointer to connect packect 
+ *  \retval mqtt error
  * */
 int mqtt_pack_connect(
 		const mqtt_attr_packet_t * p_attr_packet,
@@ -192,9 +192,9 @@ int mqtt_pack_connect(
 		);
 
 /*! \brief unpack connect packet
- *  \param p_packet[in] pointer to mqtt packet received
- *  \pram p_packet_connect[out] pointer to mqtt connect packet 
- *  \retval pointer to mqtt connect structure
+ *  \param p_buf_packet[in] pointer to mqtt packet received
+ *  \param p_attr_packet[out] pointer to mqtt connect packet 
+ *  \retval mqtt error
  * */
 int mqtt_unpack_connect(
 		const mqtt_buf_packet_t * p_buf_packet,
@@ -205,6 +205,7 @@ int mqtt_unpack_connect(
 
 ///! \defgroup mqtt_buf_packet_connack
 /// @{
+/*
 typedef struct mqtt_attr_packet_connack {
 	//!< fixed header
 	
@@ -214,14 +215,16 @@ typedef struct mqtt_attr_packet_connack {
 	//!< payload
 	
 } mqtt_attr_packet_connack_t;
+*/
 
 /*! \brief pack mqtt connack packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_connack[in] pointer to mqtt connack structure
- *  \retval mqtt_err_t
+ *  \param p_attr_packet[in] pointer to mqtt packet
+ *  \param pp_buf_packet[out] pointer to mqtt connack structure
+ *  \retval mqtt error
  * */
-struct mqtt_buf_packet_connack * mqtt_pack_connack(
-		const struct mqtt_attr_packet_connack * p_packet_connack
+int mqtt_pack_connack(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_connack
 		);
 
 /*! \brief unpack mqtt connack packet
@@ -229,8 +232,9 @@ struct mqtt_buf_packet_connack * mqtt_pack_connack(
  *  \param p_packet_connack[out] pointer to mqtt connack structure
  *  \retval mqtt_err_t
  * */
-struct mqtt_attr_packet_connack * mqtt_unpack_connack(
-		const struct mqtt_buf_packet * p_packet
+int mqtt_unpack_connack(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
 /// @}
 

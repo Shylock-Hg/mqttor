@@ -29,7 +29,7 @@ void test_var_header(void);
 void test_payload(void);
 
 void test_packet(void);
-
+void test_packet_connack(void);
 
 int main(int argc, char * argv[]){
 	/*
@@ -40,7 +40,8 @@ int main(int argc, char * argv[]){
 	test_payload();
 	*/
 
-	test_packet();
+	//test_packet();
+	test_packet_connack();
 
 	return 0;
 }
@@ -210,12 +211,6 @@ void test_payload(void){
 
 void test_packet(void){
 	int sock;
-	/*
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = in_aton(TEST_IP);//inet_addr(TEST_IP);
-	*/
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
@@ -301,5 +296,46 @@ void test_packet(void){
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
+}
+
+void test_packet_connack(void){
+	int sock;
+	struct sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(TEST_PORT);
+	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+	
+
+	mqtt_attr_packet_t * attr_connack = mqtt_attr_packet_new(0);
+	attr_connack->attr_packet.connack.flag.all = 0x00;
+	attr_connack->attr_packet.connack.ret_code = CONNECT_RET_CODE_ACCEPTED;
+
+	//< pack packet
+	mqtt_buf_packet_t * buf_packet;
+	mqtt_pack_connack(attr_connack, &buf_packet);
+	
+	mqtt_attr_packet_release(attr_connack);
+
+	//< transmite
+	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
+		fprintf(stderr, "Creat socket failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	if(0 != connect(sock, (struct sockaddr*)&addr, sizeof(addr))){
+		fprintf(stderr, "Connect failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
+	printf("send connect len `%d`!\n",count);
+	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	close(sock);
+
+	mqtt_buf_release(buf_packet);
+	
 }
 
