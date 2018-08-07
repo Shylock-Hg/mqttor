@@ -232,6 +232,7 @@ void test_packet(void){
 						1,  //!< flag user name
 					}
 				},
+				.keep_alive = 256,
 				//.keep_alive = 256,
 				//.id_client = "shylock-archlinux",
 				//.w_topic = "/topic/test",
@@ -242,14 +243,9 @@ void test_packet(void){
 		}
 	};
 	attr_connect.payload = mqtt_attr_payload_new(1024);
-	//!< keep alive
-	mqtt_buf_t * buf_keepalive = mqtt_buf_uint16_encode(256);
-	mqtt_log_print_buf(buf_keepalive->buf, buf_keepalive->len);
-	mqtt_packet_payload_write_bytes(&attr_connect,buf_keepalive->buf, 
-			buf_keepalive->len);
-	mqtt_buf_release(buf_keepalive);
 	//!< id client
-	mqtt_packet_payload_write_string(&attr_connect,"shylock");
+	mqtt_packet_payload_write_string(&attr_connect,"mosqpub|2177-shylock-ar");
+	//mqtt_log_print_buf(attr_connect.payload->buf, attr_connect.payload->len_valid);
 	//!< w_topic
 	mqtt_packet_payload_write_string(&attr_connect, "topic/test");
 	//!< w_msg
@@ -261,7 +257,7 @@ void test_packet(void){
 
 	struct mqtt_buf_packet * buf_packet = mqtt_pack_connect(&attr_connect);
 
-	//mqtt_attr_payload_release(attr_connect.payload);
+	//mqtt_attr_payload_release(attr_connect.payload); free in mqtt_pack_connect
 
 	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
 		fprintf(stderr, "Creat socket failed!\n");
