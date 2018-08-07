@@ -32,14 +32,13 @@ void test_packet(void);
 
 
 int main(int argc, char * argv[]){
-	/*
 	test_toolkit();
 	test_packet_segment();
 	test_fixed_header();
 	test_var_header();
 	test_payload();
-	*/
-	test_packet();
+
+	//test_packet();
 
 	return 0;
 }
@@ -101,17 +100,19 @@ void test_fixed_header(void){
 		//uint32_t len = mqtt_ctl_decode_remaining_len(code);
 		struct mqtt_buf_re_len * mq_buf_re_len = mqtt_ctl_encode_remaining_len(length[i]);
 		uint8_t * buf = mq_buf_re_len->buf;
-		mqtt_attr_re_len_t len = mqtt_ctl_decode_remaining_len(&buf);
+		size_t len_bytes = 0;
+		mqtt_attr_re_len_t len = mqtt_ctl_decode_remaining_len(buf,&len_bytes);
 
-		printf("[info]:(int)buf-(int)->buf=`%ld`\n",(uintptr_t)buf-(uintptr_t)(mq_buf_re_len->buf));
+		printf("[info]:(int)buf-(int)->buf=`%ld`\n",
+				(uintptr_t)buf-(uintptr_t)(mq_buf_re_len->buf));
 		printf("[info]:encode=");
 		for(int j = 0; j < mq_buf_re_len->len; j++){
 			printf("%2x,",*(mq_buf_re_len->buf+j));
 		}
 		printf("\n");
 
-		printf("[info]:origin=%u,decode=%u.\r\n",
-				length[i],len);
+		printf("[info]:origin=%u,decode=%u,len_bytes=%lu.\n",
+				length[i],len,len_bytes);
 
 		mqtt_buf_release(mq_buf_re_len);
 	}

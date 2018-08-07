@@ -149,7 +149,7 @@ struct mqtt_buf_packet * mqtt_pack_connect(
 }
 
 struct mqtt_attr_packet * mqtt_unpack_connect(
-		const struct mqtt_buf_packet * p_packet
+		const struct mqtt_buf_packet * p_buf_packet
 		){
 	/*
 	mqtt_attr_re_len_t remaining_length = 0;
@@ -221,15 +221,12 @@ struct mqtt_attr_packet * mqtt_unpack_connect(
 	//struct mqtt_buf_packet * p_buf_packet = mqtt_buf_new(total_len);
 	*/
 
-	struct mqtt_attr_packet * p_attr_packet = malloc(sizeof(struct mqtt_attr_packet));
-
-	uint8_t * buf = p_packet->buf;  //!< temp pointer to buffer
-	//size_t offset = 0;  //!< offset of packet pointer
-
 	//< fixed header
-	///< control flag
-	union mqtt_attr_ctl_flag attr_ctl_flag = mqtt_ctl_flag_unpack(&buf);
-	///< remaining length
+	//< control type
+	size_t offset = 0;
+	//p_attr_packet->hdr.all = p_buf_packet->buf[offset++];
+	//< remaining length
+	
 
 }
 

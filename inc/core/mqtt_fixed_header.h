@@ -168,11 +168,11 @@ union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(uint8_t ** p_packet);
 //uint32_t mqtt_ctl_decode_remaining_len(const uint8_t * code);
 mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len_low(const struct mqtt_buf_re_len * mq_buf_re_len);
 /*! \brief decode remaining length from packet fragment
- *  \param p_packet[in] pointer to packet
- *  \param p_buf_len[out] pointer to buf length
+ *  \param buf[in] pointer to packet
+ *  \param len_bytes[out] length of reaming length encode bytes
  *  \retval value of remaining length
  * */
-mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(uint8_t ** p_packet);
+mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(uint8_t * buf, size_t * len_bytes);
 
 /*! \brief encode the remaining length
  *  \param code[out] the code bytes encoded from length
