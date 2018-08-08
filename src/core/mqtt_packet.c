@@ -291,7 +291,31 @@ int mqtt_pack_connack(
 int mqtt_unpack_connack(
 		const mqtt_buf_packet_t * p_buf_packet,
 		mqtt_attr_packet_t ** pp_attr_packet
-		);
+		){
+	//< create packet attributes
+	*pp_attr_packet = mqtt_attr_packet_new(0);
+	int offset = 0;
+
+	//< unpack packet
+	//< fixed header
+	//< header
+	(*pp_attr_packet)->hdr.all = p_buf_packet->buf[offset++];
+	//< remaining length
+	size_t len_bytes = 0;
+	(*pp_attr_packet)->remaining_length = mqtt_ctl_decode_remaining_len(
+			p_buf_packet->buf+offset, &len_bytes);
+	offset += len_bytes;
+
+	//< variable header
+	//< connack flag
+	(*pp_attr_packet)->attr_packet.connack.flag.all = p_buf_packet->buf[offset++];
+	//< connect return code
+	(*pp_attr_packet)->attr_packet.connack.ret_code = p_buf_packet->buf[offset];
+
+	//< payload
+	//
+	return E_NONE;
+}
 
 
 mqtt_err_t mqtt_pack_publish(

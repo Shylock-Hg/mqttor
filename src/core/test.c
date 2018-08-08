@@ -308,12 +308,21 @@ void test_packet_connack(void){
 	
 
 	mqtt_attr_packet_t * attr_connack = mqtt_attr_packet_new(0);
-	attr_connack->attr_packet.connack.flag.all = 0x00;
-	attr_connack->attr_packet.connack.ret_code = CONNECT_RET_CODE_ACCEPTED;
+	attr_connack->attr_packet.connack.flag.all = 0x01;
+	attr_connack->attr_packet.connack.ret_code = CONNECT_RET_CODE_REF_ID;
 
 	//< pack packet
 	mqtt_buf_packet_t * buf_packet;
 	mqtt_pack_connack(attr_connack, &buf_packet);
+	//< unpack packet
+	mqtt_attr_packet_t * attr_packet;
+	mqtt_unpack_connack(buf_packet, &attr_packet);
+	printf("hdr = `0x%2x`\n", attr_packet->hdr.all);
+	printf("remaining length = `0x%u`\n", attr_packet->remaining_length);
+	printf("connack flag = `0x%2x`\n", 
+			attr_packet->attr_packet.connack.flag.all);
+	printf("connack return code = `0x%2x`\n", 
+			attr_packet->attr_packet.connack.ret_code);
 	
 	mqtt_attr_packet_release(attr_connack);
 
