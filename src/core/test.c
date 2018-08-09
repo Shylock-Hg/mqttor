@@ -30,6 +30,7 @@ void test_payload(void);
 
 void test_packet(void);
 void test_packet_connack(void);
+void test_packet_publish(void);
 
 int main(int argc, char * argv[]){
 	/*
@@ -41,7 +42,8 @@ int main(int argc, char * argv[]){
 	*/
 
 	//test_packet();
-	test_packet_connack();
+	//test_packet_connack();
+	test_packet_publish();
 
 	return 0;
 }
@@ -66,9 +68,13 @@ void test_packet_segment(void){
 	struct mqtt_buf_str * mq_str = mqtt_buf_str_encode(str);
 	printf("[info]:code length `%ld`\n",mq_str->len);
 	mqtt_attr_str_t _str = mqtt_buf_str_decode(mq_str);
+	mqtt_attr_str_t __str = mqtt_buf_str_4_buf(mq_str->buf);
 
-	printf("[info]:decode string `%s`.\n",_str);
+	printf("[info]:decode _str `%s`.\n",_str);
+	mqtt_log_print_buf(mq_str->buf, mq_str->len);
+	printf("[info]:decode __str `%s`.\n", __str);
 
+	free(__str);
 	free(_str);
 	mqtt_buf_release(mq_str);
 }
@@ -348,3 +354,61 @@ void test_packet_connack(void){
 	
 }
 
+void test_packet_publish(void){
+	int sock;
+	struct sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(TEST_PORT);
+	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+	
+
+	mqtt_attr_packet_t * attr_publish = mqtt_attr_packet_new(1024);
+	//< filling packet attributes
+	//< hdr
+	attr_publish->hdr.bits.DUP = 1;
+	attr_publish->hdr.bits.QoS = 0;
+	attr_publish->hdr.bits.RETAIN = 1;
+	attr_publish->hdr.bits.type = MQTT_CTL_TYPE_PUBLISH;
+	//< variable 
+	attr_publish->attr_packet.publish.id_packet = 0x9527;
+	attr_publish->attr_packet.publish.topic_name = "test";
+	//< payload
+	mqtt_attr_payload_write_string(attr_publish->payload, "content/helloworld");
+
+	//< pack packet
+	mqtt_buf_packet_t * buf_packet;
+	mqtt_pack_publish(attr_publish, &buf_packet);
+	//< unpack packet
+	mqtt_attr_packet_t * attr_packet;
+	mqtt_unpack_publish(buf_packet, &attr_packet);
+	printf("hdr = `0x%2x`\n", attr_packet->hdr.all);
+	printf("remaining length = `0x%u`\n", attr_packet->remaining_length);
+	printf("topic is `%s`\n", attr_packet->attr_packet.publish.topic_name);
+	printf("packet identify is `0x%4x`\n", 
+			attr_packet->attr_packet.publish.id_packet);
+	
+	mqtt_attr_packet_release(attr_publish);
+	mqtt_attr_packet_release(attr_packet);
+
+	//< transmite
+	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
+		fprintf(stderr, "Creat socket failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	if(0 != connect(sock, (struct sockaddr*)&addr, sizeof(addr))){
+		fprintf(stderr, "Connect failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
+	printf("send connect len `%d`!\n",count);
+	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	close(sock);
+
+	mqtt_buf_release(buf_packet);
+	
+}

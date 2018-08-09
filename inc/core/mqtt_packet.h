@@ -68,7 +68,7 @@ typedef struct mqtt_attr_packet {
 			//!< fixed header
 			//union mqtt_attr_ctl_flag flag;  //!< p_ctl_flag flag of mqtt packet control
 			//!< variable header
-			const mqtt_attr_str_t topic_name;  //!< topic_name name of topic publish to
+			mqtt_attr_str_t topic_name;  //!< topic_name name of topic publish to
 			mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 			//!< payload
 			//const mqtt_attr_str_t app_msg;  //!< app_msg application specify message
@@ -241,6 +241,7 @@ int mqtt_unpack_connack(
 
 ///! \defgroup mqtt_buf_packet_publish
 /// @{
+/*
 typedef struct mqtt_buf_packet_publish {
 	//!< fixed header
 	union mqtt_attr_ctl_flag flag;  //!< p_ctl_flag flag of mqtt packet control
@@ -250,25 +251,26 @@ typedef struct mqtt_buf_packet_publish {
 	//!< payload
 	const mqtt_attr_str_t app_msg;  //!< app_msg application specify message
 } mqtt_buf_packet_publish_t;
+*/
 
 /*! \brief pack mqtt publish packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_publish[in] pointer to publish structure
- *  \retval mqtt_err_t
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_publish(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_publish * p_packet_publish
+int mqtt_pack_publish(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
 /*! \brief unpack mqtt publish packet 
- *  \param p_packet[in] pointer to mqtt packet 
- *  \param p_packet_publish[out] pointer to mqtt publish structure
- *  \retval mqtt_err_t
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt publish attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpack_publish(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_publish * p_packet_publish
+int mqtt_unpack_publish(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
 /// @}
 

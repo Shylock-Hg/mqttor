@@ -8,10 +8,13 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "../../inc/core/mqtt_packet_segment.h"
 
 #include "../../inc/toolkit/array.h"
+#include "../../inc/toolkit/mqtt_log.h"
+
 
 //
 static const char * errstr[] = {
@@ -94,6 +97,20 @@ mqtt_attr_str_t mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str){
 	return str;
 }
 
+mqtt_attr_str_t mqtt_buf_str_4_buf(const uint8_t * buf){
+	assert(buf);
+	
+	mqtt_attr_uint16_t len_str = BYTES_2_UINT16(buf);
+	//printf("str len = `%d`\n", len_str);
+	mqtt_buf_str_t * buf_string = mqtt_buf_new(len_str+MQTT_BUF_STR_MAX_BYTE);
+	assert(buf_string);
+	memcpy(buf_string->buf, buf, len_str+MQTT_BUF_STR_MAX_BYTE);
+	mqtt_log_print_buf(buf_string->buf, buf_string->len);
+	mqtt_attr_str_t string = mqtt_buf_str_decode(buf_string);
+	mqtt_buf_release(buf_string);
+	return string;
+}
+
 
 struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(mqtt_attr_uint16_t num){
 	struct mqtt_buf_uint16 * mq_uint16 = mqtt_buf_new(sizeof(mqtt_attr_uint16_t));
@@ -105,4 +122,6 @@ struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(mqtt_attr_uint16_t num){
 mqtt_attr_uint16_t mqtt_buf_uint16_decode(const struct mqtt_buf_uint16 * mq_uint16){
 	return BYTES_2_UINT16(mq_uint16->buf);
 }
+
+
 

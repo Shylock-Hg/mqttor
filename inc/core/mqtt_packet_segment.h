@@ -109,10 +109,15 @@ typedef char* mqtt_attr_str_t;
  * */
 struct mqtt_buf_str * mqtt_buf_str_encode(const mqtt_attr_str_t str);
 /*! \brief decode mqtt string to c-string
- *  \parma code mqtt string |LEN_MSB|LEN_LSB|...|
+ *  \parma code mqtt string .buf|LEN_MSB|LEN_LSB|...| .len
  *  \retval c-string
  * */
 mqtt_attr_str_t mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str);
+/*! \brief get string from mqtt string buffer
+ *  \param buf buffer of mqtt string buffer|LEN_MSB|LEN_LSB|...|
+ *  \retval c-string
+ * */
+mqtt_attr_str_t mqtt_buf_str_4_buf(const uint8_t * buf);
 /// @}
 
 //! \defgroup mqtt_buf_uint16 uint16_t bytes buf
@@ -133,7 +138,8 @@ struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(mqtt_attr_uint16_t num);
  *  \param mq_uint16 pointer to mqtt_buf_uint16
  *  \retval mqtt_attr_uint16_t value
  * */
-mqtt_attr_uint16_t mqtt_buf_uint16_decode(const struct mqtt_buf_uint16 * mq_uint16);
+mqtt_attr_uint16_t mqtt_buf_uint16_decode(
+		const struct mqtt_buf_uint16 * mq_uint16);
 /// @}
 
 ///  @}

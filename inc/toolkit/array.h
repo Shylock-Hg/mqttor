@@ -12,7 +12,7 @@
 /*! \brief convert bytes[2] to uint16  
  *  \note bigendian
  * */
-#define BYTES_2_UINT16(bytes) ((bytes[0]<<8) | (bytes[1]))
+#define BYTES_2_UINT16(bytes) (((bytes)[0]<<8) | ((bytes)[1]))
 
 /*! \brief convert uint16 to bytes[2]
  *  \note bigendian
