@@ -100,30 +100,32 @@ int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes
 	return len;
 }
 
-struct mqtt_buf_payload_suback_flag * mqtt_payload_suback_flag_pack(
-		union mqtt_attr_payload_suback_flag flag){
+struct mqtt_buf_payload_suback_ret_code * mqtt_payload_suback_ret_code_pack(
+		union mqtt_attr_payload_suback_ret_code ret_code){
 	//!< chekc parameter
-	MQTT_ATTR_FLAG_VAL_QoS_CHECK(flag.bits.QoS);
-	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(flag.bits.reserved);
+	MQTT_ATTR_FLAG_VAL_QoS_CHECK(ret_code.bits.QoS);
+	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(ret_code.bits.reserved);
 
 	//!< pack flag byte
-	struct mqtt_buf_payload_suback_flag * p_buf_flag = mqtt_buf_new(sizeof(uint8_t));
-	p_buf_flag->buf[0] = MQTT_PAYLOAD_SUBACK_FLAG_PACK(flag);
+	struct mqtt_buf_payload_suback_ret_code * p_buf_retcode = 
+		mqtt_buf_new(sizeof(uint8_t));
+	p_buf_retcode->buf[0] = MQTT_PAYLOAD_SUBACK_RET_CODE_PACK(ret_code);
 
-	return p_buf_flag;
+	return p_buf_retcode;
 }
 
-union mqtt_attr_payload_suback_flag mqtt_payload_suback_flag_unpack(
-		const struct mqtt_buf_payload_suback_flag * p_buf_flag){
+union mqtt_attr_payload_suback_ret_code mqtt_payload_suback_ret_code_unpack(
+		const struct mqtt_buf_payload_suback_ret_code * p_buf_ret_code){
 
 	//!< unpack flag
-	union mqtt_attr_payload_suback_flag flag = MQTT_PAYLOAD_SUBACK_FLAG_UNPACK(p_buf_flag);
+	union mqtt_attr_payload_suback_ret_code ret_code = 
+		MQTT_PAYLOAD_SUBACK_RET_CODE_UNPACK(p_buf_ret_code);
 	
 	//!< chekc parameter
-	MQTT_ATTR_FLAG_VAL_QoS_CHECK(flag.bits.QoS);
-	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(flag.bits.reserved);
+	MQTT_ATTR_FLAG_VAL_QoS_CHECK(ret_code.bits.QoS);
+	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(ret_code.bits.reserved);
 
-	return flag;
+	return ret_code;
 }
 
 

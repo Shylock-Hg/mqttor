@@ -38,13 +38,11 @@ void test_packet_pubcomp(void);
 void test_packet_subscribe(void);
 
 int main(int argc, char * argv[]){
-	/*
 	test_toolkit();
 	test_packet_segment();
 	test_fixed_header();
 	test_var_header();
 	test_payload();
-	*/
 
 	//test_packet();
 	//test_packet_connack();
@@ -53,7 +51,7 @@ int main(int argc, char * argv[]){
 	//test_packet_pubrec();
 	//test_packet_pubrel();
 	//test_packet_pubcomp();
-	test_packet_subscribe();
+	//test_packet_subscribe();
 
 	return 0;
 }
@@ -184,26 +182,26 @@ void test_var_header(void){
 void test_payload(void){
 	printf("\n\n");
 	printf("**********mqtt payload test**********\n");
-	union mqtt_attr_payload_suback_flag suback_flag = {
+	union mqtt_attr_payload_suback_ret_code suback_ret_code = {
 		.bits = {
 			2,  //!< QoS
 			0,
 			1,  //!< ok
 		}
 	};
-	struct mqtt_buf_payload_suback_flag *  p_buf_flag = 
-		mqtt_payload_suback_flag_pack(suback_flag);
-	union mqtt_attr_payload_suback_flag suback_attr_flag = 
-		mqtt_payload_suback_flag_unpack(
-			p_buf_flag
+	struct mqtt_buf_payload_suback_ret_code *  p_buf_ret_code = 
+		mqtt_payload_suback_ret_code_pack(suback_ret_code);
+	union mqtt_attr_payload_suback_ret_code suback_attr_ret_code = 
+		mqtt_payload_suback_ret_code_unpack(
+			p_buf_ret_code
 			);
-	printf("suback_flag_byte=0x%2x\n",p_buf_flag->buf[0]);
-	printf("evaluate value of suback flags `all=0x%2x` `ok=%2x` , `QoS=%2x`\n",
-			suback_attr_flag.all,
-			suback_attr_flag.bits.ok,
-			suback_attr_flag.bits.QoS);
+	printf("suback_ret_code_byte=0x%2x\n",p_buf_ret_code->buf[0]);
+	printf("evaluate value of suback ret_codes `all=0x%2x` `ok=%2x` , `QoS=%2x`\n",
+			suback_attr_ret_code.all,
+			suback_attr_ret_code.bits.ok,
+			suback_attr_ret_code.bits.QoS);
 
-	mqtt_buf_release(p_buf_flag);
+	mqtt_buf_release(p_buf_ret_code);
 
 	union mqtt_attr_payload_subscribe_content_QoS subscribe_qos = {
 		.bits = {
@@ -684,6 +682,63 @@ void test_packet_subscribe(void){
 	mqtt_log_print_buf(attr_packet->payload->buf, attr_packet->payload->len);
 	
 	mqtt_attr_packet_release(attr_subscribe);
+	mqtt_attr_packet_release(attr_packet);
+
+	//< transmite
+	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
+		fprintf(stderr, "Creat socket failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	if(0 != connect(sock, (struct sockaddr*)&addr, sizeof(addr))){
+		fprintf(stderr, "Connect failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
+	printf("send connect len `%d`!\n",count);
+	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	close(sock);
+
+	mqtt_buf_release(buf_packet);
+	
+}
+
+void test_packet_suback(void){
+	int sock;
+	struct sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(TEST_PORT);
+	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+	
+
+	mqtt_attr_packet_t * attr_suback = mqtt_attr_packet_new(1024);
+	//< filling packet attributes
+	//< hdr
+	attr_suback->hdr.bits.DUP = 1;
+	attr_suback->hdr.bits.QoS = 0;
+	attr_suback->hdr.bits.RETAIN = 1;
+	attr_suback->hdr.bits.type = MQTT_CTL_TYPE_PUBACK;
+	//< variable 
+	attr_suback->attr_packet.suback.id_packet = 0x9527;
+	//< payload
+
+	//< pack packet
+	mqtt_buf_packet_t * buf_packet;
+	mqtt_pack_suback(attr_suback, &buf_packet);
+	//< unpack packet
+	mqtt_attr_packet_t * attr_packet;
+	mqtt_unpack_suback(buf_packet, &attr_packet);
+	printf("hdr = `0x%2x`\n", attr_packet->hdr.all);
+	printf("remaining length = `0x%u`\n", attr_packet->remaining_length);
+	printf("packet identify is `0x%4x`\n", 
+			attr_packet->attr_packet.suback.id_packet);
+	mqtt_log_print_buf(attr_packet->payload->buf, attr_packet->payload->len);
+	
+	mqtt_attr_packet_release(attr_suback);
 	mqtt_attr_packet_release(attr_packet);
 
 	//< transmite

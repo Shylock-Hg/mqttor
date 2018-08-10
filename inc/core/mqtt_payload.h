@@ -82,7 +82,7 @@ int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes
 ///!  \defgroup mqtt_payload_suback_flag mqtt suback payload flags byte
 ////  @{
 
-/*! \brief mqtt subscribe acknowledge flags
+/*! \brief mqtt subscribe acknowledge return code
  *
  * */
 /*
@@ -93,37 +93,37 @@ typedef struct mqtt_payload_suback_flag {
 */
 //typedef struct mqtt_payload_suback_flag  mqtt_payload_sub_ack_flag_t;
 
-typedef union mqtt_attr_payload_suback_flag {
+typedef union mqtt_attr_payload_suback_ret_code {
 	uint8_t all;
 	struct {
 		uint8_t QoS:2;
 		uint8_t reserved:5;
 		uint8_t ok:1;
 	} bits;
-} mqtt_attr_payload_suback_flag_t;
+} mqtt_attr_payload_suback_ret_code_t;
 
-#define mqtt_buf_payload_suback_flag mqtt_buf
-typedef mqtt_buf_t mqtt_buf_payload_suback_flag_t;
+#define mqtt_buf_payload_suback_ret_code mqtt_buf
+typedef mqtt_buf_t mqtt_buf_payload_suback_ret_code_t;
 
-#define MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET  7
-#define MQTT_PAYLOAD_SUBACK_FLAG_OK_Msk     (BIT(MQTT_PAYLOAD_SUBACK_FLAG_OK_OFFSET))
+#define MQTT_PAYLOAD_SUBACK_RET_CODE_OK_OFFSET  7
+#define MQTT_PAYLOAD_SUBACK_RET_CODE_OK_Msk     (BIT(MQTT_PAYLOAD_SUBACK_RET_CODE_OK_OFFSET))
 
-#define MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET 0
-#define MQTT_PAYLOAD_SUBACK_FLAG_QoS_Msk    (BIT(MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET) | \
-		BIT(MQTT_PAYLOAD_SUBACK_FLAG_QoS_OFFSET+1))
+#define MQTT_PAYLOAD_SUBACK_RET_CODE_QoS_OFFSET 0
+#define MQTT_PAYLOAD_SUBACK_RET_CODE_QoS_Msk    (BIT(MQTT_PAYLOAD_SUBACK_RET_CODE_QoS_OFFSET) | \
+		BIT(MQTT_PAYLOAD_SUBACK_RET_CODE_QoS_OFFSET+1))
 
-#define MQTT_PAYLOAD_SUBACK_FLAG_PACK(flag)         ((uint8_t)(flag.all))
-#define MQTT_PAYLOAD_SUBACK_FLAG_UNPACK(p_buf_flag) \
-	((union mqtt_attr_payload_suback_flag)(p_buf_flag->buf[0]))
+#define MQTT_PAYLOAD_SUBACK_RET_CODE_PACK(ret_code)         ((uint8_t)(ret_code.all))
+#define MQTT_PAYLOAD_SUBACK_RET_CODE_UNPACK(p_buf_ret_code) \
+	((union mqtt_attr_payload_suback_ret_code)(p_buf_ret_code->buf[0]))
 
-/*! \brief pack suback flags byte
- *  \param p_flag flags structure
- *  \retval suback flags byte
+/*! \brief pack suback ret_codes byte
+ *  \param p_ret_code ret_codes structure
+ *  \retval suback ret_codes byte
  * */
-struct mqtt_buf_payload_suback_flag * mqtt_payload_suback_flag_pack(
-		union mqtt_attr_payload_suback_flag flag);
-union mqtt_attr_payload_suback_flag mqtt_payload_suback_flag_unpack(
-		const struct mqtt_buf_payload_suback_flag * p_buf_flag);
+struct mqtt_buf_payload_suback_ret_code * mqtt_payload_suback_ret_code_pack(
+		union mqtt_attr_payload_suback_ret_code ret_code);
+union mqtt_attr_payload_suback_ret_code mqtt_payload_suback_ret_code_unpack(
+		const struct mqtt_buf_payload_suback_ret_code * p_buf_ret_code);
 
 
 ///  @}
