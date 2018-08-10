@@ -576,7 +576,7 @@ int mqtt_pack_pubrec(
 	//< header
 	union mqtt_attr_ctl_flag ctl_flag = {
 		.bits = {
-			.type   = MQTT_CTL_TYPE_PUBREL,
+			.type   = MQTT_CTL_TYPE_PUBREC,
 			.DUP    = 0,
 			.QoS    = 0,
 			.RETAIN = 0
@@ -673,7 +673,7 @@ int mqtt_pack_pubrel(
 	//< header
 	union mqtt_attr_ctl_flag ctl_flag = {
 		.bits = {
-			.type   = MQTT_CTL_TYPE_PUBREC,
+			.type   = MQTT_CTL_TYPE_PUBREL,
 			.DUP    = 0,
 			.QoS    = 0,
 			.RETAIN = 0
@@ -745,16 +745,111 @@ int mqtt_unpack_pubrel(
 }
 
 
-mqtt_err_t mqtt_pack_pubcomp(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_pubcomp * p_packet_pubcomp
-		);
+/*! \brief pack mqtt pubcomp packet
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
+ * */
+int mqtt_pack_pubcomp(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
+		){
+	mqtt_attr_re_len_t remaining_length = 0;
+	struct mqtt_buf * mqtt_buffer_array[20] = {NULL};
+	int i = 0;
 
+	//< payload 
+	
+	//< variable header
+	//< packet identify
+	mqtt_buf_uint16_t * p_buf_id_packet = mqtt_buf_uint16_encode(
+			p_attr_packet->attr_packet.pubcomp.id_packet);
+	mqtt_buffer_array[i++] = p_buf_id_packet;
+	remaining_length += sizeof(mqtt_attr_uint16_t);
 
-mqtt_err_t mqtt_unpacke_pubcomp(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_pubcomp * p_packet_pubcomp
-		);
+	//< fixed header
+	//< remaining length
+	MQTT_CTL_REMAINING_LEN_CHECK(remaining_length);
+	struct mqtt_buf_re_len * p_buf_re_len = mqtt_ctl_encode_remaining_len(
+			remaining_length);
+	mqtt_buffer_array[i++] = p_buf_re_len;
+	//< header
+	union mqtt_attr_ctl_flag ctl_flag = {
+		.bits = {
+			.type   = MQTT_CTL_TYPE_PUBCOMP,
+			.DUP    = 0,
+			.QoS    = 0,
+			.RETAIN = 0
+		}
+	};
+	struct mqtt_buf_ctl_flag * p_buf_ctl_flag = mqtt_ctl_flag_pack(ctl_flag);
+	mqtt_buffer_array[i] = p_buf_ctl_flag;
+
+	//< |payload|var header|remaining_length_code|fixed header byte|
+	size_t total_len = remaining_length +   //!< length of [payload + var header]
+			   p_buf_re_len->len +   //!< length of [remaining_length]
+			   p_buf_ctl_flag->len;    //!< length of [fixed header byte]
+
+	//struct mqtt_buf_packet * p_buf_packet = mqtt_buf_new(total_len);
+	*pp_buf_packet = mqtt_buf_new(total_len);
+
+	//// copy buffers to mqtt packet then release buffers
+	if(NULL != *pp_buf_packet){
+		size_t offset = 0;
+		for(; i>=0; i--){
+			memcpy((*pp_buf_packet)->buf+offset,
+					mqtt_buffer_array[i]->buf,
+					mqtt_buffer_array[i]->len);
+			offset += mqtt_buffer_array[i]->len;
+			mqtt_buf_release(mqtt_buffer_array[i]);
+		}
+		return E_NONE;
+	}else{
+		printf("[err]:malloc fail!\n");
+		return E_MEM_FAIL;
+	}
+
+}
+
+/*! \brief unpack mqtt pubcomp packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt pubcomp attributes
+ *  \retval mqtt error
+ * */
+int mqtt_unpack_pubcomp(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
+		){
+	//< create packet attributes
+	*pp_attr_packet = mqtt_attr_packet_new(0);
+	int offset = 0;
+	//mqtt_log_print_buf(p_buf_packet->buf, p_buf_packet->len);
+
+	//< unpack packet
+	//< fixed header
+	//< header
+	(*pp_attr_packet)->hdr.all = p_buf_packet->buf[offset++];
+	//printf("offset = `%u`\n",offset);
+	//< remaining length
+	size_t len_bytes = 0;
+	(*pp_attr_packet)->remaining_length = mqtt_ctl_decode_remaining_len(
+			p_buf_packet->buf+offset, &len_bytes);
+	offset += len_bytes;
+	//printf("re len = `%u`\n", (*pp_attr_packet)->remaining_length);
+	//printf("offset = `%u`\n",offset);
+
+	//< variable header
+	//< packet identify
+	(*pp_attr_packet)->attr_packet.pubcomp.id_packet = 
+		BYTES_2_UINT16(p_buf_packet->buf+offset);
+	offset += sizeof(mqtt_attr_uint16_t);
+	//printf("id packet = `%u`\n", (*pp_attr_packet)->attr_packet.pubcomp.id_packet);
+	//printf("offset = `%u`\n",offset);
+
+	//< payload
+	//
+	return E_NONE;
+}
 
 
 mqtt_err_t mqtt_pack_subscribe(

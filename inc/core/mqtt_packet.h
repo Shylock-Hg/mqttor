@@ -380,32 +380,35 @@ int mqtt_unpack_pubrel(
 
 ///! \defgroup mqtt_buf_packet_pubcomp
 /// @{
+/*
 typedef struct mqtt_buf_packet_pubcomp {
 	//!< fixed header
 	//!< variable header
 	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_pubcomp_t;
+*/
 
-/*! \brief pack mqtt publish complete packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_pubcomp[in] pointer to mqtt pubcomp structure
- *  \retval mqtt_err_t
+/*! \brief pack mqtt pubcomp packet
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_pubcomp(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_pubcomp * p_packet_pubcomp
+int mqtt_pack_pubcomp(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
-/*! \brief unpack mqtt pubcomp packet
- *  \param p_packet[in] pointer to mqtt packet
- *  \param p_packet_pubcomp[out] pointer to pubcomp structure
- *  \retval mqtt_err_t
+/*! \brief unpack mqtt pubcomp packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt pubcomp attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpacke_pubcomp(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_pubcomp * p_packet_pubcomp
+int mqtt_unpack_pubcomp(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
+
 /// @}
 
 

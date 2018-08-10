@@ -34,6 +34,7 @@ void test_packet_publish(void);
 void test_packet_puback(void);
 void test_packet_pubrec(void);
 void test_packet_pubrel(void);
+void test_packet_pubcomp(void);
 
 int main(int argc, char * argv[]){
 	/*
@@ -49,7 +50,8 @@ int main(int argc, char * argv[]){
 	//test_packet_publish();
 	//test_packet_puback();
 	//test_packet_pubrec();
-	test_packet_pubrel();
+	//test_packet_pubrel();
+	test_packet_pubcomp();
 
 	return 0;
 }
@@ -563,6 +565,62 @@ void test_packet_pubrel(void){
 			attr_packet->attr_packet.pubrel.id_packet);
 	
 	mqtt_attr_packet_release(attr_pubrel);
+	mqtt_attr_packet_release(attr_packet);
+
+	//< transmite
+	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
+		fprintf(stderr, "Creat socket failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	if(0 != connect(sock, (struct sockaddr*)&addr, sizeof(addr))){
+		fprintf(stderr, "Connect failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
+	printf("send connect len `%d`!\n",count);
+	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	close(sock);
+
+	mqtt_buf_release(buf_packet);
+	
+}
+
+void test_packet_pubcomp(void){
+	int sock;
+	struct sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(TEST_PORT);
+	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+	
+
+	mqtt_attr_packet_t * attr_pubcomp = mqtt_attr_packet_new(0);
+	//< filling packet attributes
+	//< hdr
+	attr_pubcomp->hdr.bits.DUP = 1;
+	attr_pubcomp->hdr.bits.QoS = 0;
+	attr_pubcomp->hdr.bits.RETAIN = 1;
+	attr_pubcomp->hdr.bits.type = MQTT_CTL_TYPE_PUBACK;
+	//< variable 
+	attr_pubcomp->attr_packet.pubcomp.id_packet = 0x9527;
+	//< payload
+
+	//< pack packet
+	mqtt_buf_packet_t * buf_packet;
+	mqtt_pack_pubcomp(attr_pubcomp, &buf_packet);
+	//< unpack packet
+	mqtt_attr_packet_t * attr_packet;
+	mqtt_unpack_pubcomp(buf_packet, &attr_packet);
+	printf("hdr = `0x%2x`\n", attr_packet->hdr.all);
+	printf("remaining length = `0x%u`\n", attr_packet->remaining_length);
+	printf("packet identify is `0x%4x`\n", 
+			attr_packet->attr_packet.pubcomp.id_packet);
+	
+	mqtt_attr_packet_release(attr_pubcomp);
 	mqtt_attr_packet_release(attr_packet);
 
 	//< transmite
