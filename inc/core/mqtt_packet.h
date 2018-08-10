@@ -312,63 +312,69 @@ int mqtt_unpack_puback(
 
 ///! \defgroup mqtt_buf_packet_pubrec
 /// @{
+/*
 typedef struct mqtt_buf_packet_pubrec {
 	//!< fixed header
 	//!< variable header
 	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_pubrec_t;
+*/
 
-/*! \brief pack mqtt publish received packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_pubrec[in] pointer to mqtt pubrec structure
- *  \retval mqtt_err_t
+/*! \brief pack mqtt pubrec packet
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_pubrec(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_pubrec * p_packet_pubrec
+int mqtt_pack_pubrec(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
 /*! \brief unpack mqtt pubrec packet 
- *  \param p_packet[in] pointer to mqtt pubrec packet
- *  \param p_packet_pubrec[out] pointer to mqtt pubrec structure
- *  \retval mqtt_err_t
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt pubrec attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpack_pubrec(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_pubrec * p_packet_pubrec
+int mqtt_unpack_pubrec(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
+
 /// @}
 
 
 ///! \defgroup mqtt_buf_packet_pubrel
 /// @{
+/*
 typedef struct mqtt_buf_packet_pubrel {
 	//!< fixed header
 	//!< variable header
 	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_pubrel_t;
+*/
 
-/*! \brief pack mqtt publish release packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_pubrel[in] pointer to mqtt pubrel structure
- *  \retval mqtt_err_t
+/*! \brief pack mqtt pubrel packet
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_pubrel(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_pubrel * p_packet_pubrel
+int mqtt_pack_pubrel(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
-/*! \brief unpack mqtt pubrel packet
- *  \param p_packet_pubrel[in] pointer to mqtt pubrel structure
- *  \param p_packet[out] pointer to mqtt packet
- *  \retval 
+/*! \brief unpack mqtt pubrel packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt pubrel attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpack_pubrel(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_pubrel * p_packet_pubrel
+int mqtt_unpack_pubrel(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
+
 /// @}
 
 
