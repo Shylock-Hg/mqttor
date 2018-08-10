@@ -622,22 +622,35 @@ int mqtt_unpack_pingresp(
 
 ///! \defgroup mqtt_buf_packet_disconnect
 ///  @{
+/*
 typedef struct mqtt_buf_packet_disconnect {
 	//!< fixed header
 	//!< variable header
 	//!< payload
 	void;
 } mqtt_buf_packet_disconnect_t;
+*/
 
 /*! \brief pack mqtt disconnect packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_disconnect[in] pointer to mqtt disconnect structure
- *  \retval mqtt_err_t
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_disconnect(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_disconnect * p_packet_disconnect
+int mqtt_pack_disconnect(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
+
+/*! \brief unpack mqtt disconnect packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt disconnect attributes
+ *  \retval mqtt error
+ * */
+int mqtt_unpack_disconnect(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
+		);
+
 /// @}
 
 /// @}
