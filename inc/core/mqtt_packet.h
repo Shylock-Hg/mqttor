@@ -486,6 +486,7 @@ int mqtt_unpack_suback(
 
 ///! \defgroup mqtt_buf_packet_unsubscribe
 /// @{
+/*
 typedef struct mqtt_buf_packet_unsubscribe {
 	//!< fixed header
 	//!< variable header
@@ -494,26 +495,28 @@ typedef struct mqtt_buf_packet_unsubscribe {
 	const mqtt_attr_str_t * top_filter;  //!< top_filter[] array of top_filter string
 	uint16_t top_filter_count;  //!< to_filter_count count of top_filter string
 } mqtt_buf_packet_unsubscribe_t;
+*/
 
 /*! \brief pack mqtt unsubscribe packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_unsubscribe[in] pointer to mqtt unsubscribe structure
- *  \retval 
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_unsubscribe(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_unsubscribe * p_packet_unsubscribe
+int mqtt_pack_unsubscribe(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
-/*! \brief unpack mqtt unsubscribe packet
- *  \param p_packet[in] pointer to mqtt packet
- *  \param p_packet_unsubscribe[out] pointer to mqtt unsubscribe structure
- *  \retval mqtt_err_t
+/*! \brief unpack mqtt unsubscribe packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt unsubscribe attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpack_unsubscribe(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_unsubscribe * p_packet_unsubscribe
+int mqtt_unpack_unsubscribe(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
+
 /// @}
 
 

@@ -37,6 +37,7 @@ void test_packet_pubrel(void);
 void test_packet_pubcomp(void);
 void test_packet_subscribe(void);
 void test_packet_suback(void);
+void test_packet_unsubscribe(void);
 
 int main(int argc, char * argv[]){
 	/*
@@ -55,7 +56,8 @@ int main(int argc, char * argv[]){
 	//test_packet_pubrel();
 	//test_packet_pubcomp();
 	//test_packet_subscribe();
-	test_packet_suback();
+	//test_packet_suback();
+	test_packet_unsubscribe();
 
 	return 0;
 }
@@ -758,6 +760,65 @@ void test_packet_suback(void){
 	mqtt_log_print_buf(attr_packet->payload->buf, attr_packet->payload->len);
 	
 	mqtt_attr_packet_release(attr_suback);
+	mqtt_attr_packet_release(attr_packet);
+
+	//< transmite
+	if(-1 == (sock = socket(addr.sin_family,SOCK_STREAM,IPPROTO_TCP))){
+		fprintf(stderr, "Creat socket failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	if(0 != connect(sock, (struct sockaddr*)&addr, sizeof(addr))){
+		fprintf(stderr, "Connect failed!\n");
+		fflush(stderr);
+		exit(-1);
+	}
+
+	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
+	printf("send connect len `%d`!\n",count);
+	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	close(sock);
+
+	mqtt_buf_release(buf_packet);
+	
+}
+
+void test_packet_unsubscribe(void){
+	int sock;
+	struct sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(TEST_PORT);
+	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+	
+
+	mqtt_attr_packet_t * attr_unsubscribe = mqtt_attr_packet_new(1024);
+	//< filling packet attributes
+	//< hdr
+	attr_unsubscribe->hdr.bits.DUP = 1;
+	attr_unsubscribe->hdr.bits.QoS = 0;
+	attr_unsubscribe->hdr.bits.RETAIN = 1;
+	attr_unsubscribe->hdr.bits.type = MQTT_CTL_TYPE_UNSUBSCRIBE;
+	//< variable 
+	attr_unsubscribe->attr_packet.unsubscribe.id_packet = 0x9527;
+	//< payload
+	mqtt_attr_payload_write_string(attr_unsubscribe->payload, "test");
+	mqtt_attr_payload_write_string(attr_unsubscribe->payload, "topic");
+
+	//< pack packet
+	mqtt_buf_packet_t * buf_packet;
+	mqtt_pack_unsubscribe(attr_unsubscribe, &buf_packet);
+	//< unpack packet
+	mqtt_attr_packet_t * attr_packet;
+	mqtt_unpack_unsubscribe(buf_packet, &attr_packet);
+	printf("hdr = `0x%2x`\n", attr_packet->hdr.all);
+	printf("remaining length = `0x%u`\n", attr_packet->remaining_length);
+	printf("packet identify is `0x%4x`\n", 
+			attr_packet->attr_packet.unsubscribe.id_packet);
+	mqtt_log_print_buf(attr_packet->payload->buf, attr_packet->payload->len);
+	
+	mqtt_attr_packet_release(attr_unsubscribe);
 	mqtt_attr_packet_release(attr_packet);
 
 	//< transmite
