@@ -450,6 +450,7 @@ int mqtt_unpack_subscribe(
 
 ///! \defgroup mqtt_buf_packet_suback
 /// @{
+/*
 typedef struct mqtt_buf_packet_suback {
 	//!< fixed header
 	//!< variable header
@@ -458,26 +459,28 @@ typedef struct mqtt_buf_packet_suback {
 	struct mqtt_payload_suback_flag * suback_flag;  //!< suback_flag[] flags of suback array
 	uint16_t suback_flag_count;  //!< suback_flag_count count of suback
 } mqtt_buf_packet_suback_t;
+*/
 
 /*! \brief pack mqtt suback packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_suback[in] pointer to mqtt suback structure
- *  \retval mqtt_err_t
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_suback(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_suback * p_packet_suback
+int mqtt_pack_suback(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
-/*! \brief unpack mqtt suback packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_suback[in] pointer to mqtt suback structure
- *  \retval mqtt_err_t
+/*! \brief unpack mqtt suback packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt suback attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpack_suback(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_suback * p_packet_suback
+int mqtt_unpack_suback(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
+
 /// @}
 
 

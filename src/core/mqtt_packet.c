@@ -877,7 +877,7 @@ int mqtt_pack_subscribe(
 	/// variable header
 	//< packet identify
 	mqtt_buf_uint16_t * p_buf_id_packet = mqtt_buf_uint16_encode(
-			p_attr_packet->attr_packet.pubcomp.id_packet);
+			p_attr_packet->attr_packet.subscribe.id_packet);
 	mqtt_buffer_array[i++] = p_buf_id_packet;
 	remaining_length += sizeof(mqtt_attr_uint16_t);
 
@@ -966,15 +966,119 @@ int mqtt_unpack_subscribe(
 }
 
 
-mqtt_err_t mqtt_pack_suback(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_suback * p_packet_suback
-		);
+/*! \brief pack mqtt suback packet
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
+ * */
+int mqtt_pack_suback(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
+		){
+	mqtt_attr_re_len_t remaining_length = 0;
+	struct mqtt_buf * mqtt_buffer_array[20] = {NULL};
+	int i = 0;
 
-mqtt_err_t mqtt_unpack_suback(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_suback * p_packet_suback
-		);
+	/// payload
+	mqtt_buf_t * p_buf_payload = mqtt_attr_payload_deep2_buf(
+			p_attr_packet->payload);
+	assert(p_buf_payload);
+	if(NULL != p_buf_payload){
+		mqtt_buffer_array[i++] = p_buf_payload;
+		remaining_length += p_buf_payload->len;
+	}
+
+	/// variable header
+	//< packet identify
+	mqtt_buf_uint16_t * p_buf_id_packet = mqtt_buf_uint16_encode(
+			p_attr_packet->attr_packet.suback.id_packet);
+	mqtt_buffer_array[i++] = p_buf_id_packet;
+	remaining_length += sizeof(mqtt_attr_uint16_t);
+
+	/// fixed header
+	/// remaining length
+	MQTT_CTL_REMAINING_LEN_CHECK(remaining_length);
+	struct mqtt_buf_re_len * p_buf_re_len = mqtt_ctl_encode_remaining_len(remaining_length);
+	mqtt_buffer_array[i++] = p_buf_re_len;
+	/// ctl flags
+	union mqtt_attr_ctl_flag ctl_flag = {
+		.bits = {
+			.type   = MQTT_CTL_TYPE_SUBACK,
+			.DUP    = 0,
+			.QoS    = 0,
+			.RETAIN = 0
+		}
+	};
+	struct mqtt_buf_ctl_flag * p_buf_ctl_flag = mqtt_ctl_flag_pack(ctl_flag);
+	mqtt_buffer_array[i] = p_buf_ctl_flag;
+
+	//< |payload|var header|remaining_length_code|fixed header byte|
+	size_t total_len = remaining_length +   //!< length of [payload + var header]
+			   p_buf_re_len->len +   //!< length of [remaining_length]
+			   p_buf_ctl_flag->len;    //!< length of [fixed header byte]
+
+	//struct mqtt_buf_packet * p_buf_packet = mqtt_buf_new(total_len);
+	*pp_buf_packet = mqtt_buf_new(total_len);
+
+	//// copy buffers to mqtt packet then release buffers
+	if(NULL != *pp_buf_packet){
+		size_t offset = 0;
+		for(; i>=0; i--){
+			memcpy((*pp_buf_packet)->buf+offset,
+					mqtt_buffer_array[i]->buf,
+					mqtt_buffer_array[i]->len);
+			offset += mqtt_buffer_array[i]->len;
+			mqtt_buf_release(mqtt_buffer_array[i]);
+		}
+		return E_NONE;
+	}else{
+		printf("[err]:malloc fail!\n");
+		return E_MEM_FAIL;
+	}
+
+}
+
+/*! \brief unpack mqtt suback packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt suback attributes
+ *  \retval mqtt error
+ * */
+int mqtt_unpack_suback(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
+		){
+	size_t offset = 0;
+	//< fixed header
+	//< control type
+	mqtt_attr_ctl_flag_t attr_hdr;
+	attr_hdr.all = p_buf_packet->buf[offset++];
+	//< remaining length
+	size_t len_bytes = 0;
+	mqtt_attr_re_len_t attr_remaining_length = mqtt_ctl_decode_remaining_len(
+			p_buf_packet->buf+offset, 
+			&len_bytes);
+	offset += len_bytes;
+	
+	//< variable header
+	//< packet identify
+	mqtt_attr_uint16_t attr_id_packet = 
+		BYTES_2_UINT16(p_buf_packet->buf+offset);
+	offset += sizeof(mqtt_attr_uint16_t);
+
+	//< payload
+	*pp_attr_packet = mqtt_attr_packet_new(
+			p_buf_packet->len-offset);
+	memcpy((*pp_attr_packet)->payload->buf, p_buf_packet->buf+offset, 
+			p_buf_packet->len-offset);
+	
+	//< filling packet attributes
+	(*pp_attr_packet)->hdr = attr_hdr;
+	(*pp_attr_packet)->remaining_length = attr_remaining_length;
+	(*pp_attr_packet)->attr_packet.suback.id_packet = attr_id_packet;
+
+	return E_NONE;
+
+}
 
 
 mqtt_err_t mqtt_pack_unsubscribe(

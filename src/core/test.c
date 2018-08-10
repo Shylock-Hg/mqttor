@@ -36,13 +36,16 @@ void test_packet_pubrec(void);
 void test_packet_pubrel(void);
 void test_packet_pubcomp(void);
 void test_packet_subscribe(void);
+void test_packet_suback(void);
 
 int main(int argc, char * argv[]){
+	/*
 	test_toolkit();
 	test_packet_segment();
 	test_fixed_header();
 	test_var_header();
 	test_payload();
+	*/
 
 	//test_packet();
 	//test_packet_connack();
@@ -52,6 +55,7 @@ int main(int argc, char * argv[]){
 	//test_packet_pubrel();
 	//test_packet_pubcomp();
 	//test_packet_subscribe();
+	test_packet_suback();
 
 	return 0;
 }
@@ -721,10 +725,25 @@ void test_packet_suback(void){
 	attr_suback->hdr.bits.DUP = 1;
 	attr_suback->hdr.bits.QoS = 0;
 	attr_suback->hdr.bits.RETAIN = 1;
-	attr_suback->hdr.bits.type = MQTT_CTL_TYPE_PUBACK;
+	attr_suback->hdr.bits.type = MQTT_CTL_TYPE_SUBACK;
 	//< variable 
 	attr_suback->attr_packet.suback.id_packet = 0x9527;
 	//< payload
+	mqtt_attr_payload_suback_ret_code_t ret_codes[2] = {{
+		.bits = {
+			.ok = 1,
+			.reserved = 0,
+			.QoS =1,
+		}
+	},{
+		.bits = {
+			.ok = 0,
+			.reserved = 0,
+			.QoS = 2,
+		}
+	}};
+	mqtt_attr_payload_write_bytes(attr_suback->payload, 
+			(uint8_t*)ret_codes, sizeof(ret_codes));
 
 	//< pack packet
 	mqtt_buf_packet_t * buf_packet;
