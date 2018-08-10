@@ -589,21 +589,33 @@ int mqtt_unpack_pingreq(
 
 ///! \defgroup mqtt_buf_packet_pingresp
 ///  @{
+/*
 typedef struct mqtt_buf_packet_pingresp {
 	//!< fixed header
 	//!< variable header
 	//!< payload
 	void;
 } mqtt_buf_packet_pingresp_t;
+*/
 
 /*! \brief pack mqtt pingresp packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_pingresp[in] pointer to mqtt pingresp structure
- *  \retval mqtt_err_t
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_pingresp(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_pingresp * p_packet_pingresp
+int mqtt_pack_pingresp(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
+		);
+
+/*! \brief unpack mqtt pingresp packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt pingresp attributes
+ *  \retval mqtt error
+ * */
+int mqtt_unpack_pingresp(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
 /// @}
 
