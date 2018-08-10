@@ -522,53 +522,68 @@ int mqtt_unpack_unsubscribe(
 
 ///! \defgroup mqtt_buf_packet_unsuback
 /// @{
+/*
 typedef struct mqtt_buf_packet_unsuback {
 	//!< fixed header
 	//!< variable header
 	uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_unsuback_t;
+*/
 
 /*! \brief pack mqtt unsuback packet
- *  \param p_packet[out] pointer to mqtt unsuback packet
- *  \param p_packet_unsuback[in] pointer to mqtt unsuback structure
- *  \retval mqtt_err_t
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_unsuback(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_unsuback * p_packet_unsuback
+int mqtt_pack_unsuback(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
-/*! \brief unpack mqtt unsuback packet
- *  \param p_packet[in] pointer to mqtt packet
- *  \param p_packet_unsuback[out] pointer to mqtt unsuback structure
- *  \retval mqtt_err_t
+/*! \brief unpack mqtt unsuback packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt unsuback attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpack_unsuback(
-		const struct mqtt_buf_packet p_packet,
-		struct mqtt_buf_packet_unsuback * p_packet_unsuback
+int mqtt_unpack_unsuback(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
 /// @}
 
 
 ///! \defgroup mqtt_buf_packet_pingreq
 ///  @{
+/*
 typedef struct mqtt_buf_packet_pingreq {
 	//!< fixed header
 	//!< variable header
 	//!< payload
 	void;
 } mqtt_buf_packet_pingreq_t;
+*/
 
 /*! \brief pack mqtt pingreq packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_pingreq[in] pointer to mqtt pingreq structure
- *  \retval mqtt_err_t
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_pingreq(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_pingreq * p_packet_pingreq
+int mqtt_pack_pingreq(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
+
+/*! \brief unpack mqtt pingreq packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt pingreq attributes
+ *  \retval mqtt error
+ * */
+int mqtt_unpack_pingreq(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
+		);
+
 /// @}
 
 
