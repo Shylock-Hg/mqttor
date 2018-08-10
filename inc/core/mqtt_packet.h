@@ -277,6 +277,7 @@ int mqtt_unpack_publish(
 
 ///! \defgroup mqtt_buf_packet_puback
 /// @{
+/*
 typedef struct mqtt_buf_packet_puback {
 	//!< fixed header
 	
@@ -284,26 +285,28 @@ typedef struct mqtt_buf_packet_puback {
 	mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 	//!< payload
 } mqtt_buf_packet_puback_t;
+*/
 
-/*! \brief pack mqtt publish acknowledge packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_puback[in] pointer to mqtt puback structure
- *  \retval pointer to mqtt packet
+/*! \brief pack mqtt puback packet
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_puback(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_puback * p_packet_puback
+int mqtt_pack_puback(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
-/*! \brief unpack matt puback packet 
- *  \param p_packet[in] pointer to mqtt packet
- *  \param p_packet_puback[out] pointer to mqtt puback packet
- *  \retval mqtt_err_t
+/*! \brief unpack mqtt puback packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt puback attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpack_puback(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_puback * p_packet_puback
+int mqtt_unpack_puback(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
+
 /// @}
 
 
