@@ -414,6 +414,7 @@ int mqtt_unpack_pubcomp(
 
 ///! \defgroup mqtt_buf_packet_subscribe
 /// @{
+/*
 typedef struct mqtt_buf_packet_subscribe {
 	//!< fixed header
 	//!< variable header
@@ -422,26 +423,28 @@ typedef struct mqtt_buf_packet_subscribe {
 	struct mqtt_payload_subscribe_content * sub_content;  //!< sub_content content array to subscribe
 	uint16_t sub_count;  //!< sub_count count of subscribe
 } mqtt_buf_packet_subscribe_t;
+*/
 
 /*! \brief pack mqtt subscribe packet
- *  \param p_packet[out] pointer to mqtt packet
- *  \param p_packet_subscribe[in] pointer to mqtt subscribe structure
- *  \retval mqtt_err_t
+ *  \param p_attr_packet[in] pointer to mqtt packet attributes
+ *  \param pp_buf_packet[out] pointer to mqtt packet buffer
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_pack_subscribe(
-		struct mqtt_buf_packet * p_packet,
-		const struct mqtt_buf_packet_subscribe * p_packet_subscribe
+int mqtt_pack_subscribe(
+		const mqtt_attr_packet_t * p_attr_packet,
+		mqtt_buf_packet_t ** pp_buf_packet
 		);
 
-/*! \brief unpack mqtt subscribe packet
- *  \param p_packet[in] pointer to mqtt packet
- *  \param p_packet_subscribe[out] pointer to mqtt subscribe structure
- *  \retval mqtt_err_t
+/*! \brief unpack mqtt subscribe packet 
+ *  \param p_buf_packet[in] pointer to mqtt packet buffer
+ *  \param p_attr_packet[out] pointer to mqtt subscribe attributes
+ *  \retval mqtt error
  * */
-mqtt_err_t mqtt_unpack_subscribe(
-		const struct mqtt_buf_packet * p_packet,
-		struct mqtt_buf_packet_subscribe * p_packet_subscribe
+int mqtt_unpack_subscribe(
+		const mqtt_buf_packet_t * p_buf_packet,
+		mqtt_attr_packet_t ** pp_attr_packet
 		);
+
 /// @}
 
 
