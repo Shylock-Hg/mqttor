@@ -1,3 +1,5 @@
+CC = gcc
+
 CFLAGS = -std=c99 -Wall -g
 
 DIR_BUILD = ./build
@@ -18,16 +20,16 @@ DEPFILES = $(patsubst %.o, %.d, $(OBJS))
 all : $(DIR_BUILD)/test
 
 $(DIR_BUILD)/test : $(OBJS) output
-	cc $(CFLAGS) -o $@ $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS)
 
 $(DIR_BUILD)/%.o : %.c $(DIR_BUILD)/%.d output
-	cc $(PPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(PPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(DIR_BUILD)/%.d : ;
 .PRECIOUS : $(DIR_BUILD)/%.d
 
 $(DIR_BUILD)/mqtt_log.o : ../toolkit/mqtt_log.c
-	cc $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 #create build directory
 output : 

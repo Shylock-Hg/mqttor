@@ -105,7 +105,6 @@ mqtt_attr_str_t mqtt_buf_str_4_buf(const uint8_t * buf){
 	mqtt_buf_str_t * buf_string = mqtt_buf_new(len_str+MQTT_BUF_STR_MAX_BYTE);
 	assert(buf_string);
 	memcpy(buf_string->buf, buf, len_str+MQTT_BUF_STR_MAX_BYTE);
-	mqtt_log_print_buf(buf_string->buf, buf_string->len);
 	mqtt_attr_str_t string = mqtt_buf_str_decode(buf_string);
 	mqtt_buf_release(buf_string);
 	return string;

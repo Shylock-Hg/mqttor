@@ -93,7 +93,7 @@ void test_packet_segment(void){
 	mqtt_attr_str_t __str = mqtt_buf_str_4_buf(mq_str->buf);
 
 	printf("[info]:decode _str `%s`.\n",_str);
-	mqtt_log_print_buf(mq_str->buf, mq_str->len);
+	mqtt_log_print_buf(LOG_LEVEL_LOG, mq_str->buf, mq_str->len);
 	printf("[info]:decode __str `%s`.\n", __str);
 
 	free(__str);
@@ -276,7 +276,7 @@ void test_packet(void){
 	//attr_connect->payload = mqtt_attr_payload_new(1024);
 	//!< id client
 	mqtt_attr_payload_write_string(attr_connect->payload,"shylock-archlinux");
-	//mqtt_log_print_buf(attr_connect->payload->buf, attr_connect->payload->len_valid);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, attr_connect->payload->buf, attr_connect->payload->len_valid);
 	//!< w_topic
 	mqtt_attr_payload_write_string(attr_connect->payload, "topic/test");
 	//!< w_msg
@@ -299,7 +299,7 @@ void test_packet(void){
 	printf("remaining length = `%d`\n", attr_packet->remaining_length);
 	printf("connect flag = `0x%2x`\n",attr_packet->attr_packet.connect.flag.all);
 	printf("keepalive = `%d`\n", attr_packet->attr_packet.connect.keep_alive);
-	mqtt_log_print_buf(attr_packet->payload->buf,attr_packet->payload->len);
+	mqtt_log_print_buf(LOG_LEVEL_LOG, attr_packet->payload->buf, attr_packet->payload->len);
 
 	//!< don't free in mqtt_pack_connect
 	//mqtt_attr_payload_release(attr_connect->payload); 
@@ -320,7 +320,7 @@ void test_packet(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -369,7 +369,7 @@ void test_packet_connack(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -428,7 +428,7 @@ void test_packet_publish(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -484,7 +484,7 @@ void test_packet_puback(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -540,7 +540,7 @@ void test_packet_pubrec(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -596,7 +596,7 @@ void test_packet_pubrel(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -652,7 +652,7 @@ void test_packet_pubcomp(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -693,7 +693,7 @@ void test_packet_subscribe(void){
 	printf("remaining length = `0x%u`\n", attr_packet->remaining_length);
 	printf("packet identify is `0x%4x`\n", 
 			attr_packet->attr_packet.subscribe.id_packet);
-	mqtt_log_print_buf(attr_packet->payload->buf, attr_packet->payload->len);
+	mqtt_log_print_buf(LOG_LEVEL_LOG, attr_packet->payload->buf, attr_packet->payload->len);
 	
 	mqtt_attr_packet_release(attr_subscribe);
 	mqtt_attr_packet_release(attr_packet);
@@ -713,7 +713,7 @@ void test_packet_subscribe(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -765,7 +765,7 @@ void test_packet_suback(void){
 	printf("remaining length = `0x%u`\n", attr_packet->remaining_length);
 	printf("packet identify is `0x%4x`\n", 
 			attr_packet->attr_packet.suback.id_packet);
-	mqtt_log_print_buf(attr_packet->payload->buf, attr_packet->payload->len);
+	mqtt_log_print_buf(LOG_LEVEL_LOG, attr_packet->payload->buf, attr_packet->payload->len);
 	
 	mqtt_attr_packet_release(attr_suback);
 	mqtt_attr_packet_release(attr_packet);
@@ -785,7 +785,7 @@ void test_packet_suback(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -824,7 +824,7 @@ void test_packet_unsubscribe(void){
 	printf("remaining length = `0x%u`\n", attr_packet->remaining_length);
 	printf("packet identify is `0x%4x`\n", 
 			attr_packet->attr_packet.unsubscribe.id_packet);
-	mqtt_log_print_buf(attr_packet->payload->buf, attr_packet->payload->len);
+	mqtt_log_print_buf(LOG_LEVEL_LOG, attr_packet->payload->buf, attr_packet->payload->len);
 	
 	mqtt_attr_packet_release(attr_unsubscribe);
 	mqtt_attr_packet_release(attr_packet);
@@ -844,7 +844,7 @@ void test_packet_unsubscribe(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -900,7 +900,7 @@ void test_packet_unsuback(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -953,7 +953,7 @@ void test_packet_pingreq(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -1006,7 +1006,7 @@ void test_packet_pingresp(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);
@@ -1059,7 +1059,7 @@ void test_packet_disconnect(void){
 
 	int count = send(sock, buf_packet->buf, buf_packet->len, 0);
 	printf("send connect len `%d`!\n",count);
-	//mqtt_log_print_buf(buf_packet->buf, buf_packet->len);
+	//mqtt_log_print_buf(LOG_LEVEL_LOG, buf_packet->buf, buf_packet->len);
 	close(sock);
 
 	mqtt_buf_release(buf_packet);

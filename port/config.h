@@ -13,6 +13,8 @@
  * */
 #define configENDIAN 0
 
+#define configLOG    1 //!< bool 
+
 /// @}
 
 #ifdef __cplusplus

@@ -11,8 +11,11 @@ The simple mqtt protocol implement.
 ## Project Structure
 
                 core
-              /     \
-             \/     \/
+                  |
+                  | 
+               session
+               |     |
+               |     |
             broker client
       ------------------------
            python wrapper
