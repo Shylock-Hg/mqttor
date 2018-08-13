@@ -44,27 +44,25 @@ void test_packet_pingresp(void);
 void test_packet_disconnect(void);
 
 int main(int argc, char * argv[]){
-	/*
 	test_toolkit();
 	test_packet_segment();
 	test_fixed_header();
 	test_var_header();
 	test_payload();
-	*/
 
-	//test_packet();
-	//test_packet_connack();
-	//test_packet_publish();
-	//test_packet_puback();
-	//test_packet_pubrec();
-	//test_packet_pubrel();
-	//test_packet_pubcomp();
-	//test_packet_subscribe();
-	//test_packet_suback();
-	//test_packet_unsubscribe();
-	//test_packet_unsuback();
-	//test_packet_pingreq();
-	//test_packet_pingresp();
+	test_packet();
+	test_packet_connack();
+	test_packet_publish();
+	test_packet_puback();
+	test_packet_pubrec();
+	test_packet_pubrel();
+	test_packet_pubcomp();
+	test_packet_subscribe();
+	test_packet_suback();
+	test_packet_unsubscribe();
+	test_packet_unsuback();
+	test_packet_pingreq();
+	test_packet_pingresp();
 	test_packet_disconnect();
 
 	return 0;

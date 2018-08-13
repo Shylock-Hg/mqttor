@@ -7,7 +7,10 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#include "../inc/session/mqttor_session.h"
+#include "../../inc/core/mqtt_packet.h"
+#include "../../inc/toolkit/mqtt_log.h"
+
+#include "../../inc/session/mqttor_session.h"
 
 void mqttor_config_deinit(mqttor_config_t * mq_config){
 	assert(mq_config);
@@ -57,7 +60,26 @@ int mqttor_session_on_publish(mqttor_session_t * mq_sess,
 		return err;
 	}
 	
+	mqtt_log_printf(LOG_LEVEL_LOG, "Receive publish message from broker:\n");
+	mqtt_log_print_buf(LOG_LEVEL_LOG, attr_packet->payload->buf, 
+			attr_packet->payload->len);
 
+	mqtt_attr_packet_release(attr_packet);
+
+	return E_NONE;
+}
+
+
+void mqttor_session_deinit(mqttor_session_t * mq_sess){
+	assert(mq_sess);
+
+	mqttor_config_deinit(mq_sess->config);
+
+	mq_sess->on_publish = mqttor_session_on_publish;
+
+	mq_sess->socket = -1;
+
+	mq_sess->id_packet = 0;
 }
 
 mqttor_session_t * mqttor_session_new(void){
@@ -65,7 +87,12 @@ mqttor_session_t * mqttor_session_new(void){
 
 	mq_sess->config = mqttor_config_new();
 	mq_sess->on_publish = mqttor_session_on_publish;
+
 	mq_sess->socket = -1;
+
+	mq_sess->id_packet = 0;
+
+	return mq_sess;
 }
 
 void mqttor_session_release(mqttor_session_t * mq_sess){

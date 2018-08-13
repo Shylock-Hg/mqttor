@@ -16,6 +16,10 @@ typedef enum mqtt_err {
 	E_FORMAT_CHECK = 1,  //!< error format : flag value check fail
 	E_MEM_FAIL     = 2,
 	E_MEM_OUT      = 3,
+	E_NET_SOCK     = 4,  //!< socket create fail
+	E_NET_CONN     = 5,  //!< socket connect fail
+	E_NET_XFER     = 6,  //!< socket transfer fail
+	E_SESS_ACK     = 7,  //!< mqtt ack fail
 } mqtt_err_t;
 
 /*! \brief convert err to coressponding prompt string

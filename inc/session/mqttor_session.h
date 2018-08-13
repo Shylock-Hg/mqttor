@@ -13,10 +13,10 @@
 	
 #include <stdbool.h>
 
-#include "../inc/core/mqtt_packet.h"
+#include "../core/mqtt_packet.h"
 
 enum mqttor_protocol {
-	MQTTOR_V311 = 4;
+	MQTTOR_V311 = 4
 };
 
 enum mqttor_QoS {
@@ -69,6 +69,8 @@ typedef struct mqttor_session {
 	mqttor_config_t * config;
 
 	int socket;
+
+	uint16_t id_packet;  //!< record message id
 
 	//< callback functions
 	int (*on_publish)(struct mqttor_session * mq_sess, 

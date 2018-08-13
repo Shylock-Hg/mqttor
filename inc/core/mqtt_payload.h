@@ -61,7 +61,7 @@ mqtt_buf_t * mqtt_attr_payload_deep2_buf(mqtt_attr_payload_t * payload);
  *  \retval len of string to write or negtive number for error
  * */
 int mqtt_attr_payload_write_string(mqtt_attr_payload_t * payload, 
-		mqtt_attr_str_t string);
+		const char * string);
 /*! \brief write byte to mqtt packet payload |BYTE|
  *  \param packet pointer to mqtt packet
  *  \param byte byte to write

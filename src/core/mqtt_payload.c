@@ -50,7 +50,7 @@ mqtt_buf_t * mqtt_attr_payload_deep2_buf(mqtt_attr_payload_t * payload){
 
 //!< matt packet payload writer
 int mqtt_attr_payload_write_string(mqtt_attr_payload_t * payload, 
-		mqtt_attr_str_t string){
+		const char * string){
 	assert(payload);
 	assert(string);
 
