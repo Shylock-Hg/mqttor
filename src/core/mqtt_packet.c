@@ -891,7 +891,7 @@ int mqtt_pack_subscribe(
 		.bits = {
 			.type   = MQTT_CTL_TYPE_SUBSCRIBE,
 			.DUP    = 0,
-			.QoS    = 0,
+			.QoS    = 1,
 			.RETAIN = 0
 		}
 	};
