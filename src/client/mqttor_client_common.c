@@ -13,6 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+//#include <fcntl.h>
 
 #include "../../inc/toolkit/mqtt_log.h"
 #include "../../inc/core/mqtt_packet.h"
@@ -40,6 +41,9 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 					"Mqttor create socket fail!\n");
 			return -E_NET_SOCK;
 		}
+		
+		//int flags = fcntl(mq_sess->socket , F_GETFL, 0);
+		//fcntl(mq_sess->socket, F_SETFL, flags&~O_NONBLOCK);
 	}
 
 	//< tcp connect
@@ -104,15 +108,18 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	mqtt_attr_packet_release(p_attr_packet);
 
 	//< wait for connack
-	mqtt_buf_t * mq_rece = mqtt_buf_new(4);
-	err = recv(mq_sess->socket, mq_rece->buf, mq_rece->len, 0);
+	mqtt_buf_t * p_buf_connack = mqtt_buf_new(4);
+	err = recv(mq_sess->socket, p_buf_connack->buf, p_buf_connack->len, 
+			MSG_WAITALL);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv connack fail!\n");
 		return -E_NET_XFER;
 	}
+	mqtt_log_print_buf(LOG_LEVEL_LOG, p_buf_connack->buf, 
+			p_buf_connack->len);
 	mqtt_attr_packet_t * p_attr_connack = NULL;
-	err = mqtt_unpack_connack(mq_rece, &p_attr_connack);
-	mqtt_buf_release(mq_rece);
+	err = mqtt_unpack_connack(p_buf_connack, &p_attr_connack);
+	mqtt_buf_release(p_buf_connack);
 	if(err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor unpack connack fail!\n");
 		return err;

@@ -6,7 +6,6 @@ DIR_BUILD = ./build
 
 PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
 
-#SOURCES = $(wildcard *.c)
 SOURCES = src/client/mqttor_client.c \
 	  src/client/mqttor_client_common.c \
 	  ../core/mqtt_fixed_header.c \
@@ -18,12 +17,12 @@ SOURCES = src/client/mqttor_client.c \
 	  ../toolkit/mqtt_log.c
 
 OBJECTS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))
-#OBJECTS = $(addprefix $(DIR_BUILD)/, $(patsubst %%.c, %.o, $(SOURCES)))
 
 TARGET = test
 
 DEPFILES = $(patsubst %.o, %.d, $(OBJECTS))
 
+# set c sources search path
 vpath %.c $(sort $(dir $(SOURCES)))
 
 .PHONY : all clean
@@ -42,11 +41,9 @@ $(DIR_BUILD)/%.o : %.c Makefile | $(DIR_BUILD)
 $(DIR_BUILD)/%.d : ;
 .PRECIOUS : $(DIR_BUILD)/%.d
 
-#create build directory
 $(DIR_BUILD) : 
 	mkdir -p $(DIR_BUILD)
 
-#clean outputs
 clean : 
 	rm -rf $(DIR_BUILD)
 

@@ -27,7 +27,7 @@ void mqttor_config_deinit(mqttor_config_t * mq_config){
 	mq_config->user = NULL;  //!< unkown user name
 	mq_config->will_message = NULL;  //!< unkown will message
 	mq_config->will_qos = MQTTOR_QoS_MONCE;  //!< will most once
-	mq_config->will_retain = true;  //!< will broker saving
+	mq_config->will_retain = false;//true;  //!< will broker saving
 	mq_config->will_topic = NULL;  //!< will topic
 }
 
