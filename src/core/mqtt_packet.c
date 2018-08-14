@@ -340,12 +340,14 @@ int mqtt_pack_publish(
 
 	//< varialbe header
 	//< packet identify
-	mqtt_buf_uint16_t * buf_uint16 = mqtt_buf_uint16_encode(
-			p_attr_packet->attr_packet.publish.id_packet);
-	assert(buf_uint16);
-	if(NULL != buf_uint16){
-		mqtt_buffer_array[i++] = buf_uint16;
-		remaining_length += buf_uint16->len;
+	if(0 < p_attr_packet->hdr.bits.QoS){
+		mqtt_buf_uint16_t * buf_uint16 = mqtt_buf_uint16_encode(
+				p_attr_packet->attr_packet.publish.id_packet);
+		assert(buf_uint16);
+		if(NULL != buf_uint16){
+			mqtt_buffer_array[i++] = buf_uint16;
+			remaining_length += buf_uint16->len;
+		}
 	}
 	//< topic name
 	mqtt_buf_str_t * buf_topic = mqtt_buf_str_encode(
@@ -429,13 +431,16 @@ int mqtt_unpack_publish(
 	attr_topic_name[len_str] = '\0';
 	offset += MQTT_BUF_STR_MAX_BYTE+len_str;
 	//< packet identify
-	mqtt_buf_t * buf_id_packet = mqtt_buf_new(sizeof(mqtt_attr_uint16_t));
-	memcpy(buf_id_packet->buf, p_buf_packet->buf+offset, 
-			sizeof(mqtt_attr_uint16_t));
-	mqtt_attr_uint16_t attr_id_packet = mqtt_buf_uint16_decode(
-			buf_id_packet);
-	offset += sizeof(mqtt_attr_uint16_t);
-	mqtt_buf_release(buf_id_packet);
+	mqtt_attr_uint16_t attr_id_packet = 0;
+	if(0 < attr_hdr.bits.QoS){
+		mqtt_buf_t * buf_id_packet = mqtt_buf_new(sizeof(mqtt_attr_uint16_t));
+		memcpy(buf_id_packet->buf, p_buf_packet->buf+offset, 
+				sizeof(mqtt_attr_uint16_t));
+		attr_id_packet = mqtt_buf_uint16_decode(
+				buf_id_packet);
+		offset += sizeof(mqtt_attr_uint16_t);
+		mqtt_buf_release(buf_id_packet);
+	}
 
 	//< payload
 	*pp_attr_packet = mqtt_attr_packet_new(
