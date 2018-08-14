@@ -30,7 +30,7 @@ The simple mqtt protocol implement.
          |                        |
   variable header          variable header
          |                        |
-    fixed header  \---tcp\--- fixed header
+    fixed header  \-\-\-tcp\-\-\- fixed header
                       
 
 ## Demo 
