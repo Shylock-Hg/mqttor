@@ -1,0 +1,9 @@
+language : c
+compiler : gcc
+os : linux
+
+script :
+        - make -C src/core
+        - ./src/core/build/test
+        - make -C src/client
+        - ./src/client/build/test
