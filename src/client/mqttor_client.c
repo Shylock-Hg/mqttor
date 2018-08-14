@@ -20,8 +20,6 @@
 
 int main(int argc, char * argv[]){
 
-	mqtt_log_printf(LOG_LEVEL_LOG, "Test\n");
-
 	mqttor_session_t * mq_sess = mqttor_session_new();
 	assert(mq_sess);
 
@@ -41,7 +39,7 @@ int main(int argc, char * argv[]){
 	mqtt_attr_payload_t * payload = mqtt_attr_payload_new(1024);
 	mqtt_attr_payload_write_string(payload, "hello world!");
 	err = mqttor_client_publish(mq_sess, "test/topic", payload, 
-			MQTTOR_QoS_MONCE, true);
+			MQTTOR_QoS_RESERVED, true);
 	mqtt_attr_payload_release(payload);
 	if(err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client publish fail!\n"

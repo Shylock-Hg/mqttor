@@ -13,7 +13,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-//#include <fcntl.h>
 
 #include "../../inc/toolkit/mqtt_log.h"
 #include "../../inc/core/mqtt_packet.h"
@@ -42,8 +41,6 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 			return -E_NET_SOCK;
 		}
 		
-		//int flags = fcntl(mq_sess->socket , F_GETFL, 0);
-		//fcntl(mq_sess->socket, F_SETFL, flags&~O_NONBLOCK);
 	}
 
 	//< tcp connect
@@ -93,7 +90,7 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 
 	err = mqtt_pack_connect(p_attr_packet, 
 			&p_buf_packet);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor packet connect fail!\n");
 		return err;
 	}
@@ -115,12 +112,10 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv connack fail!\n");
 		return -E_NET_XFER;
 	}
-	mqtt_log_print_buf(LOG_LEVEL_LOG, p_buf_connack->buf, 
-			p_buf_connack->len);
 	mqtt_attr_packet_t * p_attr_connack = NULL;
 	err = mqtt_unpack_connack(p_buf_connack, &p_attr_connack);
 	mqtt_buf_release(p_buf_connack);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor unpack connack fail!\n");
 		return err;
 	}
@@ -147,13 +142,6 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	
 	int err = 0;
 
-	/*
-	struct sockaddr_in addr;
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = inet_addr(host);
-	*/
 
 	//< mqtt disconect
 	mqtt_attr_packet_t * p_attr_packet = mqtt_attr_packet_new(0);
@@ -161,13 +149,13 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	mqtt_buf_packet_t * p_buf_packet = NULL; 
 	err = mqtt_pack_disconnect(p_attr_packet,
 			&p_buf_packet);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, 
 				"Mqttor packet disconnect fail!\n");
 		return err;
 	}
 	err = send(mq_sess->socket, p_buf_packet->buf, p_buf_packet->len, 0);
-	if(err != p_buf_packet->len){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, 
 				"Mqttor send disconnect packet fail!\n");
 		return -E_NET_CONN;
@@ -179,7 +167,7 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	close(mq_sess->socket);
 	mq_sess->socket = -1;
 
-	return E_NONE;
+	return err;
 }
 
 int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic, 
@@ -197,6 +185,11 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 		return -E_NET_SOCK;
 	}
 
+	//< check QoS
+	qos = MQTTOR_QoS_MONCE <= qos && qos < MQTTOR_QoS_RESERVED ? 
+		qos : 
+		mq_sess->config->qos;
+
 	//!< mqtt publish
 	mqtt_attr_packet_t * p_attr_publish = mqtt_attr_packet_new(
 			payload->len);
@@ -204,10 +197,7 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 	p_attr_publish->hdr.bits.type = MQTT_CTL_TYPE_PUBLISH;
 	p_attr_publish->hdr.bits.DUP = false;
 	p_attr_publish->hdr.bits.RETAIN = retain;
-	p_attr_publish->hdr.bits.QoS = 
-		MQTTOR_QoS_MONCE <= qos && qos < MQTTOR_QoS_RESERVED ? 
-		qos : 
-		mq_sess->config->qos;
+	p_attr_publish->hdr.bits.QoS = qos;
 	p_attr_publish->attr_packet.publish.id_packet = mq_sess->id_packet++;
 	p_attr_publish->attr_packet.publish.topic_name = topic;
 	mqtt_attr_payload_t * _payload = mqtt_attr_payload_new(payload->len);
@@ -217,14 +207,14 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 	p_attr_publish->payload = _payload;
 	mqtt_buf_packet_t * p_buf_publish = NULL;
 	err = mqtt_pack_publish(p_attr_publish, &p_buf_publish);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor pack publish fail!\n");
 		return err;
 	}
 	mqtt_attr_packet_release(p_attr_publish);
 	
 	err = send(mq_sess->socket, p_buf_publish->buf, p_buf_publish->len, 0);
-	if(err != p_buf_publish->len){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, 
 				"Mqttor send disconnect packet fail!\n");
 		return -E_NET_CONN;
@@ -233,109 +223,128 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 
 	//!< handle puback
 	mqtt_buf_packet_t * p_buf_puback = mqtt_buf_new(4);
-	mqtt_attr_packet_t * p_attr_puback = mqtt_attr_packet_new(0);
+	mqtt_attr_packet_t * p_attr_puback = NULL;//mqtt_attr_packet_new(0);
 	switch(qos){
 		case MQTTOR_QoS_MONCE:
 			//< no puback
 			err = E_NONE;
+			mqtt_log_printf(LOG_LEVEL_LOG, 
+					"Mqttor publish ok!\n");
 			break;
 		case MQTTOR_QoS_LONCE:
 			//< puback
 			err = recv(mq_sess->socket, p_buf_puback->buf, 
 					p_buf_puback->len, 0);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
-						"Mqttor recv puback fail!=n");
-				return err;
+						"Mqttor recv puback fail!\n");
+				break;
 			}
 			err = mqtt_unpack_puback(p_buf_puback, &p_attr_puback);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor unpack puback fail!\n");
-				return err;
+				break;
 			}
 			if(MQTT_CTL_TYPE_PUBACK == p_attr_puback->hdr.bits.type){
 				mqtt_log_printf(LOG_LEVEL_LOG, 
 						"Mqttor publish ok!\n");
-				return E_NONE;
+				err = E_NONE;
 			}else{
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor publish fail!\n");
-				return E_NET_CONN;
+				err = -E_NET_CONN;
+				break;
 			}
 			break;
 		case MQTTOR_QoS_EONCE:
 			//< pubrec
 			err = recv(mq_sess->socket, p_buf_puback->buf, 
 					p_buf_puback->len, 0);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor recv pubrec fail!=n");
-				return err;
+				break;
 			}
 			err = mqtt_unpack_pubrec(p_buf_puback, &p_attr_puback);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
-						"Mqttor unpack puback fail!\n");
-				return err;
+						"Mqttor unpack pubrec fail!\n");
+				break;
 			}
 			if(MQTT_CTL_TYPE_PUBREC == p_attr_puback->hdr.bits.type){
 				mqtt_log_printf(LOG_LEVEL_LOG, 
-						"Mqttor publish ok!\n");
-				return E_NONE;
+						"Mqttor publish receive ok!\n");
 			}else{
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor publish fail!\n");
-				return E_NET_CONN;
+				err = -E_NET_CONN;
+				break;
 			}
 			//< pubrel
 			p_attr_puback->hdr.bits.type = MQTT_CTL_TYPE_PUBREL;
+			mqtt_buf_release(p_buf_puback);
+			p_buf_puback;
 			err = mqtt_pack_pubrel(p_attr_puback, &p_buf_puback);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor pack pubrel fail!\nn");
-				return err;
+				break;
 			}
 			err = send(mq_sess->socket, p_buf_puback->buf, 
 					p_buf_puback->len, 0);
 			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor send pubrel fail!\n");
-				return err;
+				err = -E_NET_XFER;
+				break;
 			}
 			//< pubcomp
 			err = recv(mq_sess->socket, p_buf_puback->buf, 
 					p_buf_puback->len, 0);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor recv pubcomp fail!=n");
-				return err;
+				err =  -E_NET_XFER;
+				break;
 			}
+			mqtt_attr_packet_release(p_attr_puback);
+			p_attr_puback = NULL;
 			err = mqtt_unpack_pubcomp(p_buf_puback, &p_attr_puback);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor unpack pubcomp fail!\n");
-				return err;
+				break;
 			}
 			if(MQTT_CTL_TYPE_PUBCOMP == p_attr_puback->hdr.bits.type){
 				mqtt_log_printf(LOG_LEVEL_LOG, 
 						"Mqttor publish ok!\n");
-				return E_NONE;
+				err = E_NONE;
 			}else{
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor publish fail!\n");
-				return E_NET_CONN;
+				err = -E_SESS_ACK;
+				break;
 			}
 			
 			break;
 		default:
 			mqtt_log_printf(LOG_LEVEL_ERR, 
 					"Mqttor unkown qos `%d`!\n", qos);
+			err = -E_SESS_ACK;
 
 	}
-	mqtt_attr_packet_release(p_attr_puback);
-	mqtt_buf_release(p_buf_puback);
 	
+	
+	if(p_attr_puback){
+		mqtt_attr_packet_release(p_attr_puback);
+		p_attr_puback = NULL;
+	}
+	if(p_buf_puback){
+		mqtt_buf_release(p_buf_puback);
+		p_buf_puback = NULL;
+	}
+
 	return err;
 }
 
@@ -364,7 +373,7 @@ int mqttor_client_subscribe(mqttor_session_t * mq_sess, const char * sub,
 	mqtt_buf_packet_t * p_buf_subscribe = NULL;
 	err = mqtt_pack_subscribe(p_attr_subscribe, &p_buf_subscribe);
 	mqtt_attr_packet_release(p_attr_subscribe);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor pack subscribe fail!\n");
 		return err;
 	}
@@ -390,7 +399,7 @@ int mqttor_client_subscribe(mqttor_session_t * mq_sess, const char * sub,
 			sizeof(uint8_t));
 	err = mqtt_unpack_suback(p_buf_suback, &p_attr_suback);
 	mqtt_buf_release(p_buf_suback);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor unpack suback fail!\n");
 		return err;
 	}
@@ -424,7 +433,7 @@ int mqttor_client_unsubscribe(mqttor_session_t * mq_sess, const char * sub){
 	mqtt_attr_payload_write_string(p_attr_unsubscribe->payload, sub);
 	mqtt_buf_packet_t * p_buf_unsubscribe = NULL;
 	err = mqtt_pack_unsubscribe(p_attr_unsubscribe, &p_buf_unsubscribe);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, 
 				"Mqttor pack unsubscribe fail!\n");
 		return err;
@@ -443,13 +452,13 @@ int mqttor_client_unsubscribe(mqttor_session_t * mq_sess, const char * sub){
 	mqtt_buf_t * p_buf_unsuback =  mqtt_buf_new(4);
 	err = recv(mq_sess->socket, p_buf_unsuback->buf, p_buf_unsuback->len, 
 			0);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv unsuback fail!\n");
 		return -E_NET_XFER;
 	}
 	mqtt_attr_packet_t *  p_attr_unsuback = NULL;
 	err = mqtt_unpack_unsuback(p_buf_unsuback, &p_attr_unsuback);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor unpack unsuback fail!\n");
 		return err;
 	}

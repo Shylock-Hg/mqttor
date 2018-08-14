@@ -44,7 +44,7 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 /*! \brief subscribe to broker
  *  \param mq_sess mqttor session
  *  \param sub subscribe pattern
- *  \param qos QoS of subscribe , invalid QoS will be replaced by default QoS in config
+ *  \param qos the requested QoS of subscribe
  *  \retval mqtt error
  * */
 int mqttor_client_subscribe(mqttor_session_t * mq_sess, const char * sub, 
