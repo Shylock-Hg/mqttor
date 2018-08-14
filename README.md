@@ -1,6 +1,8 @@
 The simple mqtt protocol implement.
 ===================================
 
+[![Build Status](https://travis-ci.org/Shylock-Hg/mqttor.svg?branch=master)](https://travis-ci.org/Shylock-Hg/mqttor)
+
 ## Feature 
 
   - mqtt specification v3.1.1
@@ -28,7 +30,7 @@ The simple mqtt protocol implement.
          |                        |
   variable header          variable header
          |                        |
-    fixed header  ---tcp---  fixed header
+    fixed header  \---tcp\--- fixed header
                       
 
 ## Demo 
