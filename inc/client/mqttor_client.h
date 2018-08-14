@@ -11,7 +11,7 @@
 	extern "C" {
 #endif
 
-#define MQTTOR_BROKER_IP "127.0.0.1"
+#define MQTTOR_BROKER_IP "37.187.106.16"//"127.0.0.1"
 #define MQTTOR_BROKER_PORT 1883
 
 #define MQTTOR_CLIENT_ID "shylock-archlinux"
