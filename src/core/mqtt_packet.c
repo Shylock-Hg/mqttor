@@ -675,7 +675,7 @@ int mqtt_pack_pubrel(
 		.bits = {
 			.type   = MQTT_CTL_TYPE_PUBREL,
 			.DUP    = 0,
-			.QoS    = 0,
+			.QoS    = 1,
 			.RETAIN = 0
 		}
 	};
@@ -1115,7 +1115,7 @@ int mqtt_pack_unsubscribe(
 		.bits = {
 			.type   = MQTT_CTL_TYPE_UNSUBSCRIBE,
 			.DUP    = 0,
-			.QoS    = 0,
+			.QoS    = 1,
 			.RETAIN = 0
 		}
 	};
