@@ -112,7 +112,7 @@ typedef char* mqtt_attr_str_t;
  *  \param str c-string
  *  \retval pointer to mqtt string
  * */
-struct mqtt_buf_str * mqtt_buf_str_encode(const mqtt_attr_str_t str);
+struct mqtt_buf_str * mqtt_buf_str_encode(const char * str);
 /*! \brief decode mqtt string to c-string
  *  \parma code mqtt string .buf|LEN_MSB|LEN_LSB|...| .len
  *  \retval c-string

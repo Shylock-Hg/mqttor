@@ -58,7 +58,7 @@ void mqtt_buf_release(struct mqtt_buf * mq_buf){
 
 #define MQTT_BUF_STR_LEN_CHECK(len) assert(MQTT_BUF_STR_MAX_LEN >= len)
 
-struct mqtt_buf_str * mqtt_buf_str_encode(const mqtt_attr_str_t str){
+struct mqtt_buf_str * mqtt_buf_str_encode(const char * str){
 
 	if(NULL == str)
 		return NULL;
