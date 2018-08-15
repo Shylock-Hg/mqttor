@@ -59,7 +59,7 @@ static int mqttor_client_argparser(mqttor_session_t * mq_sess, int argc,
 	char opt = '\0';
 
 	if(0 == strcmp("publish", argv[1])){  //!< publish
-		while(-1 != (opt = getopt(argc-1, argv+1, "t:m:q:i:p:h"))){
+		while(-1 != (opt = getopt(argc-1, argv+1, "t:m:q:i:p:"))){
 			//mqtt_log_printf(LOG_LEVEL_LOG, "Option is `%c`!\n", opt);
 			switch(opt){
 				case 't':  //!< topic
@@ -80,9 +80,6 @@ static int mqttor_client_argparser(mqttor_session_t * mq_sess, int argc,
 					//mq_sess->config->broker_port = atoi(optarg);
 					port = atoi(optarg);
 					break;
-				case 'h':  //!< help
-					return 0;
-					break;
 				default:
 					mqtt_log_printf(LOG_LEVEL_WARN, 
 							"Unkown option `-%c`", 
@@ -91,8 +88,34 @@ static int mqttor_client_argparser(mqttor_session_t * mq_sess, int argc,
 		}
 		return 1;  //!< publish
 	}else if(0 == strcmp("subscribe", argv[1])){  //!< subscribe
+		while(-1 != (opt = getopt(argc-1, argv+1, "t:q:i:p:"))){
+			//mqtt_log_printf(LOG_LEVEL_LOG, "Option is `%c`!\n", opt);
+			switch(opt){
+				case 't':  //!< topic
+					topic = optarg;
+					break;
+				case 'q':  //!< QoS
+					//mq_sess->config->qos = atoi(optarg);
+					qos = atoi(optarg);
+					break;
+				case 'i':  //!< broker ip
+					//mq_sess->config->broker_ip = optarg;
+					host = optarg;
+					break;
+				case 'p':  //!< broker port
+					//mq_sess->config->broker_port = atoi(optarg);
+					port = atoi(optarg);
+					break;
+				default:
+					mqtt_log_printf(LOG_LEVEL_WARN, 
+							"Unkown option `-%c`", 
+							opt);
+			}
+		}
 	
 		return 2;  //!< subscribe
+	}else if(0 == strcmp("-h", argv[1])){  //!< help
+		return 0;  //!< help
 	}else{
 		return -E_INVAL;
 	}
@@ -121,10 +144,10 @@ int main(int argc, char * argv[]){
 					qos/*mq_sess->config->qos*/);
 			mqtt_log_printf(LOG_LEVEL_LOG, 
 					"Publish host is `%s`\n", 
-					mq_sess->config->broker_ip);
+					host/*mq_sess->config->broker_ip*/);
 			mqtt_log_printf(LOG_LEVEL_LOG, 
 					"Publish port is `%d`\n", 
-					mq_sess->config->broker_port);
+					port/*mq_sess->config->broker_port*/);
 #endif
 
 			//< connect
@@ -155,6 +178,17 @@ int main(int argc, char * argv[]){
 
 			break;
 		case 2:  //!< subscribe
+			mqtt_log_printf(LOG_LEVEL_LOG, 
+					"Subscribe topic is `%s`\n", topic);
+			mqtt_log_printf(LOG_LEVEL_LOG, "Subscribe qos is `%d`\n", 
+					qos/*mq_sess->config->qos*/);
+			mqtt_log_printf(LOG_LEVEL_LOG, 
+					"Subscribe host is `%s`\n", 
+					host);
+			mqtt_log_printf(LOG_LEVEL_LOG, 
+					"Subscribe port is `%d`\n", 
+					port);
+			
 			break;
 		default:
 			mqtt_log_printf(LOG_LEVEL_LOG, 
