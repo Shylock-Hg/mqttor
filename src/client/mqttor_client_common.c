@@ -22,15 +22,28 @@
 int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host, 
 		int port){
 	assert(mq_sess);
-	assert(host);
+	//assert(host);
+	//assert(port);
+	assert((host && port > 0) || (!host && port < 0));
 
 	int err = 0;
+
+	mq_sess->config->broker_ip = host ? 
+		host : 
+		mq_sess->config->broker_ip;
+	mq_sess->config->broker_port = port > 0 ? 
+		port : 
+		mq_sess->config->broker_port;
+
+	mqtt_log_printf(LOG_LEVEL_LOG, "Connect to (%s:%d)!\n", 
+			mq_sess->config->broker_ip, 
+			mq_sess->config->broker_port);
 
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = inet_addr(host);
+	addr.sin_port = htons(mq_sess->config->broker_port);
+	addr.sin_addr.s_addr = inet_addr(mq_sess->config->broker_ip);
 
 	//< initialize socket
 	if(0 > mq_sess->socket){  //!< invalid socket
@@ -284,7 +297,6 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 			//< pubrel
 			p_attr_puback->hdr.bits.type = MQTT_CTL_TYPE_PUBREL;
 			mqtt_buf_release(p_buf_puback);
-			p_buf_puback;
 			err = mqtt_pack_pubrel(p_attr_puback, &p_buf_puback);
 			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 

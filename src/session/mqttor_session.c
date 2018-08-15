@@ -12,15 +12,25 @@
 
 #include "../../inc/session/mqttor_session.h"
 
+
 void mqttor_config_deinit(mqttor_config_t * mq_config){
+
+	static const char * MQTTOR_BROKER_IP = "37.187.106.16";//"127.0.0.1"
+	static const int MQTTOR_BROKER_PORT  = 1883;
+
+	static const char * MQTTOR_CLIENT_ID = "shylock-archlinux";
+
 	assert(mq_config);
 
 	mq_config->DUP = false;  //!< not resent
 	mq_config->RETAIN = true;   //!< broker saving
 	mq_config->qos = MQTTOR_QoS_MONCE;  //!< most once
 
+	mq_config->broker_ip = MQTTOR_BROKER_IP;
+	mq_config->broker_port = MQTTOR_BROKER_PORT;
+
 	mq_config->clean_session = true;  //!< new session
-	mq_config->id_client = NULL;  //!< unknow client identifier
+	mq_config->id_client = MQTTOR_CLIENT_ID;  //!< unknow client identifier
 	mq_config->keep_alive = 32;  //!< 32 seconds keep alive
 	mq_config->protocol = MQTTOR_V311;  //!< mqtt version 3.1.1
 	mq_config->pwd = NULL;  //!< unknown password

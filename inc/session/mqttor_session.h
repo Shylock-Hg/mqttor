@@ -31,20 +31,22 @@ enum mqttor_QoS {
 typedef struct mqttor_config {
 	/* for client */
 	enum mqttor_protocol protocol; //!< connect
-	char * user;  //!< connect
-	char * pwd;  //!< connect
+	const char * user;  //!< connect
+	const char * pwd;  //!< connect
 	bool will_retain;  //!< connect
 	enum mqttor_QoS will_qos;  //!< connect
 	bool clean_session;  //!< connect
 	uint16_t keep_alive;  //!< connect
-	char * id_client;  //!< connect
-	char * will_topic;  //!< connect
-	char * will_message;  //!< connect
+	const char * id_client;  //!< connect
+	const char * will_topic;  //!< connect
+	const char * will_message;  //!< connect
+	/* for client */
+	const char * broker_ip;  //!< connect
+	int broker_port;  //!< connect
 	/* for client */
 	bool DUP;  //!< publish
 	enum mqttor_QoS qos;  //!< publish
 	bool RETAIN;  //!< publish
-
 
 } mqttor_config_t;
 

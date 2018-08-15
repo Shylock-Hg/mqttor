@@ -12,14 +12,15 @@
 ///! \defgroup mqtt_err mqtt error definition
 ///  @{
 typedef enum mqtt_err {
-	E_NONE         = 0,  //!< error : none error
-	E_FORMAT_CHECK = 1,  //!< error format : flag value check fail
-	E_MEM_FAIL     = 2,
-	E_MEM_OUT      = 3,
-	E_NET_SOCK     = 4,  //!< socket create fail
-	E_NET_CONN     = 5,  //!< socket connect fail
-	E_NET_XFER     = 6,  //!< socket transfer fail
-	E_SESS_ACK     = 7,  //!< mqtt ack fail
+	E_NONE         ,  //!< error : none error
+	E_FORMAT_CHECK ,  //!< error format : flag value check fail
+	E_MEM_FAIL     ,
+	E_MEM_OUT      ,
+	E_NET_SOCK     ,  //!< socket create fail
+	E_NET_CONN     ,  //!< socket connect fail
+	E_NET_XFER     ,  //!< socket transfer fail
+	E_SESS_ACK     ,  //!< mqtt ack fail
+	E_INVAL        ,  //!< invalid value
 } mqtt_err_t;
 
 /*! \brief convert err to coressponding prompt string
