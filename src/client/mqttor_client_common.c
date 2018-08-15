@@ -487,3 +487,73 @@ int mqttor_client_unsubscribe(mqttor_session_t * mq_sess, const char * sub){
 	return err;
 }
 
+int mqttor_client_pingreq(mqttor_session_t * mq_sess){
+	assert(mq_sess);
+
+	if(0 > mq_sess->socket){
+		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor invalid socket!\n");
+		return -E_NET_SOCK;
+	}
+
+	int err = 0;
+
+	//< send pingreq
+	mqtt_attr_packet_t * p_attr_pingreq = mqtt_attr_packet_new(0);
+	mqtt_buf_packet_t * p_buf_pingreq = NULL;
+	assert(p_attr_pingreq);
+	p_attr_pingreq->hdr.bits.type = MQTT_CTL_TYPE_PINGREQ;
+	err = mqtt_pack_pingreq(p_attr_pingreq, &p_buf_pingreq);
+	mqtt_attr_packet_release(p_attr_pingreq);
+	p_attr_pingreq = NULL;
+	assert(p_buf_pingreq);
+	if(0 > err){
+		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client pack pingreq fail!\n");
+		mqtt_attr_packet_release(p_attr_pingreq);
+		if(p_buf_pingreq){
+			mqtt_buf_release(p_buf_pingreq);
+		}
+		return err;
+	}
+	err = send(mq_sess->socket, p_buf_pingreq->buf, p_buf_pingreq->len, 0);
+	if(0 > err){
+		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client send pingreq fail!\n");
+		mqtt_attr_packet_release(p_attr_pingreq);
+		if(p_buf_pingreq){
+			mqtt_buf_release(p_buf_pingreq);
+		}
+		return -E_NET_XFER;
+	}
+	mqtt_buf_release(p_buf_pingreq);
+	p_buf_pingreq = NULL;
+
+	//< wait pingresp
+	mqtt_buf_packet_t * p_buf_pingresp = mqtt_buf_new(2);
+	mqtt_attr_packet_t * p_attr_pingresp = NULL;
+	assert(p_buf_pingresp);
+	err = recv(mq_sess->socket, p_buf_pingresp->buf, p_buf_pingresp->len, 0);
+	if(0 > err){
+		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client recv pingresp fail!\n");
+		mqtt_buf_release(p_buf_pingresp);
+		return -E_NET_XFER;
+	}
+	err = mqtt_unpack_pingresp(p_buf_pingresp, &p_attr_pingresp);
+	mqtt_buf_release(p_buf_pingresp);
+	p_buf_pingresp = NULL;
+	if(0 > err){
+		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client unpack pingresp fail!\n");
+		mqtt_buf_release(p_buf_pingresp);
+		if(p_attr_pingresp){
+			mqtt_attr_packet_release(p_attr_pingresp);
+		}
+		return err;
+	}
+	if(MQTT_CTL_TYPE_PINGRESP == p_attr_pingresp->hdr.bits.type){
+		err = E_NONE;
+	}else{
+		err = -E_SESS_ACK;
+	}
+	mqtt_attr_packet_release(p_attr_pingresp);
+	p_attr_pingresp = NULL;
+	return err;
+}
+

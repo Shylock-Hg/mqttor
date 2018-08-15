@@ -31,7 +31,7 @@ void mqttor_config_deinit(mqttor_config_t * mq_config){
 
 	mq_config->clean_session = true;  //!< new session
 	mq_config->id_client = MQTTOR_CLIENT_ID;  //!< unknow client identifier
-	mq_config->keep_alive = 32;  //!< 32 seconds keep alive
+	mq_config->keep_alive = 1024;//32;  //!< 32 seconds keep alive
 	mq_config->protocol = MQTTOR_V311;  //!< mqtt version 3.1.1
 	mq_config->pwd = NULL;  //!< unknown password
 	mq_config->user = NULL;  //!< unkown user name

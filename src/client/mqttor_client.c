@@ -14,8 +14,14 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <stdbool.h>
 
-//#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 #include <getopt.h>
 
 #include "../../inc/client/mqttor_client_common.h"
@@ -38,6 +44,19 @@ static void print_usage(void){
 	printf("\tmqttor_client publish [-t topic] [-m message] [-q QoS] ");
 	printf("[-i host] [-p port]\n");
 	printf("\tmqttor_client subscribe [-t topic] [-q requested_QoS]\n");
+}
+
+static bool runcond = true;
+
+/*  \brief SIGINT handler
+ *  \param signum signal number
+ * */
+void sighandler(int signum){
+	if(SIGINT == signum){
+		//mqtt_log_printf(LOG_LEVEL_LOG, "Sigint\n");
+		fflush(stdout);
+		runcond = false;
+	}
 }
 
 /*! \brief parse mqttor client command line parameter
@@ -178,6 +197,7 @@ int main(int argc, char * argv[]){
 
 			break;
 		case 2:  //!< subscribe
+#if 0
 			mqtt_log_printf(LOG_LEVEL_LOG, 
 					"Subscribe topic is `%s`\n", topic);
 			mqtt_log_printf(LOG_LEVEL_LOG, "Subscribe qos is `%d`\n", 
@@ -188,7 +208,57 @@ int main(int argc, char * argv[]){
 			mqtt_log_printf(LOG_LEVEL_LOG, 
 					"Subscribe port is `%d`\n", 
 					port);
+#endif
+			//< SIGINT
+			signal(SIGINT, sighandler);
+
+			//< connect
+			err = mqttor_client_connect(mq_sess, 
+					host, port);
+			if(err){
+				mqtt_log_printf(LOG_LEVEL_ERR, 
+						"Mqttor client connect to broker (%s,%d) fail!\n",
+						host/*MQTTOR_BROKER_IP*/, 
+						port/*MQTTOR_BROKER_PORT*/);
+				return err;
+			}
+
+			//< subscribe
+			err = mqttor_client_subscribe(mq_sess, topic, qos);
+			if(err){
+				mqtt_log_printf(LOG_LEVEL_ERR, 
+						"Mqttor client subscribe `%s` fail!\n", topic);
+			}
+
+			//< handle publish from boker
+			mqtt_buf_t * buf_publish = mqtt_buf_new(1024);
+			uint16_t seconds = 0;
+			assert(buf_publish);
+			while(runcond){
+				err = recv(mq_sess->socket, buf_publish->buf, buf_publish->len,
+						MSG_DONTWAIT);
+				if(0 < err){
+					err = mq_sess->on_publish(mq_sess, buf_publish);
+				}
+
+				sleep(1);
+				seconds++;
+				//< send pingreq
+				if(seconds > mq_sess->config->keep_alive/2){
+					seconds = 0;
+					err = mqttor_client_pingreq(mq_sess);
+					if(0 > err){
+						mqtt_log_printf(LOG_LEVEL_WARN, 
+								"Mqttor client pingreq fail!\n");
+					}
+				
+				}
+			}
+			mqtt_buf_release(buf_publish);
 			
+			//< disconnect
+			//mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client disconnect!\n");
+			mqttor_client_disconnect(mq_sess);
 			break;
 		default:
 			mqtt_log_printf(LOG_LEVEL_LOG, 

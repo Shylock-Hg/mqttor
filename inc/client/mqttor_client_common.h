@@ -57,6 +57,12 @@ int mqttor_client_subscribe(mqttor_session_t * mq_sess, const char * sub,
  * */
 int mqttor_client_unsubscribe(mqttor_session_t * mq_sess, const char * sub);
 
+/*! \brief send ping request and handle ping rasponse
+ *  \param mq_sess mqttor session
+ *  \retval mqtt error
+ * */
+int mqttor_client_pingreq(mqttor_session_t * mq_sess);
+
 #ifdef __cplusplus
 	}
 #endif
