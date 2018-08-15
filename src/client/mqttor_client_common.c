@@ -28,6 +28,7 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 
 	int err = 0;
 
+	/*
 	mq_sess->config->broker_ip = host ? 
 		host : 
 		mq_sess->config->broker_ip;
@@ -38,12 +39,13 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	mqtt_log_printf(LOG_LEVEL_LOG, "Connect to (%s:%d)!\n", 
 			mq_sess->config->broker_ip, 
 			mq_sess->config->broker_port);
+	*/
 
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(mq_sess->config->broker_port);
-	addr.sin_addr.s_addr = inet_addr(mq_sess->config->broker_ip);
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = inet_addr(host);
 
 	//< initialize socket
 	if(0 > mq_sess->socket){  //!< invalid socket
@@ -183,7 +185,7 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	return err;
 }
 
-int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic, 
+int mqttor_client_publish(mqttor_session_t * mq_sess, const char * topic, 
 		mqtt_attr_payload_t * payload,
 		enum mqttor_QoS qos,
 		bool retain){

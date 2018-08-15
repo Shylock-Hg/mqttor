@@ -15,8 +15,8 @@
 
 void mqttor_config_deinit(mqttor_config_t * mq_config){
 
-	static const char * MQTTOR_BROKER_IP = "37.187.106.16";//"127.0.0.1"
-	static const int MQTTOR_BROKER_PORT  = 1883;
+	//static const char * MQTTOR_BROKER_IP = "37.187.106.16";//"127.0.0.1"
+	//static const int MQTTOR_BROKER_PORT  = 1883;
 
 	static const char * MQTTOR_CLIENT_ID = "shylock-archlinux";
 
@@ -26,8 +26,8 @@ void mqttor_config_deinit(mqttor_config_t * mq_config){
 	mq_config->RETAIN = true;   //!< broker saving
 	mq_config->qos = MQTTOR_QoS_MONCE;  //!< most once
 
-	mq_config->broker_ip = MQTTOR_BROKER_IP;
-	mq_config->broker_port = MQTTOR_BROKER_PORT;
+	//mq_config->broker_ip = MQTTOR_BROKER_IP;
+	//mq_config->broker_port = MQTTOR_BROKER_PORT;
 
 	mq_config->clean_session = true;  //!< new session
 	mq_config->id_client = MQTTOR_CLIENT_ID;  //!< unknow client identifier

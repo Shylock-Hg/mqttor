@@ -25,7 +25,12 @@
 
 static const char * topic = "test/topic";
 static const char * message = "hello world!";
+
 static enum mqttor_QoS qos = MQTTOR_QoS_MONCE;
+
+/* eclipse.org:1883 -- mqtt with tcp */
+static const char * host = "37.187.106.16";
+static int port  = 1883;
 
 static void print_usage(void){
 	printf("Mqttor client usage:\n");
@@ -68,10 +73,12 @@ static int mqttor_client_argparser(mqttor_session_t * mq_sess, int argc,
 					qos = atoi(optarg);
 					break;
 				case 'i':  //!< broker ip
-					mq_sess->config->broker_ip = optarg;
+					//mq_sess->config->broker_ip = optarg;
+					host = optarg;
 					break;
 				case 'p':  //!< broker port
-					mq_sess->config->broker_port = atoi(optarg);
+					//mq_sess->config->broker_port = atoi(optarg);
+					port = atoi(optarg);
 					break;
 				case 'h':  //!< help
 					return 0;
@@ -105,6 +112,7 @@ int main(int argc, char * argv[]){
 			print_usage();
 			break;
 		case 1:  //!< publish
+#if 0
 			mqtt_log_printf(LOG_LEVEL_LOG, 
 					"Publish topic is `%s`\n", topic);
 			mqtt_log_printf(LOG_LEVEL_LOG, 
@@ -117,6 +125,34 @@ int main(int argc, char * argv[]){
 			mqtt_log_printf(LOG_LEVEL_LOG, 
 					"Publish port is `%d`\n", 
 					mq_sess->config->broker_port);
+#endif
+
+			//< connect
+			err = mqttor_client_connect(mq_sess, 
+					host, port);
+			if(err){
+				mqtt_log_printf(LOG_LEVEL_ERR, 
+						"Mqttor client connect to broker (%s,%d) fail!\n",
+						host/*MQTTOR_BROKER_IP*/, 
+						port/*MQTTOR_BROKER_PORT*/);
+				return err;
+			}
+
+			//< publish
+			mqtt_attr_payload_t * payload = mqtt_attr_payload_new(1024);
+			mqtt_attr_payload_write_string(payload, message);
+			err = mqttor_client_publish(mq_sess, topic, payload, 
+					qos, true);
+			mqtt_attr_payload_release(payload);
+			if(err){
+				mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client publish fail!\n"
+					       );
+				return err;
+			}
+
+			//< disconnect
+			mqttor_client_disconnect(mq_sess);
+
 			break;
 		case 2:  //!< subscribe
 			break;
@@ -126,36 +162,6 @@ int main(int argc, char * argv[]){
 			err = -E_INVAL;
 	}
 	
-	err = err < 0 ? err : 0;
-
-#if 0
-	//int err = 0;
-	//< connect
-	err = mqttor_client_connect(mq_sess, 
-			NULL/*MQTTOR_BROKER_IP*/, -1/*MQTTOR_BROKER_PORT*/);
-	if(err){
-		mqtt_log_printf(LOG_LEVEL_ERR, 
-				"Mqttor client connect to broker (%s,%d) fail!\n",
-				mq_sess->config->broker_ip/*MQTTOR_BROKER_IP*/, 
-				mq_sess->config->broker_port/*MQTTOR_BROKER_PORT*/);
-		return err;
-	}
-
-	//< publish
-	mqtt_attr_payload_t * payload = mqtt_attr_payload_new(1024);
-	mqtt_attr_payload_write_string(payload, "hello world!");
-	err = mqttor_client_publish(mq_sess, "test/topic", payload, 
-			MQTTOR_QoS_RESERVED, true);
-	mqtt_attr_payload_release(payload);
-	if(err){
-		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client publish fail!\n"
-			       );
-		return err;
-	}
-
-	//< disconnect
-	mqttor_client_disconnect(mq_sess);
-#endif
 
 	mqttor_session_release(mq_sess);
 

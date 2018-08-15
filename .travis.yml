@@ -6,4 +6,6 @@ script :
         - make -C src/core
         - ./src/core/build/test
         - make -C src/client
-        - ./src/client/build/test
+        - ./src/client/build/test publish -t 'test/topic' -m 'QoS0' -q 0
+        - ./src/client/build/test publish -t 'test/topic' -m 'QoS1' -q 1
+        - ./src/client/build/test publish -t 'test/topic' -m 'QoS2' -q 2

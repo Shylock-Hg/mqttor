@@ -41,8 +41,8 @@ typedef struct mqttor_config {
 	const char * will_topic;  //!< connect
 	const char * will_message;  //!< connect
 	/* for client */
-	const char * broker_ip;  //!< connect
-	int broker_port;  //!< connect
+	//const char * broker_ip;  //!< connect
+	//int broker_port;  //!< connect
 	/* for client */
 	bool DUP;  //!< publish
 	enum mqttor_QoS qos;  //!< publish
