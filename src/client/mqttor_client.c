@@ -7,9 +7,11 @@
 /*! mqttor client command line usage
  *  synopsis -- mqttor_client <operation> [options]
  *  example 
- *          --  mqttor_client publish -t "topic" -m "message" 
+ *          --  mqttor_client -h
+ *          --  mqttor_client pub -t "topic" -m "message" 
  *          	[-q QoS] [-i host] [-p port]
- *          --  mqttor_client subscribe -t "topic" [-q will_QoS] 
+ *          --  mqttor_client sub -t "topic" [-q requested QoS] 
+ *              [-n publish]
  * */
 
 #include <string.h>
@@ -29,6 +31,7 @@
 
 #include "../../inc/toolkit/mqtt_log.h"
 
+/********** mqttor client options **********/
 static const char * topic = "test/topic";
 static const char * message = "hello world!";
 
@@ -38,12 +41,19 @@ static enum mqttor_QoS qos = MQTTOR_QoS_MONCE;
 static const char * host = "37.187.106.16";
 static int port  = 1883;
 
+/*! \brief number of subscriber will receive publish
+ *         negative for infinity
+ * */
+static int n = -1;
+
 static void print_usage(void){
 	printf("Mqttor client usage:\n");
 	printf("\tsynopsis：mqttor_client <operation> [options]\n");
-	printf("\tmqttor_client publish [-t topic] [-m message] [-q QoS] ");
+	printf("\tmqttor_client -h\n");
+	printf("\tmqttor_client pub [-t topic] [-m message] [-q QoS] ");
 	printf("[-i host] [-p port]\n");
-	printf("\tmqttor_client subscribe [-t topic] [-q requested_QoS]\n");
+	printf("\tmqttor_client sub [-t topic] [-q requested QoS] ");
+	printf("[-n count of publish]\n");
 }
 
 static bool runcond = true;
@@ -77,7 +87,7 @@ static int mqttor_client_argparser(mqttor_session_t * mq_sess, int argc,
 
 	char opt = '\0';
 
-	if(0 == strcmp("publish", argv[1])){  //!< publish
+	if(0 == strcmp("pub", argv[1])){  //!< publish
 		while(-1 != (opt = getopt(argc-1, argv+1, "t:m:q:i:p:"))){
 			//mqtt_log_printf(LOG_LEVEL_LOG, "Option is `%c`!\n", opt);
 			switch(opt){
@@ -106,8 +116,8 @@ static int mqttor_client_argparser(mqttor_session_t * mq_sess, int argc,
 			}
 		}
 		return 1;  //!< publish
-	}else if(0 == strcmp("subscribe", argv[1])){  //!< subscribe
-		while(-1 != (opt = getopt(argc-1, argv+1, "t:q:i:p:"))){
+	}else if(0 == strcmp("sub", argv[1])){  //!< subscribe
+		while(-1 != (opt = getopt(argc-1, argv+1, "t:q:i:p:n:"))){
 			//mqtt_log_printf(LOG_LEVEL_LOG, "Option is `%c`!\n", opt);
 			switch(opt){
 				case 't':  //!< topic
@@ -124,6 +134,9 @@ static int mqttor_client_argparser(mqttor_session_t * mq_sess, int argc,
 				case 'p':  //!< broker port
 					//mq_sess->config->broker_port = atoi(optarg);
 					port = atoi(optarg);
+					break;
+				case 'n':  //!< count of publish to receive
+					n = atoi(optarg);
 					break;
 				default:
 					mqtt_log_printf(LOG_LEVEL_WARN, 
@@ -233,12 +246,20 @@ int main(int argc, char * argv[]){
 			//< handle publish from boker
 			mqtt_buf_t * buf_publish = mqtt_buf_new(1024);
 			uint16_t seconds = 0;
+			uint32_t count_publish = 0;
 			assert(buf_publish);
 			while(runcond){
+				if(count_publish == n){  //!< had received all publish
+					raise(SIGINT);
+				}
+
 				err = recv(mq_sess->socket, buf_publish->buf, buf_publish->len,
 						MSG_DONTWAIT);
 				if(0 < err){
 					err = mq_sess->on_publish(mq_sess, buf_publish);
+					if(0 == err){
+						count_publish ++;
+					}
 				}
 
 				sleep(1);
@@ -253,6 +274,8 @@ int main(int argc, char * argv[]){
 					}
 				
 				}
+
+				err = (n==count_publish ? 0 : err);
 			}
 			mqtt_buf_release(buf_publish);
 			
@@ -268,6 +291,7 @@ int main(int argc, char * argv[]){
 	
 
 	mqttor_session_release(mq_sess);
+
 
 	return err;
 }
