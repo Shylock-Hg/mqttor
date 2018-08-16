@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#include <sys/socket.h>
+
 #include "../../inc/core/mqtt_packet.h"
 #include "../../inc/toolkit/mqtt_log.h"
 
@@ -61,20 +63,109 @@ void mqttor_config_release(mqttor_config_t * mq_config){
 int mqttor_session_on_publish(mqttor_session_t * mq_sess, 
 		mqtt_buf_packet_t * buf_packet){
 	int err = 0;
-	mqtt_attr_packet_t * attr_packet = NULL;
-	err = mqtt_unpack_publish(buf_packet, &attr_packet);
-	if(err){
-		mqtt_log_printf(LOG_LEVEL_ERR, "error:%d\n", err);
-		if(attr_packet)
-			mqtt_attr_packet_release(attr_packet);
-		return err;
-	}
-	
-	mqtt_log_printf(LOG_LEVEL_LOG, "Receive publish message from broker:\n");
-	mqtt_log_print_buf(LOG_LEVEL_LOG, attr_packet->payload->buf, 
-			attr_packet->payload->len);
 
-	mqtt_attr_packet_release(attr_packet);
+	enum mqtt_ctl_type type = MQTT_BUF_SEGMENT_EVAL(buf_packet->buf[0], 
+			MQTT_CTL_TYPE_Msk, MQTT_CTL_TYPE_OFFSET);
+
+	mqtt_attr_packet_t * p_attr_publish = NULL;
+	mqtt_attr_packet_t * p_attr_pubcomp = NULL;
+	switch(type){
+		case MQTT_CTL_TYPE_PUBLISH:
+			err = mqtt_unpack_publish(buf_packet, &p_attr_publish);
+			if(err){
+				mqtt_log_printf(LOG_LEVEL_ERR, "error:%d\n", err);
+				if(p_attr_publish)
+					mqtt_attr_packet_release(p_attr_publish);
+				return err;
+			}
+			
+			mqtt_log_printf(LOG_LEVEL_LOG, "Receive publish message from broker:\n");
+			mqtt_log_print_buf(LOG_LEVEL_LOG, p_attr_publish->payload->buf, 
+					p_attr_publish->payload->len);
+
+
+			//< check QoS of puback or pubrec
+			mqtt_attr_packet_t * p_attr_puback = NULL;
+			mqtt_attr_packet_t * p_attr_pubrec = NULL;
+			switch(p_attr_publish->hdr.bits.QoS){
+				case MQTTOR_QoS_MONCE:
+					/* no ack */
+					break;
+				case MQTTOR_QoS_LONCE:
+					/* puback */
+					p_attr_puback = mqtt_attr_packet_new(0);
+					mqtt_buf_packet_t * p_buf_puback = NULL;
+					p_attr_puback->hdr.bits.type = MQTT_CTL_TYPE_PUBACK;
+					p_attr_puback->attr_packet.puback.id_packet = 
+						mq_sess->id_packet++;
+					err = mqtt_pack_puback(p_attr_puback, &p_buf_puback);
+					mqtt_attr_packet_release(p_attr_puback);
+					if(0 > err){
+						mqtt_log_printf(LOG_LEVEL_ERR, 
+								"Mqttor client pack puback fail!\n");
+					}
+					err = send(mq_sess->socket, p_buf_puback->buf, 
+							p_buf_puback->len, 0);
+					mqtt_buf_release(p_buf_puback);
+					if(0 > err){
+						mqtt_log_printf(LOG_LEVEL_ERR, 
+								"Mqttor client send puback fail!\n");
+					}
+					break;
+				case MQTTOR_QoS_EONCE:
+					/* pubrec */
+					p_attr_pubrec = mqtt_attr_packet_new(0);
+					mqtt_buf_packet_t * p_buf_pubrec = NULL;
+					p_attr_pubrec->hdr.bits.type = MQTT_CTL_TYPE_PUBACK;
+					p_attr_pubrec->attr_packet.pubrec.id_packet = 
+						mq_sess->id_packet++;
+					err = mqtt_pack_pubrec(p_attr_pubrec, &p_buf_pubrec);
+					mqtt_attr_packet_release(p_attr_pubrec);
+					if(0 > err){
+						mqtt_log_printf(LOG_LEVEL_ERR, 
+								"Mqttor client pack pubrec fail!\n");
+					}
+					err = send(mq_sess->socket, p_buf_pubrec->buf, 
+							p_buf_pubrec->len, 0);
+					mqtt_buf_release(p_buf_pubrec);
+					if(0 > err){
+						mqtt_log_printf(LOG_LEVEL_ERR, 
+								"Mqttor client send pubrec fail!\n");
+					}
+					break;
+				default:
+					mqtt_log_printf(LOG_LEVEL_WARN, "Invalid QoS `%d`!\n", 
+							p_attr_publish->hdr.bits.QoS);
+			}
+
+			mqtt_attr_packet_release(p_attr_publish);
+			p_attr_publish = NULL;
+
+			break;
+		case MQTT_CTL_TYPE_PUBREL:
+				/* pubcomp */
+				p_attr_pubcomp = mqtt_attr_packet_new(0);
+				mqtt_buf_packet_t * p_buf_pubcomp = NULL;
+				p_attr_pubcomp->hdr.bits.type = MQTT_CTL_TYPE_PUBACK;
+				p_attr_pubcomp->attr_packet.pubcomp.id_packet = 
+					mq_sess->id_packet++;
+				err = mqtt_pack_pubcomp(p_attr_pubcomp, &p_buf_pubcomp);
+				mqtt_attr_packet_release(p_attr_pubcomp);
+				if(0 > err){
+					mqtt_log_printf(LOG_LEVEL_ERR, 
+							"Mqttor client pack pubcomp fail!\n");
+				}
+				err = send(mq_sess->socket, p_buf_pubcomp->buf, 
+						p_buf_pubcomp->len, 0);
+				mqtt_buf_release(p_buf_pubcomp);
+				if(0 > err){
+					mqtt_log_printf(LOG_LEVEL_ERR, 
+							"Mqttor client send pubcomp fail!\n");
+				}
+			break;	
+		default:
+			mqtt_log_printf(LOG_LEVEL_WARN, "Invalid packet `%d`!\n", type);
+	}
 
 	return E_NONE;
 }
