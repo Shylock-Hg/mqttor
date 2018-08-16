@@ -11,7 +11,8 @@
  *          --  mqttor_client pub -t "topic" -m "message" 
  *          	[-q QoS] [-i host] [-p port]
  *          --  mqttor_client sub -t "topic" [-q requested QoS] 
- *              [-n publish]
+ *              [-n publish] [-i host] [-p port]
+ *          --  mqttor_client con [-i host] [-p port] [-n count of publish]
  * */
 
 #include <string.h>
@@ -48,12 +49,18 @@ static int n = -1;
 
 static void print_usage(void){
 	printf("Mqttor client usage:\n");
+
 	printf("\tsynopsis：mqttor_client <operation> [options]\n");
+
 	printf("\tmqttor_client -h\n");
+
 	printf("\tmqttor_client pub [-t topic] [-m message] [-q QoS] ");
 	printf("[-i host] [-p port]\n");
+
 	printf("\tmqttor_client sub [-t topic] [-q requested QoS] ");
 	printf("[-n count of publish]\n");
+
+	printf("\tmqttor_client con [-i host] [-p port] [-n count of publish]\n");
 }
 
 static bool runcond = true;
@@ -146,6 +153,29 @@ static int mqttor_client_argparser(mqttor_session_t * mq_sess, int argc,
 		}
 	
 		return 2;  //!< subscribe
+	}else if(0 == strcmp("con", argv[1])){
+		while(-1 != (opt = getopt(argc-1, argv+1, "i:p:n:"))){
+			//mqtt_log_printf(LOG_LEVEL_LOG, "Option is `%c`!\n", opt);
+			switch(opt){
+				case 'i':  //!< broker ip
+					//mq_sess->config->broker_ip = optarg;
+					host = optarg;
+					break;
+				case 'p':  //!< broker port
+					//mq_sess->config->broker_port = atoi(optarg);
+					port = atoi(optarg);
+					break;
+				case 'n':
+					n = atoi(optarg);
+					break;
+				default:
+					mqtt_log_printf(LOG_LEVEL_WARN, 
+							"Unkown option `-%c`", 
+							opt);
+			}
+		}
+		
+		return 3;  //!< connect
 	}else if(0 == strcmp("-h", argv[1])){  //!< help
 		return 0;  //!< help
 	}else{
@@ -162,6 +192,10 @@ int main(int argc, char * argv[]){
 	//mq_sess->config->id_client = MQTTOR_CLIENT_ID;
 	err = mqttor_client_argparser(mq_sess, argc, argv);
 	//mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor parser error is `%d`!\n", err);
+	//
+	mqtt_buf_t * buf_publish = NULL;
+	uint16_t seconds = 0;
+	uint32_t count_publish = 0;
 	switch(err){
 		case 0:  //!< help
 			print_usage();
@@ -244,9 +278,67 @@ int main(int argc, char * argv[]){
 			}
 
 			//< handle publish from boker
-			mqtt_buf_t * buf_publish = mqtt_buf_new(1024);
-			uint16_t seconds = 0;
-			uint32_t count_publish = 0;
+			buf_publish = mqtt_buf_new(1024);
+			assert(buf_publish);
+			while(runcond){
+				if(count_publish == n){  //!< had received all publish
+					raise(SIGINT);
+				}
+
+				err = recv(mq_sess->socket, buf_publish->buf, buf_publish->len,
+						MSG_DONTWAIT);
+				if(0 < err){
+					err = mq_sess->on_publish(mq_sess, buf_publish);
+					if(0 == err){
+						count_publish ++;
+					}
+				}
+
+				sleep(1);
+				seconds++;
+				//< send pingreq
+				if(seconds > mq_sess->config->keep_alive/2){
+					seconds = 0;
+					err = mqttor_client_pingreq(mq_sess);
+					if(0 > err){
+						mqtt_log_printf(LOG_LEVEL_WARN, 
+								"Mqttor client pingreq fail!\n");
+					}
+				
+				}
+
+				err = (n==count_publish ? 0 : err);
+			}
+			mqtt_buf_release(buf_publish);
+			
+			//< disconnect
+			//mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client disconnect!\n");
+			mqttor_client_disconnect(mq_sess);
+			break;
+
+		case 3: //!< conenct
+			/*
+			mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client connect to (%s,%d)", 
+					host, port);
+			*/
+
+			//< SIGINT
+			signal(SIGINT, sighandler);
+
+			//< connect
+			err = mqttor_client_connect(mq_sess, 
+					host, port);
+			if(err){
+				mqtt_log_printf(LOG_LEVEL_ERR, 
+						"Mqttor client connect to broker (%s,%d) fail!\n",
+						host/*MQTTOR_BROKER_IP*/, 
+						port/*MQTTOR_BROKER_PORT*/);
+				return err;
+			}
+
+			//< wait for publish
+			//< handle publish from boker
+			buf_publish = mqtt_buf_new(1024);
 			assert(buf_publish);
 			while(runcond){
 				if(count_publish == n){  //!< had received all publish
