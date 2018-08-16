@@ -31,6 +31,7 @@ typedef struct mqtt_attr_payload {
 	uint8_t * buf;
 	size_t len;
 	size_t len_valid;
+	size_t pos;
 } mqtt_attr_payload_t;
 
 /*! \brief create a mqtt attribute payload

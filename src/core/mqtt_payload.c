@@ -15,6 +15,7 @@ mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len){
 	assert(payload);
 	payload->len = len;
 	payload->len_valid = 0;
+	payload->pos = 0;
 	payload->buf = malloc(len);
 	assert(payload->buf);
 	
