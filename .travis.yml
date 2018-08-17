@@ -3,9 +3,9 @@ compiler : gcc
 os : linux
 
 script :
-        - make -C src/core
+        - make -C src/core -j8
         - ./src/core/build/test
-        - make -C src/client
+        - make -C src/client -j8
         - ./src/client/build/test -h
         - ./src/client/build/test pub -t 'test/topic' -m 'QoS0' -q 0
         - ./src/client/build/test pub -t 'test/topic' -m 'QoS1' -q 1
