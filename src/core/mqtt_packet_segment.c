@@ -10,10 +10,10 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "../../inc/core/mqtt_packet_segment.h"
+#include "core/mqtt_packet_segment.h"
 
-#include "../../inc/toolkit/array.h"
-#include "../../inc/toolkit/mqtt_log.h"
+#include "toolkit/array.h"
+#include "toolkit/mqtt_log.h"
 
 
 //

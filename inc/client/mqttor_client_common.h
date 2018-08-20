@@ -11,7 +11,7 @@
 	extern "C" {
 #endif
 
-#include "../session/mqttor_session.h"
+#include "session/mqttor_session.h"
 
 /*! \brief connect to mqtt broker
  *  \param mq_sess mqttor session 

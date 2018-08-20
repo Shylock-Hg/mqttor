@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-#include "../../port/config.h"
+#include "port/config.h"
 
 #define LOG_LEVEL_ERR  "[err]"
 #define LOG_LEVEL_WARN "[warn]"

@@ -4,7 +4,9 @@ CFLAGS = -std=c99 -Wall -fprofile-arcs -ftest-coverage
 
 DIR_BUILD = ./build
 
-PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
+INCLUDES = -I../../inc -I../..
+
+PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d $(INCLUDES)
 
 SOURCES = src/client/mqttor_client.c \
 	  src/client/mqttor_client_common.c \
@@ -16,6 +18,7 @@ SOURCES = src/client/mqttor_client.c \
 	  ../session/mqttor_session.c \
 	  ../toolkit/mqtt_log.c
 
+
 OBJECTS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))
 
 TARGET = test
@@ -24,6 +27,9 @@ DEPFILES = $(patsubst %.o, %.d, $(OBJECTS))
 
 # set c sources search path
 vpath %.c $(sort $(dir $(SOURCES)))
+
+# set c headers search path
+#vpath %.h $(sort $(dir $(INCLUDES)))
 
 .PHONY : all clean
 all : $(DIR_BUILD)/$(TARGET)

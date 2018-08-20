@@ -4,17 +4,19 @@ CFLAGS = -std=c99 -Wall -g -fprofile-arcs -ftest-coverage
 
 DIR_BUILD = ./build
 
-PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
+INCLUDES = -I../../inc -I../..
+
+PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d $(INCLUDES)
 
 SOURCES = $(wildcard *.c) ../toolkit/mqtt_log.c
+
 
 OBJS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))
 
 DEPFILES = $(patsubst %.o, %.d, $(OBJS))
 
 # core header
-#vpath %.h ../../inc/core
-#vpath %.h ../../inc/toolkit
+vpath %.h $(sort $(dir $(INCLUDES)))
 
 .PHONY : all output clean
 all : $(DIR_BUILD)/test

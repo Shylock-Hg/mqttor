@@ -27,10 +27,10 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#include "../../inc/client/mqttor_client_common.h"
-#include "../../inc/client/mqttor_client.h"
+#include "client/mqttor_client_common.h"
+#include "client/mqttor_client.h"
 
-#include "../../inc/toolkit/mqtt_log.h"
+#include "toolkit/mqtt_log.h"
 
 /********** mqttor client options **********/
 static const char * topic = "test/topic";

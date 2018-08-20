@@ -9,8 +9,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../../inc/core/mqtt_packet.h"
-#include "../../inc/toolkit/mqtt_log.h"
+#include "core/mqtt_packet.h"
+#include "toolkit/mqtt_log.h"
 
 
 

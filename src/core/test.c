@@ -13,13 +13,13 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#include "../../inc/core/mqtt_fixed_header.h"
-#include "../../inc/core/mqtt_var_header.h"
-#include "../../inc/core/mqtt_payload.h"
+#include "core/mqtt_fixed_header.h"
+#include "core/mqtt_var_header.h"
+#include "core/mqtt_payload.h"
 
-#include "../../inc/core/mqtt_packet.h"
+#include "core/mqtt_packet.h"
 
-#include "../../inc/toolkit/mqtt_log.h"
+#include "toolkit/mqtt_log.h"
 
 void test_toolkit(void);
 void test_packet_segment(void);
