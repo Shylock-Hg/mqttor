@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "core/mqtt_payload.h"
+#include "toolkit/mqtt_log.h"
 
 mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len){
 	//assert(len);
@@ -74,6 +75,31 @@ int mqtt_attr_payload_write_string(mqtt_attr_payload_t * payload,
 	return len+MQTT_BUF_STR_MAX_BYTE;
 }
 
+int mqtt_attr_payload_read_string(mqtt_attr_payload_t * payload, char * buf, 
+		uint16_t len){
+	assert(payload);
+	assert(buf);
+	assert(len);
+
+	//mqtt_log_printf(LOG_LEVEL_LOG, "Payload->len_valid == `%ld`!\n", 
+			//payload->len_valid);
+
+	mqtt_attr_uint16_t len_str = BYTES_2_UINT16(payload->buf+payload->pos);
+	if(len_str > len){
+		return -E_MEM_OUT;
+	}
+	if((payload->pos + len_str) >= payload->len_valid){
+		return -E_MEM_OUT;
+	}
+
+	memcpy(buf, payload->buf+payload->pos+MQTT_BUF_STR_MAX_BYTE, len_str);
+	buf[len_str] = '\0';
+
+	payload->pos += (len_str+MQTT_BUF_STR_MAX_BYTE);
+
+	return len_str + MQTT_BUF_STR_MAX_BYTE;
+}
+
 int mqtt_attr_payload_write_byte(mqtt_attr_payload_t * payload, uint8_t byte){
 	assert(payload);
 
@@ -86,19 +112,44 @@ int mqtt_attr_payload_write_byte(mqtt_attr_payload_t * payload, uint8_t byte){
 	return sizeof(byte);
 }
 
+int mqtt_attr_payload_read_byte(mqtt_attr_payload_t * payload, uint8_t * byte){
+	assert(payload);
+	assert(byte);
+
+	if(payload->pos >= payload->len_valid)
+		return -E_MEM_OUT;
+
+	*byte = payload->buf[payload->pos++];
+
+	return E_NONE;
+}
+
 int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes,
 		size_t len){
 	assert(payload);
 	assert(bytes);
 
-	if(len + payload->len_valid > payload->len){
+	if(len + payload->len_valid > payload->len)
 		return -E_MEM_OUT;
-	}
 
 	memcpy(payload->buf+payload->len_valid, bytes, len);
 	payload->len_valid += len;
 
 	return len;
+}
+
+int mqtt_attr_payload_read_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes, 
+		size_t len){
+	assert(payload);
+	assert(bytes);
+
+	if(len + payload->pos >= payload->len_valid)
+		return -E_MEM_OUT;
+	
+	memcpy(bytes, payload->buf+payload->pos, len);
+	payload->pos += len;
+
+	return E_NONE;
 }
 
 struct mqtt_buf_payload_suback_ret_code * mqtt_payload_suback_ret_code_pack(

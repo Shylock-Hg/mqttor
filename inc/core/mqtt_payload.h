@@ -63,12 +63,26 @@ mqtt_buf_t * mqtt_attr_payload_deep2_buf(mqtt_attr_payload_t * payload);
  * */
 int mqtt_attr_payload_write_string(mqtt_attr_payload_t * payload, 
 		const char * string);
+/*! \brief read string from mqtt packet payload
+ *  \param payload mqtt payload structure
+ *  \param buf string buffer
+ *  \param len string buffer length 
+ *  \retval length of string to read or negtive number for error
+ * */
+int mqtt_attr_payload_read_string(mqtt_attr_payload_t * payload, char * buf, 
+		uint16_t len);
 /*! \brief write byte to mqtt packet payload |BYTE|
  *  \param packet pointer to mqtt packet
  *  \param byte byte to write
  *  \retval len of byte to write or negtive number for error
  * */
 int mqtt_attr_payload_write_byte(mqtt_attr_payload_t * payload, uint8_t byte);
+/*! \brief read byte from mqtt packet payload
+ *  \param payload mqtt packet payload structure
+ *  \param byte[out] the byte value read
+ *  \retval length of byte to read or negtive number for error
+ * */
+int mqtt_attr_payload_read_byte(mqtt_attr_payload_t * payload, uint8_t * byte);
 /*! \brief wirte bytes to mqtt payload payload |BYTE...|
  *  \param payload pointer to mqtt payload
  *  \param bytes pointer to bytes
@@ -76,6 +90,14 @@ int mqtt_attr_payload_write_byte(mqtt_attr_payload_t * payload, uint8_t byte);
  *  \retval len of bytes to write or negtive number for error
  * */
 int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes,
+		size_t len);
+/*! \brief read bytes from mqtt packet payload
+ *  \param payload pointer to mqtt packet payload structure
+ *  \param bytes[out] bytes read
+ *  \param len length of buffer
+ *  \retval length of bytes read from payload
+ * */
+int mqtt_attr_payload_read_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes, 
 		size_t len);
 
 /***********mqtt subscribe acknowledge flag***********/
