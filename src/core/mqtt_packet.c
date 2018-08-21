@@ -197,6 +197,7 @@ int mqtt_unpack_connect(
 			p_buf_packet->len-offset);
 	memcpy((*pp_attr_packet)->payload->buf, p_buf_packet->buf+offset, 
 			p_buf_packet->len-offset);
+	(*pp_attr_packet)->payload->len_valid = p_buf_packet->len-offset;
 	
 	//< filling packet attributes
 	(*pp_attr_packet)->hdr = attr_hdr;
@@ -450,6 +451,7 @@ int mqtt_unpack_publish(
 			p_buf_packet->len-offset);
 	memcpy((*pp_attr_packet)->payload->buf, p_buf_packet->buf+offset, 
 			p_buf_packet->len-offset);
+	(*pp_attr_packet)->payload->len_valid = p_buf_packet->len-offset;
 	
 	//< filling packet attributes
 	(*pp_attr_packet)->hdr = attr_hdr;
@@ -969,6 +971,7 @@ int mqtt_unpack_subscribe(
 			p_buf_packet->len-offset);
 	memcpy((*pp_attr_packet)->payload->buf, p_buf_packet->buf+offset, 
 			p_buf_packet->len-offset);
+	(*pp_attr_packet)->payload->len_valid = p_buf_packet->len-offset;
 	
 	//< filling packet attributes
 	(*pp_attr_packet)->hdr = attr_hdr;
@@ -1084,6 +1087,7 @@ int mqtt_unpack_suback(
 			p_buf_packet->len-offset);
 	memcpy((*pp_attr_packet)->payload->buf, p_buf_packet->buf+offset, 
 			p_buf_packet->len-offset);
+	(*pp_attr_packet)->payload->len_valid = p_buf_packet->len - offset;
 	
 	//< filling packet attributes
 	(*pp_attr_packet)->hdr = attr_hdr;
@@ -1190,6 +1194,7 @@ int mqtt_unpack_unsubscribe(
 			p_buf_packet->len-offset);
 	memcpy((*pp_attr_packet)->payload->buf, p_buf_packet->buf+offset, 
 			p_buf_packet->len-offset);
+	(*pp_attr_packet)->payload->len_valid = p_buf_packet->len - offset;
 	
 	//< filling packet attributes
 	(*pp_attr_packet)->hdr = attr_hdr;
