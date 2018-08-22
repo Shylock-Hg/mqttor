@@ -68,7 +68,7 @@ static bool runcond = true;
 /*  \brief SIGINT handler
  *  \param signum signal number
  * */
-void sighandler(int signum){
+static void sighandler(int signum){
 	if(SIGINT == signum){
 		//mqtt_log_printf(LOG_LEVEL_LOG, "Sigint\n");
 		fflush(stdout);

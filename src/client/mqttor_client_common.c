@@ -182,6 +182,8 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	close(mq_sess->socket);
 	mq_sess->socket = -1;
 
+	mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client disconnect!\n");
+
 	return err;
 }
 
@@ -288,8 +290,8 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, const char * topic,
 				break;
 			}
 			if(MQTT_CTL_TYPE_PUBREC == p_attr_puback->hdr.bits.type){
-				mqtt_log_printf(LOG_LEVEL_LOG, 
-						"Mqttor publish receive ok!\n");
+				//mqtt_log_printf(LOG_LEVEL_LOG, 
+						//"Mqttor publish receive ok!\n");
 			}else{
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor publish fail!\n");
