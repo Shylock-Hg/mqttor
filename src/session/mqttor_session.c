@@ -79,17 +79,18 @@ int mqttor_session_on_publish(mqttor_session_t * mq_sess,
 				return err;
 			}
 			
-			//mqtt_log_printf(LOG_LEVEL_LOG, "Receive publish message from broker:\n");
-			//mqtt_log_print_buf(LOG_LEVEL_LOG, p_attr_publish->payload->buf, 
-					//p_attr_publish->payload->len);
-			char content[1024] = {0};
-			err = mqtt_attr_payload_read_string(p_attr_publish->payload, content, 
-					sizeof(content));
-			if(0 > err){
-				mqtt_log_printf(LOG_LEVEL_ERR, 
-						"Mqttor client read string from payload fail!\n");
-			}
-			mqtt_log_printf(LOG_LEVEL_LOG, "Publish -- %s\n", content);
+			mqtt_log_printf(LOG_LEVEL_LOG, "Receive publish message from broker:\n");
+			mqtt_log_print_buf(LOG_LEVEL_LOG, p_attr_publish->payload->buf, 
+					p_attr_publish->payload->len);
+
+			//char content[1024] = {0};
+			//err = mqtt_attr_payload_read_string(p_attr_publish->payload, content, 
+					//sizeof(content));
+			//if(0 > err){
+				//mqtt_log_printf(LOG_LEVEL_ERR, 
+						//"Mqttor client read string from payload fail!\n");
+			//}
+			//mqtt_log_printf(LOG_LEVEL_LOG, "Publish -- %s\n", p_attr_publish->payload->buf);
 
 
 			//< check QoS of puback or pubrec

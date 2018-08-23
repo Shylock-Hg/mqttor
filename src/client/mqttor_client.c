@@ -193,7 +193,7 @@ int main(int argc, char * argv[]){
 	err = mqttor_client_argparser(mq_sess, argc, argv);
 	//mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor parser error is `%d`!\n", err);
 	//
-	mqtt_buf_t * buf_publish = NULL;
+	mqtt_buf_t * buf = NULL;
 	uint16_t seconds = 0;
 	uint32_t count_publish = 0;
 	switch(err){
@@ -278,17 +278,21 @@ int main(int argc, char * argv[]){
 			}
 
 			//< handle publish from boker
-			buf_publish = mqtt_buf_new(1024);
-			assert(buf_publish);
+			buf = mqtt_buf_new(1024);
+			mqtt_buf_t * buf_publish = NULL;
+			assert(buf);
 			while(runcond){
 				if(count_publish == n){  //!< had received all publish
 					raise(SIGINT);
 				}
 
-				err = recv(mq_sess->socket, buf_publish->buf, buf_publish->len,
+				err = recv(mq_sess->socket, buf->buf, buf->len,
 						MSG_DONTWAIT);
 				if(0 < err){
+					buf_publish = mqtt_buf_new(err);
+					memcpy(buf_publish->buf, buf->buf, buf_publish->len);
 					err = mq_sess->on_publish(mq_sess, buf_publish);
+					mqtt_buf_release(buf_publish);
 					if(0 == err){
 						count_publish ++;
 					}
@@ -309,7 +313,7 @@ int main(int argc, char * argv[]){
 
 				err = (n==count_publish ? 0 : err);
 			}
-			mqtt_buf_release(buf_publish);
+			mqtt_buf_release(buf);
 			
 			//< disconnect
 			//mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client disconnect!\n");
@@ -338,20 +342,23 @@ int main(int argc, char * argv[]){
 
 			//< wait for publish
 			//< handle publish from boker
-			buf_publish = mqtt_buf_new(1024);
-			assert(buf_publish);
+			buf = mqtt_buf_new(1024);
+			assert(buf);
 			while(runcond){
 				if(count_publish == n){  //!< had received all publish
 					raise(SIGINT);
 				}
 
-				err = recv(mq_sess->socket, buf_publish->buf, buf_publish->len,
+				err = recv(mq_sess->socket, buf->buf, buf->len,
 						MSG_DONTWAIT);
 				if(0 < err){
-					err = mq_sess->on_publish(mq_sess, buf_publish);
+					buf_publish = mqtt_buf_new(err);
+					memcpy(buf_publish->buf, buf->buf, buf_publish->len);
+					err = mq_sess->on_publish(mq_sess, buf);
 					if(0 == err){
 						count_publish ++;
 					}
+					mqtt_buf_release(buf_publish);
 				}
 
 				sleep(1);
@@ -369,7 +376,7 @@ int main(int argc, char * argv[]){
 
 				err = (n==count_publish ? 0 : err);
 			}
-			mqtt_buf_release(buf_publish);
+			mqtt_buf_release(buf);
 			
 			//< disconnect
 			//mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client disconnect!\n");
