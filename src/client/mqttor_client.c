@@ -39,7 +39,7 @@ static const char * message = "hello world!";
 static enum mqttor_QoS qos = MQTTOR_QoS_MONCE;
 
 /* eclipse.org:1883 -- mqtt with tcp */
-static const char * host = "37.187.106.16";
+static const char * host = "127.0.0.1";//"37.187.106.16";
 static int port  = 1883;
 
 /*! \brief number of subscriber will receive publish

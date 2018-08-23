@@ -232,7 +232,7 @@ void test_payload(void){
 	mqtt_buf_release(p_buf_subscribe_flag);
 }
 
-#define TEST_IP   "37.187.106.16"//"127.0.0.1"
+#define TEST_IP   "127.0.0.1"//"37.187.106.16"//
 #define TEST_PORT 1883
 
 void test_packet(void){
