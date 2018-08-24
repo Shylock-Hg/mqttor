@@ -10,10 +10,8 @@ before_install:
     - git config --file=.gitmodules submodule.AT-interpreter.url https://github.com/Shylock-Hg/AT-interpreter.git
     - git submodule update --init --recursive
 
-before_script:
-    - mosquitto -d
-
 script :
+    - mosquitto -d
     - make -C src/core -j8
     - ./src/core/build/test
     - make -C src/client -j8
