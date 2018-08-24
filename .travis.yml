@@ -12,6 +12,7 @@ before_install:
 
 before_script:
     - mosquitto -d &
+    - sleep 5  ## wait for mosquitto daemon started
 
 script :
     - make -C src/core -j8
