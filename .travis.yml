@@ -11,10 +11,10 @@ before_install:
     - git submodule update --init --recursive
 
 before_script:
-    - mosquitto -d &
-    - sleep 5  ## wait for mosquitto daemon started
+    - mosquitto -d
 
 script :
+    - ps -aux | grep mosquitto
     - make -C src/core -j8
     - ./src/core/build/test
     - make -C src/client -j8
