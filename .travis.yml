@@ -6,7 +6,7 @@ git:
     submodules: false
 before_install:
     - pip install --user cpp-coveralls
-    - sudo apt-get install mosquitto
+    - git clone --depth=1 https://github.com/eclipse/mosquitto.git && cd mosquitto && mkdir -p mosquitto.build && cd mosquitto.build && cmake .. && sudo make install
     - git config --file=.gitmodules submodule.AT-interpreter.url https://github.com/Shylock-Hg/AT-interpreter.git
     - git submodule update --init --recursive
 
@@ -14,7 +14,6 @@ before_script:
     - mosquitto -d
 
 script :
-    - ps -aux | grep mosquitto
     - make -C src/core -j8
     - ./src/core/build/test
     - make -C src/client -j8
