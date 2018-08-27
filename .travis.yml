@@ -6,7 +6,7 @@ git:
     submodules: false
 before_install:
     - sudo apt-get install xsltproc docbook-xsl
-    - git clone --depth=1 https://github.com/eclipse/mosquitto.git && cd mosquitto && make -j8 && sudo make install
+    - git clone --depth=1 https://github.com/eclipse/mosquitto.git && cd mosquitto && make -j8 && sudo make install && cd ..
     - sudo pip install cpp-coveralls
     - git config --file=.gitmodules submodule.AT-interpreter.url https://github.com/Shylock-Hg/AT-interpreter.git
     - git submodule update --init --recursive
