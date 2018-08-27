@@ -282,9 +282,6 @@ int main(int argc, char * argv[]){
 			mqtt_buf_t * buf_publish = NULL;
 			assert(buf);
 			while(runcond){
-				if(count_publish == n){  //!< had received all publish
-					raise(SIGINT);
-				}
 
 				err = recv(mq_sess->socket, buf->buf, buf->len,
 						MSG_DONTWAIT);
@@ -294,8 +291,12 @@ int main(int argc, char * argv[]){
 					err = mq_sess->on_publish(mq_sess, buf_publish);
 					mqtt_buf_release(buf_publish);
 					if(0 == err){
-						count_publish ++;
+						count_publish ++;  //!< publish count succ
+						seconds = 0;  //!< reset timeout
 					}
+				}
+				if(count_publish == n){  //!< had received all publish
+					raise(SIGINT);
 				}
 
 				sleep(1);
@@ -311,7 +312,9 @@ int main(int argc, char * argv[]){
 				
 				}
 
-				err = (n==count_publish ? 0 : err);
+				err = err > 0 ? 0 : err;
+
+				//err = (n==count_publish ? 0 : err);
 			}
 			mqtt_buf_release(buf);
 			
@@ -345,9 +348,6 @@ int main(int argc, char * argv[]){
 			buf = mqtt_buf_new(1024);
 			assert(buf);
 			while(runcond){
-				if(count_publish == n){  //!< had received all publish
-					raise(SIGINT);
-				}
 
 				err = recv(mq_sess->socket, buf->buf, buf->len,
 						MSG_DONTWAIT);
@@ -356,9 +356,13 @@ int main(int argc, char * argv[]){
 					memcpy(buf_publish->buf, buf->buf, buf_publish->len);
 					err = mq_sess->on_publish(mq_sess, buf);
 					if(0 == err){
-						count_publish ++;
+						count_publish ++;  //!< publish count succ
+						seconds = 0;  //!< reset timeout
 					}
 					mqtt_buf_release(buf_publish);
+				}
+				if(count_publish == n){  //!< had received all publish
+					raise(SIGINT);
 				}
 
 				sleep(1);
@@ -374,7 +378,9 @@ int main(int argc, char * argv[]){
 				
 				}
 
-				err = (n==count_publish ? 0 : err);
+				err = err > 0 ? 0 : err;
+
+				//err = (n==count_publish ? 0 : err);
 			}
 			mqtt_buf_release(buf);
 			
