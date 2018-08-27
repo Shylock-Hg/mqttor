@@ -65,45 +65,45 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	}
 	
 	//< mqtt connect
-	mqtt_attr_packet_t * p_attr_packet = mqtt_attr_packet_new(1024);
-	p_attr_packet->hdr.bits.type = MQTT_CTL_TYPE_CONNECT;
-	p_attr_packet->attr_packet.connect.flag.bits.flag_clean_session = 
+	mqtt_attr_packet_t * p_attr_connect = mqtt_attr_packet_new(1024);
+	p_attr_connect->hdr.bits.type = MQTT_CTL_TYPE_CONNECT;
+	p_attr_connect->attr_packet.connect.flag.bits.flag_clean_session = 
 		mq_sess->config->clean_session;
-	p_attr_packet->attr_packet.connect.flag.bits.flag_pwd = 
+	p_attr_connect->attr_packet.connect.flag.bits.flag_pwd = 
 		mq_sess->config->pwd ? true : false;
-	p_attr_packet->attr_packet.connect.flag.bits.flag_reserved = 0;
-	p_attr_packet->attr_packet.connect.flag.bits.flag_user_name = 
+	p_attr_connect->attr_packet.connect.flag.bits.flag_reserved = 0;
+	p_attr_connect->attr_packet.connect.flag.bits.flag_user_name = 
 		mq_sess->config->user ? true : false;
-	p_attr_packet->attr_packet.connect.flag.bits.flag_w_QoS = 
+	p_attr_connect->attr_packet.connect.flag.bits.flag_w_QoS = 
 		mq_sess->config->will_qos;
-	p_attr_packet->attr_packet.connect.flag.bits.flag_w_flag = 
+	p_attr_connect->attr_packet.connect.flag.bits.flag_w_flag = 
 		mq_sess->config->will_message && mq_sess->config->will_topic ? 
 		true : 
 		false;
-	p_attr_packet->attr_packet.connect.flag.bits.flag_w_retain = 
+	p_attr_connect->attr_packet.connect.flag.bits.flag_w_retain = 
 		mq_sess->config->will_retain;
-	p_attr_packet->attr_packet.connect.keep_alive = 
+	p_attr_connect->attr_packet.connect.keep_alive = 
 		mq_sess->config->keep_alive;
 	mqtt_buf_packet_t * p_buf_packet = NULL;
 
 	assert(mq_sess->config->id_client);
 	if(mq_sess->config->id_client)
-		mqtt_attr_payload_write_string(p_attr_packet->payload, 
+		mqtt_attr_payload_write_string(p_attr_connect->payload, 
 				mq_sess->config->id_client);
 	if(mq_sess->config->will_topic && mq_sess->config->will_message)
-		mqtt_attr_payload_write_string(p_attr_packet->payload,
+		mqtt_attr_payload_write_string(p_attr_connect->payload,
 				mq_sess->config->will_topic);
 	if(mq_sess->config->will_message && mq_sess->config->will_topic)
-		mqtt_attr_payload_write_string(p_attr_packet->payload,
+		mqtt_attr_payload_write_string(p_attr_connect->payload,
 				mq_sess->config->will_message);
 	if(mq_sess->config->user)
-		mqtt_attr_payload_write_string(p_attr_packet->payload,
+		mqtt_attr_payload_write_string(p_attr_connect->payload,
 				mq_sess->config->user);
 	if(mq_sess->config->pwd)
-		mqtt_attr_payload_write_string(p_attr_packet->payload,
+		mqtt_attr_payload_write_string(p_attr_connect->payload,
 				mq_sess->config->pwd);
 
-	err = mqtt_pack_connect(p_attr_packet, 
+	err = mqtt_pack_connect(p_attr_connect, 
 			&p_buf_packet);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor packet connect fail!\n");
@@ -116,8 +116,7 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 				"Mqttor send connect packet fail!\n");
 		return -E_NET_CONN;
 	}
-	//mqtt_buf_release(p_buf_packet);
-	mqtt_attr_packet_release(p_attr_packet);
+	mqtt_attr_packet_release(p_attr_connect);
 
 	//< wait for connack
 	mqtt_buf_t * p_buf_connack = mqtt_buf_new(4);
@@ -143,7 +142,7 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 				"Mqttor connect to broker fail!\n");
 		err = E_NET_CONN;
 	}
-	mqtt_attr_packet_release(p_attr_packet);
+	mqtt_attr_packet_release(p_attr_connack);
 	return err;
 }
 
@@ -209,7 +208,7 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, const char * topic,
 
 	//!< mqtt publish
 	mqtt_attr_packet_t * p_attr_publish = mqtt_attr_packet_new(
-			payload->len);
+			payload->len_valid);
 	assert(p_attr_publish);
 	p_attr_publish->hdr.bits.type = MQTT_CTL_TYPE_PUBLISH;
 	p_attr_publish->hdr.bits.DUP = false;
@@ -217,11 +216,10 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, const char * topic,
 	p_attr_publish->hdr.bits.QoS = qos;
 	p_attr_publish->attr_packet.publish.id_packet = mq_sess->id_packet++;
 	p_attr_publish->attr_packet.publish.topic_name = topic;
-	mqtt_attr_payload_t * _payload = mqtt_attr_payload_new(payload->len);
-	memcpy(_payload->buf, payload->buf, payload->len_valid);
-	_payload->len = payload->len;
-	_payload->len_valid = payload->len_valid;
-	p_attr_publish->payload = _payload;
+	//mqtt_attr_payload_t * _payload = mqtt_attr_payload_new(payload->len_valid);
+	memcpy(p_attr_publish->payload->buf, payload->buf, payload->len_valid);
+	p_attr_publish->payload->len_valid = payload->len_valid;
+	//p_attr_publish->payload = _payload;
 	mqtt_buf_packet_t * p_buf_publish = NULL;
 	err = mqtt_pack_publish(p_attr_publish, &p_buf_publish);
 	if(0 > err){

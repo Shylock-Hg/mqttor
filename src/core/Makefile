@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -std=c99 -Wall -g -fprofile-arcs -ftest-coverage
+CFLAGS = -std=c99 -Wall -g -fprofile-arcs -ftest-coverage -g
 
 DIR_BUILD = ./build
 
