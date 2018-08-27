@@ -72,7 +72,7 @@ int mqttor_session_on_publish(mqttor_session_t * mq_sess,
 	switch(type){
 		case MQTT_CTL_TYPE_PUBLISH:
 			err = mqtt_unpack_publish(buf_packet, &p_attr_publish);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, "error:%d\n", err);
 				if(p_attr_publish)
 					mqtt_attr_packet_release(p_attr_publish);

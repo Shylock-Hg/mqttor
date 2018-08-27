@@ -409,8 +409,10 @@ int mqttor_client_subscribe(mqttor_session_t * mq_sess, const char * sub,
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv suback fail!\n");
 		return err;
 	}
-	mqtt_attr_packet_t * p_attr_suback = mqtt_attr_packet_new(
-			sizeof(uint8_t));
+	//mqtt_attr_packet_t * p_attr_suback = mqtt_attr_packet_new(
+			//sizeof(uint8_t));
+			//
+	mqtt_attr_packet_t * p_attr_suback = NULL;
 	err = mqtt_unpack_suback(p_buf_suback, &p_attr_suback);
 	mqtt_buf_release(p_buf_suback);
 	if(0 > err){
