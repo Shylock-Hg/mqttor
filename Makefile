@@ -4,7 +4,7 @@ WITH_GCOV = no
 export CC = gcc
 export INSTALL = install
 export prefix = /usr/local
-export CFLAGS = -Wall -g
+export CFLAGS = -Wall -g -std=gnu99
 
 ifeq ($(WITH_GCOV),yes)
 	CFLAGS += -fprofile-arcs -ftest-coverage
