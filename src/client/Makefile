@@ -4,7 +4,7 @@ CFLAGS = -std=c99 -Wall -fprofile-arcs -ftest-coverage -g
 
 DIR_BUILD = ./build
 
-INCLUDES = -I../../inc -I../..
+INCLUDES = -I../../inc
 
 PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d $(INCLUDES)
 

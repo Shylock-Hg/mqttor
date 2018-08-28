@@ -1,7 +1,7 @@
 #ifndef _ARRAY_H_
 #define _ARRAY_H_
 
-#include "port/config.h"
+#include <port/config.h>
 
 ///! \defgroup toolkit_array
 /// @{

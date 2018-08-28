@@ -14,10 +14,10 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#include "../../inc/toolkit/mqtt_log.h"
-#include "../../inc/core/mqtt_packet.h"
+#include <toolkit/mqtt_log.h>
+#include <core/mqtt_packet.h>
 
-#include "../../inc/session/mqttor_session.h"
+#include <session/mqttor_session.h>
 
 int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host, 
 		int port){

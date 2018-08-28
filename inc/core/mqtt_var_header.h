@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include "toolkit/array.h"
+#include <toolkit/array.h>
 #include "mqtt_packet_segment.h"
 
 /*********** packet identifier ***********/

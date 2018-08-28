@@ -4,7 +4,7 @@ CFLAGS = -Wall -fprofile-arcs -ftest-coverage -g
 
 DIR_BUILD = ./build
 
-INCLUDES = -I../../inc -I../.. -I../../AT-interpreter/inc
+INCLUDES = -I../../inc -I../../AT-interpreter/inc
 
 SOURCES =\
       ../toolkit/mqtt_log.c \
