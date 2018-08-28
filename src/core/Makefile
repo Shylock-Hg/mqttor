@@ -1,4 +1,4 @@
-CC = gcc
+#CC = gcc
 
 CFLAGS = -std=c99 -Wall -g -fprofile-arcs -ftest-coverage -g
 

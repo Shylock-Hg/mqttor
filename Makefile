@@ -1,7 +1,7 @@
 
 WITH_GCOV = no
 
-export CC = gcc
+#export CC = gcc
 export INSTALL = install
 export prefix = /usr/local
 export CFLAGS = -Wall -g -std=gnu99
