@@ -175,7 +175,7 @@ typedef mqtt_buf_t mqtt_buf_payload_subscribe_content_QoS_t;
 	((union mqtt_attr_payload_subscribe_content_QoS)(p_buf_flag->buf[0]))
 
 struct mqtt_buf_payload_subscribe_content_QoS * mqtt_payload_subscribe_content_QoS_pack(
-		union mqtt_attr_payload_subscribe_content_QoS flag;
+		union mqtt_attr_payload_subscribe_content_QoS flag
 		);
 union mqtt_attr_payload_subscribe_content_QoS mqtt_payload_subscribe_content_QoS_unpack(
 		const struct mqtt_buf_payload_subscribe_content_QoS * p_buf_flag
