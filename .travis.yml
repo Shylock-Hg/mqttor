@@ -136,6 +136,7 @@ before_script:
 script :
     - sudo make install -j8
     - export LD_LIBRARY_PATH=/usr/local
+    - sudo ldconfig
     - mqttor_client -h
     - mqttor_client pub -t 'test/topic' -m 'QoS0' -q 0
     - mqttor_client pub -t 'test/topic' -m 'QoS1' -q 1
