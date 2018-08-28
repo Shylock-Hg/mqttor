@@ -147,6 +147,7 @@ int mqttor_session_on_publish(mqttor_session_t * mq_sess,
 							p_attr_publish->hdr.bits.QoS);
 			}
 
+			free(p_attr_publish->attr_packet.publish.topic_name);
 			mqtt_attr_packet_release(p_attr_publish);
 			p_attr_publish = NULL;
 

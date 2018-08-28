@@ -29,9 +29,11 @@ mqtt_attr_packet_t * mqtt_attr_packet_new(size_t len_payload){
 void mqtt_attr_packet_release(mqtt_attr_packet_t * packet){
 	assert(packet);
 
+	/*
 	if(MQTT_CTL_TYPE_PUBLISH == packet->hdr.bits.type){
 		free(packet->attr_packet.publish.topic_name);
 	}
+	*/
 
 	mqtt_attr_payload_release(packet->payload);
 	free(packet);
