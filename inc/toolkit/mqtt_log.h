@@ -22,17 +22,21 @@
 
 void __mqtt_log_print_buf(uint8_t * buf, size_t len);
 
-//#if configDBG
+#if (configLOG == 1)
+
 #define mqtt_log_printf(level, format, ...) printf(level " : " __FILE__ "-" "%u" " : " LOG_TYPE_CHAR " : " format , __LINE__,##__VA_ARGS__)
 
 #define mqtt_log_print_buf(level, buf, len) do{\
 	printf(level " : " __FILE__ "-" "%u" " : " LOG_TYPE_BIN " : ",__LINE__);\
 	__mqtt_log_print_buf((uint8_t*)buf,len);\
 }while(0);
-//#else   //!< configLOG
-	//#define mqtt_log_printf(level, format, ...)
-	//#define mqtt_log_print_buf(level, buf, len)
-//#endif  //!< configLOG
+
+#else   //!< configLOG
+
+	#define mqtt_log_printf(level, format, ...)
+	#define mqtt_log_print_buf(level, buf, len)
+
+#endif  //!< configLOG
 
 #ifdef __cplusplus
 	}  //!< extern "C"

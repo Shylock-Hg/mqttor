@@ -15,16 +15,13 @@ before_script:
     - mosquitto -d
 
 script :
-    - make -C src/core -j8
-    - ./src/core/build/test
-    - make -C src/client -j8
-    - ./src/client/build/test -h
-    - ./src/client/build/test pub -t 'test/topic' -m 'QoS0' -q 0
-    - ./src/client/build/test pub -t 'test/topic' -m 'QoS1' -q 1
-    - ./src/client/build/test pub -t 'test/topic' -m 'QoS2' -q 2
-    - ./src/client/build/test sub -t 'test/topic' -n 1
-      #    - cd src/at
-      #    - make && ./build/test
+    - sudo make install -j8
+    - export LD_LIBRARY_PATH=/usr/local
+    - mqttor_client -h
+    - mqttor_client pub -t 'test/topic' -m 'QoS0' -q 0
+    - mqttor_client pub -t 'test/topic' -m 'QoS1' -q 1
+    - mqttor_client pub -t 'test/topic' -m 'QoS2' -q 2
+    - mqttor_client sub -t 'test/topic' -n 1
 
 after_success:
     - coveralls --gcov-options '\-lp'
