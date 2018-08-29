@@ -69,9 +69,7 @@ static bool runcond = true;
  *  \param signum signal number
  * */
 static void sighandler(int signum){
-	if(SIGINT == signum){
-		//mqtt_log_printf(LOG_LEVEL_LOG, "Sigint\n");
-		fflush(stdout);
+	if(SIGINT == signum || SIGPIPE == signum){
 		runcond = false;
 	}
 }
@@ -228,7 +226,8 @@ int main(int argc, char * argv[]){
 			}
 
 			//< publish
-			mqtt_attr_payload_t * payload = mqtt_attr_payload_new(1024);
+			mqtt_attr_payload_t * payload = mqtt_attr_payload_new(
+					MQTT_FIXED_PACKET_LEN_MAX);
 			mqtt_attr_payload_write_string(payload, message);
 			err = mqttor_client_publish(mq_sess, topic, payload, 
 					qos, true);
@@ -258,6 +257,7 @@ int main(int argc, char * argv[]){
 #endif
 			//< SIGINT
 			signal(SIGINT, sighandler);
+			signal(SIGPIPE, sighandler);
 
 			//< connect
 			err = mqttor_client_connect(mq_sess, 
@@ -278,7 +278,7 @@ int main(int argc, char * argv[]){
 			}
 
 			//< handle publish from boker
-			buf = mqtt_buf_new(1024);
+			buf = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_MAX);
 			mqtt_buf_t * buf_publish = NULL;
 			assert(buf);
 			while(runcond){
@@ -286,13 +286,13 @@ int main(int argc, char * argv[]){
 				err = recv(mq_sess->socket, buf->buf, buf->len,
 						MSG_DONTWAIT);
 				if(0 < err){
+					seconds = 0;  //!< reset timeout
 					buf_publish = mqtt_buf_new(err);
 					memcpy(buf_publish->buf, buf->buf, buf_publish->len);
 					err = mq_sess->on_publish(mq_sess, buf_publish);
 					mqtt_buf_release(buf_publish);
 					if(0 == err){
 						count_publish ++;  //!< publish count succ
-						seconds = 0;  //!< reset timeout
 					}
 				}
 				if(count_publish == n){  //!< had received all publish
@@ -331,6 +331,7 @@ int main(int argc, char * argv[]){
 
 			//< SIGINT
 			signal(SIGINT, sighandler);
+			signal(SIGPIPE, sighandler);
 
 			//< connect
 			err = mqttor_client_connect(mq_sess, 
@@ -345,19 +346,19 @@ int main(int argc, char * argv[]){
 
 			//< wait for publish
 			//< handle publish from boker
-			buf = mqtt_buf_new(1024);
+			buf = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_MAX);
 			assert(buf);
 			while(runcond){
 
 				err = recv(mq_sess->socket, buf->buf, buf->len,
 						MSG_DONTWAIT);
 				if(0 < err){
+					seconds = 0;  //!< reset timeout
 					buf_publish = mqtt_buf_new(err);
 					memcpy(buf_publish->buf, buf->buf, buf_publish->len);
 					err = mq_sess->on_publish(mq_sess, buf);
 					if(0 == err){
 						count_publish ++;  //!< publish count succ
-						seconds = 0;  //!< reset timeout
 					}
 					mqtt_buf_release(buf_publish);
 				}

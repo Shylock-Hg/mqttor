@@ -349,7 +349,6 @@ int main(int argc, char * argv[]){
 
 	char buffer[1024] = {0};
 	mqtt_buf_t * buf = NULL;
-	//uint32_t count_publish = 0;
 	uint16_t seconds = 0;
 
 	int fd = fileno(stdin);  
@@ -358,7 +357,7 @@ int main(int argc, char * argv[]){
 	fcntl(fd, F_SETFL, flags); 
 
 	//< handle publish from boker
-	buf = mqtt_buf_new(1024);
+	buf = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_MAX);
 	mqtt_buf_t * buf_publish = NULL;
 	assert(buf);
 	while(runcond){

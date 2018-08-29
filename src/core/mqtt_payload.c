@@ -124,8 +124,8 @@ int mqtt_attr_payload_read_byte(mqtt_attr_payload_t * payload, uint8_t * byte){
 	return E_NONE;
 }
 
-int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes,
-		size_t len){
+int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, 
+		uint8_t * bytes, size_t len){
 	assert(payload);
 	assert(bytes);
 
@@ -138,8 +138,8 @@ int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes
 	return len;
 }
 
-int mqtt_attr_payload_read_bytes(mqtt_attr_payload_t * payload, uint8_t * bytes, 
-		size_t len){
+int mqtt_attr_payload_read_bytes(mqtt_attr_payload_t * payload, 
+		uint8_t * bytes, size_t len){
 	assert(payload);
 	assert(bytes);
 

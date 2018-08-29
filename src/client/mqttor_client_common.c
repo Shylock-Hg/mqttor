@@ -65,7 +65,8 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	}
 	
 	//< mqtt connect
-	mqtt_attr_packet_t * p_attr_connect = mqtt_attr_packet_new(1024);
+	mqtt_attr_packet_t * p_attr_connect = mqtt_attr_packet_new(
+			MQTT_FIXED_PAYLOAD_LEN_CONNECT);
 	p_attr_connect->hdr.bits.type = MQTT_CTL_TYPE_CONNECT;
 	p_attr_connect->attr_packet.connect.flag.bits.flag_clean_session = 
 		mq_sess->config->clean_session;
@@ -119,7 +120,7 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	mqtt_attr_packet_release(p_attr_connect);
 
 	//< wait for connack
-	mqtt_buf_t * p_buf_connack = mqtt_buf_new(4);
+	mqtt_buf_t * p_buf_connack = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_CONNACK);
 	err = recv(mq_sess->socket, p_buf_connack->buf, p_buf_connack->len, 
 			MSG_WAITALL);
 	if(0 > err){
@@ -216,10 +217,8 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 	p_attr_publish->hdr.bits.QoS = qos;
 	p_attr_publish->attr_packet.publish.id_packet = mq_sess->id_packet++;
 	p_attr_publish->attr_packet.publish.topic_name = topic;
-	//mqtt_attr_payload_t * _payload = mqtt_attr_payload_new(payload->len_valid);
 	memcpy(p_attr_publish->payload->buf, payload->buf, payload->len_valid);
 	p_attr_publish->payload->len_valid = payload->len_valid;
-	//p_attr_publish->payload = _payload;
 	mqtt_buf_packet_t * p_buf_publish = NULL;
 	err = mqtt_pack_publish(p_attr_publish, &p_buf_publish);
 	if(0 > err){
@@ -237,7 +236,8 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 	mqtt_buf_release(p_buf_publish);
 
 	//!< handle puback
-	mqtt_buf_packet_t * p_buf_puback = mqtt_buf_new(4);
+	mqtt_buf_packet_t * p_buf_puback = mqtt_buf_new(
+			MQTT_FIXED_PACKET_LEN_PUBACK);
 	mqtt_attr_packet_t * p_attr_puback = NULL;//mqtt_attr_packet_new(0);
 	switch(qos){
 		case MQTTOR_QoS_MONCE:
@@ -402,7 +402,8 @@ int mqttor_client_subscribe(mqttor_session_t * mq_sess, const char * sub,
 
 	mqtt_buf_release(p_buf_subscribe);
 
-	//!< handle suback
+	//< handle suback
+	//< only on subscribe in this version
 	mqtt_buf_packet_t * p_buf_suback = mqtt_buf_new(5);
 	err = recv(mq_sess->socket, p_buf_suback->buf, p_buf_suback->len, 0);
 	if(0 > err){
@@ -465,7 +466,8 @@ int mqttor_client_unsubscribe(mqttor_session_t * mq_sess, const char * sub){
 	mqtt_buf_release(p_buf_unsubscribe);
 
 	//< unsuback
-	mqtt_buf_t * p_buf_unsuback =  mqtt_buf_new(4);
+	mqtt_buf_t * p_buf_unsuback =  mqtt_buf_new(
+			MQTT_FIXED_PACKET_LEN_UNSUBACK);
 	err = recv(mq_sess->socket, p_buf_unsuback->buf, p_buf_unsuback->len, 
 			0);
 	if(0 > err){
@@ -527,7 +529,8 @@ int mqttor_client_pingreq(mqttor_session_t * mq_sess){
 	p_buf_pingreq = NULL;
 
 	//< wait pingresp
-	mqtt_buf_packet_t * p_buf_pingresp = mqtt_buf_new(2);
+	mqtt_buf_packet_t * p_buf_pingresp = mqtt_buf_new(
+			MQTT_FIXED_PACKET_LEN_PINGRESP);
 	mqtt_attr_packet_t * p_attr_pingresp = NULL;
 	assert(p_buf_pingresp);
 	err = recv(mq_sess->socket, p_buf_pingresp->buf, p_buf_pingresp->len, 0);

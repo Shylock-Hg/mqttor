@@ -2,7 +2,8 @@
 
 #include <core/mqtt_var_header.h>
 
-struct mqtt_buf_connect_flag * mqtt_connect_flag_pack(union mqtt_attr_connect_flag flag){
+struct mqtt_buf_connect_flag * mqtt_connect_flag_pack(
+		union mqtt_attr_connect_flag flag){
 	//!< check parameter
 	MQTT_ATTR_FLAG_VAL_QoS_CHECK(flag.bits.flag_w_QoS);
 	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(flag.bits.flag_reserved);
@@ -13,7 +14,8 @@ struct mqtt_buf_connect_flag * mqtt_connect_flag_pack(union mqtt_attr_connect_fl
 	return p_buf_flag;
 }
 
-union mqtt_attr_connect_flag mqtt_connect_flag_unpack(const struct mqtt_buf_connect_flag * p_buf_flag){
+union mqtt_attr_connect_flag mqtt_connect_flag_unpack(
+		const struct mqtt_buf_connect_flag * p_buf_flag){
 	union mqtt_attr_connect_flag flag = MQTT_CONNECT_FLAG_UNPACK(p_buf_flag);
 	 
 	//!< check parameter
@@ -24,7 +26,8 @@ union mqtt_attr_connect_flag mqtt_connect_flag_unpack(const struct mqtt_buf_conn
 }
 
 
-struct mqtt_buf_connack_flag * mqtt_connack_flag_pack(union mqtt_attr_connack_flag flag){
+struct mqtt_buf_connack_flag * mqtt_connack_flag_pack(
+		union mqtt_attr_connack_flag flag){
 	//!< chekc parameter
 	MQTT_ATTR_FLAG_VAL_RESERVED_CHECK(flag.bits.reserved);
 

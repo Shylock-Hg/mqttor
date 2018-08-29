@@ -112,13 +112,14 @@ mqtt_attr_str_t mqtt_buf_str_4_buf(const uint8_t * buf){
 
 
 struct mqtt_buf_uint16 * mqtt_buf_uint16_encode(mqtt_attr_uint16_t num){
-	struct mqtt_buf_uint16 * mq_uint16 = mqtt_buf_new(sizeof(mqtt_attr_uint16_t));
+	struct mqtt_buf_uint16 * mq_uint16 = mqtt_buf_new(
+			sizeof(mqtt_attr_uint16_t));
 	UINT16_2_BYTES(num,mq_uint16->buf);
 
 	return mq_uint16;
 }
 
-mqtt_attr_uint16_t mqtt_buf_uint16_decode(const struct mqtt_buf_uint16 * mq_uint16){
+mqtt_attr_uint16_t mqtt_buf_uint16_decode(const mqtt_buf_uint16_t * mq_uint16){
 	return BYTES_2_UINT16(mq_uint16->buf);
 }
 
