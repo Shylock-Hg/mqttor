@@ -125,8 +125,8 @@ typedef struct mqtt_attr_packet {
 			//!< fixed header
 			//union mqtt_attr_ctl_flag flag;  //!< p_ctl_flag flag of mqtt packet control
 			//!< variable header
-			/*mqtt_attr_str_t*/const char * topic_name;  //!< topic_name name of topic publish to
 			mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
+			mqtt_attr_str_t /*const char **/ topic_name;  //!< topic_name name of topic publish to
 			//!< payload
 			//const mqtt_attr_str_t app_msg;  //!< app_msg application specify message
 		} publish;
@@ -188,7 +188,7 @@ typedef struct mqtt_attr_packet {
 		struct {
 			//!< fixed header
 			//!< variable header
-			uint16_t id_packet;  //!< id_packet identifier of packet
+			mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 			//!< payload
 			//const mqtt_attr_str_t * top_filter;  //!< top_filter[] array of top_filter string
 			//uint16_t top_filter_count;  //!< to_filter_count count of top_filter string
@@ -198,7 +198,7 @@ typedef struct mqtt_attr_packet {
 		struct {
 			//!< fixed header
 			//!< variable header
-			uint16_t id_packet;  //!< id_packet identifier of packet
+			mqtt_attr_uint16_t id_packet;  //!< id_packet identifier of packet
 			//!< payload
 		} unsuback;
 

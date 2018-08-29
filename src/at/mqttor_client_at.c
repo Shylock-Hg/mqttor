@@ -30,7 +30,7 @@
 #define REPL
 
 /********** mqttor client options **********/
-static const char * topic = "test/topic";
+static /*const*/ char * topic = "test/topic";
 static const char * message = "hello world!";
 
 static enum mqttor_QoS qos = MQTTOR_QoS_MONCE;

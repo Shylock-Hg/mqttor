@@ -186,7 +186,7 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	return err;
 }
 
-int mqttor_client_publish(mqttor_session_t * mq_sess, const char * topic, 
+int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic, 
 		mqtt_attr_payload_t * payload,
 		enum mqttor_QoS qos,
 		bool retain){

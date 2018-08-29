@@ -36,7 +36,7 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess);
  *  \param retain is retain the publish
  *  \retval mqtt error
  * */
-int mqttor_client_publish(mqttor_session_t * mq_sess, const char * topic, 
+int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic, 
 		mqtt_attr_payload_t * payload,
 		enum mqttor_QoS qos,
 		bool retain);
