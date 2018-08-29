@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <signal.h>
-//#include <stdio.h>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -56,12 +55,12 @@ static int at_cmd_MQCONF_set_handler(char * parameter){
 		mq_sess->config->user = p_at_params->params[1]->param;
 		mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client user is `%s`!\n", 
 				mq_sess->config->user);
-		return 0;
+		return 0;  //!< not release string argument value
 	}else if(0 == strcmp("password", p_at_params->params[0]->param)){
 		mq_sess->config->pwd = p_at_params->params[1]->param;
 		mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client pwd is `%s`!\n", 
 				mq_sess->config->pwd);
-		return 0;
+		return 0;  //!< not release string argument value
 	}else if(0 == strcmp("will_retain", p_at_params->params[0]->param)){
 		mq_sess->config->will_retain = !!atoi(p_at_params->params[1]->param);
 		mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client will_retain is `%s`!\n", 
@@ -86,17 +85,17 @@ static int at_cmd_MQCONF_set_handler(char * parameter){
 		mq_sess->config->id_client = p_at_params->params[1]->param;
 		mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client id_client is `%s`!\n", 
 				mq_sess->config->id_client);
-		return 0;
+		return 0;  //!< not release string argument value
 	}else if(0 == strcmp("will_topic", p_at_params->params[0]->param)){
 		mq_sess->config->will_topic = p_at_params->params[1]->param;
 		mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client will_topic is `%s`!\n",
 				mq_sess->config->will_topic);
-		return 0;
+		return 0;  //!< not release string argument value
 	}else if(0 == strcmp("will_message", p_at_params->params[0]->param)){
 		mq_sess->config->will_message = p_at_params->params[1]->param;
 		mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client will_message is `%s`!\n", 
 				mq_sess->config->will_message);
-		return 0;
+		return 0;  //!< not release string argument value
 	}
 	
 	else if(0 == strcmp("RETAIN", p_at_params->params[0]->param)){
@@ -167,9 +166,6 @@ static int at_cmd_MQCONF_read_handler(void){
 
 
 static int at_cmd_MQCON_set_handler(char * parameter){
-
-	//mqtt_log_printf(LOG_LEVEL_LOG, "MQCON=%s\n", parameter);
-
 	assert(parameter);
 	assert(mq_sess);
 
@@ -227,24 +223,18 @@ static int at_cmd_MQDSC_exec_handler(void){
 	return err;
 }
 
-//static int  n = -1;  //!< count of publish client try to receive 
 static bool runcond = true;  //!< subscribe run loop flag
 /*  \brief SIGINT handler
  *  \param signum signal number
  * */
 void sighandler(int signum){
-	if(SIGINT == signum){
+	if(SIGINT == signum || SIGPIPE == signum){
 		runcond = false;
 	}
 }
 
 static int at_cmd_MQSUB_set_handler(char * parameter){
-	//mqtt_log_printf(LOG_LEVEL_LOG, "MQSUB=%s\n", parameter);
-
 	int err = 0;
-	//uint16_t seconds = 0;
-	//mqtt_buf_t * buf_publish = NULL;
-	//uint32_t count_publish = 0;
 
 	assert(parameter);
 
@@ -259,21 +249,14 @@ static int at_cmd_MQSUB_set_handler(char * parameter){
 	at_cmd_params_t * p_at_params = at_cmd_params_new(parameter, 1, 2);
 	if(1 == p_at_params->count){  //!< AT+MQSUB=topic
 		topic = p_at_params->params[0]->param;
-	}else if(2 == p_at_params->count){  
-		//!< AT+MQSUB=topic,requested_qos,count_publish
+	}else if(2 == p_at_params->count){  //!< AT+MQSUB=topic,requested_qos
 		topic = p_at_params->params[0]->param;
 		qos   = atoi(p_at_params->params[1]->param);
-		//n     = atoi(p_at_params->params[2]->param);
 	}else{  //!< error
 		at_cmd_params_release(p_at_params);
 		return -1;
 	}
 	
-#if 0
-	//< SIGINT
-	signal(SIGINT, sighandler);
-#endif
-
 	//< subscribe
 	err = mqttor_client_subscribe(mq_sess, topic, qos);
 	if(err){
@@ -281,45 +264,6 @@ static int at_cmd_MQSUB_set_handler(char * parameter){
 				"Mqttor client subscribe `%s` fail!\n", topic);
 	}
 
-#if 0
-	//< handle publish from boker
-	buf_publish = mqtt_buf_new(1024);
-	assert(buf_publish);
-	runcond = true;
-	while(runcond){
-		if(count_publish == n){  //!< had received all publish
-			raise(SIGINT);
-		}
-
-		err = recv(mq_sess->socket, buf_publish->buf, buf_publish->len,
-				MSG_DONTWAIT);
-		if(0 < err){
-			err = mq_sess->on_publish(mq_sess, buf_publish);
-			if(0 == err){
-				count_publish ++;
-			}
-		}
-
-		sleep(1);
-		seconds++;
-		//< send pingreq
-		if(seconds > mq_sess->config->keep_alive/2){
-			seconds = 0;
-			err = mqttor_client_pingreq(mq_sess);
-			if(0 > err){
-				mqtt_log_printf(LOG_LEVEL_WARN, 
-						"Mqttor client pingreq fail!\n");
-			}
-		
-		}
-
-		err = (n==count_publish ? 0 : err);
-	}
-
-	runcond = true;
-
-	mqtt_buf_release(buf_publish);
-#endif
 
 	at_cmd_params_release(p_at_params);
 
@@ -328,11 +272,9 @@ static int at_cmd_MQSUB_set_handler(char * parameter){
 
 
 static int at_cmd_MQPUB_set_handler(char * parameter){
-	//mqtt_log_printf(LOG_LEVEL_LOG, "MQPUB=%s\n", parameter);
+	int err = 0;
 
 	assert(parameter);
-
-	int err = 0;
 
 	if(!is_connected){
 		return -1;
@@ -403,6 +345,7 @@ int main(int argc, char * argv[]){
 #ifdef REPL  //!< REPL mode
 
 	signal(SIGINT, sighandler);
+	signal(SIGPIPE, sighandler);
 
 	char buffer[1024] = {0};
 	mqtt_buf_t * buf = NULL;
@@ -424,15 +367,14 @@ int main(int argc, char * argv[]){
 			at_cmd_execute_script_string(context, buffer);
 		}
 
-		if(is_connected){
-			//if(count_publish == n){  //!< had received all publish
-				//raise(SIGINT);
-			//}
-
+		if(is_connected){  //!< connected to broker and listen to publish
 			//< receive publish packet
 			err = recv(mq_sess->socket, buf->buf, buf->len,
 					MSG_DONTWAIT);
 			if(0 < err){  //!< receive packet
+				mqtt_log_printf(LOG_LEVEL_LOG,
+						"Mqttor client recv %d bytes!\n", err);
+				seconds = 0;  //!< reset timeout
 				buf_publish = mqtt_buf_new(err);
 				memcpy(buf_publish->buf, buf->buf, buf_publish->len);
 				err = mq_sess->on_publish(mq_sess, buf_publish);
@@ -441,9 +383,6 @@ int main(int argc, char * argv[]){
 							"Mqttor on publish error `%d`!\n", err);
 				}
 				mqtt_buf_release(buf_publish);
-				//if(0 == err){
-					//count_publish ++;
-				//}
 			}
 
 			//< sleep one seconds
@@ -471,6 +410,8 @@ int main(int argc, char * argv[]){
 	at_cmd_execute_script(context, "test.at");
 
 #endif
+
+	at_cmd_class_release(context);
 
 	return err;
 }

@@ -501,16 +501,15 @@ int mqttor_client_pingreq(mqttor_session_t * mq_sess){
 
 	//< send pingreq
 	mqtt_attr_packet_t * p_attr_pingreq = mqtt_attr_packet_new(0);
-	mqtt_buf_packet_t * p_buf_pingreq = NULL;
 	assert(p_attr_pingreq);
+	mqtt_buf_packet_t * p_buf_pingreq = NULL;
 	p_attr_pingreq->hdr.bits.type = MQTT_CTL_TYPE_PINGREQ;
 	err = mqtt_pack_pingreq(p_attr_pingreq, &p_buf_pingreq);
+	assert(p_buf_pingreq);
 	mqtt_attr_packet_release(p_attr_pingreq);
 	p_attr_pingreq = NULL;
-	assert(p_buf_pingreq);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client pack pingreq fail!\n");
-		mqtt_attr_packet_release(p_attr_pingreq);
 		if(p_buf_pingreq){
 			mqtt_buf_release(p_buf_pingreq);
 		}
@@ -519,7 +518,6 @@ int mqttor_client_pingreq(mqttor_session_t * mq_sess){
 	err = send(mq_sess->socket, p_buf_pingreq->buf, p_buf_pingreq->len, 0);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client send pingreq fail!\n");
-		mqtt_attr_packet_release(p_attr_pingreq);
 		if(p_buf_pingreq){
 			mqtt_buf_release(p_buf_pingreq);
 		}
@@ -539,11 +537,11 @@ int mqttor_client_pingreq(mqttor_session_t * mq_sess){
 		return -E_NET_XFER;
 	}
 	err = mqtt_unpack_pingresp(p_buf_pingresp, &p_attr_pingresp);
+	assert(p_attr_pingresp);
 	mqtt_buf_release(p_buf_pingresp);
 	p_buf_pingresp = NULL;
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client unpack pingresp fail!\n");
-		mqtt_buf_release(p_buf_pingresp);
 		if(p_attr_pingresp){
 			mqtt_attr_packet_release(p_attr_pingresp);
 		}
