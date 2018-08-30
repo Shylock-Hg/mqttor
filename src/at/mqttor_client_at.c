@@ -189,7 +189,7 @@ static int at_cmd_MQCON_set_handler(char * parameter){
 	//< connect
 	err = mqttor_client_connect(mq_sess, 
 			host, port);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, 
 				"Mqttor client connect to broker (%s,%d) fail!\n",
 				host/*MQTTOR_BROKER_IP*/, 
@@ -199,7 +199,7 @@ static int at_cmd_MQCON_set_handler(char * parameter){
 	//< release params 
 	at_cmd_params_release(p_at_params);
 
-	is_connected = true;
+	is_connected = (0 == err ? true : is_connected);
 
 	return err;
 }

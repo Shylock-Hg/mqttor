@@ -135,13 +135,21 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 		return err;
 	}
 	if(MQTT_CTL_TYPE_CONNACK == p_attr_connack->hdr.bits.type){
-		mqtt_log_printf(LOG_LEVEL_LOG, 
-				"Mqttor connect to broker ok!\n");
-		err = E_NONE;
+		if(CONNECT_RET_CODE_ACCEPTED == p_attr_connack->attr_packet.connack.ret_code){
+		
+			mqtt_log_printf(LOG_LEVEL_LOG, 
+					"Mqttor connect to broker ok!\n");
+			err = E_NONE;
+		}else{
+			mqtt_log_printf(LOG_LEVEL_LOG, 
+					"Mqttor client refused by broker, return code is`%d`!\n",
+					p_attr_connack->attr_packet.connack.ret_code);
+			err = -E_SESS_ACK;
+		}
 	}else{
 		mqtt_log_printf(LOG_LEVEL_ERR, 
 				"Mqttor connect to broker fail!\n");
-		err = E_NET_CONN;
+		err = -E_NET_CONN;
 	}
 	mqtt_attr_packet_release(p_attr_connack);
 	return err;

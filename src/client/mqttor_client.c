@@ -217,7 +217,7 @@ int main(int argc, char * argv[]){
 			//< connect
 			err = mqttor_client_connect(mq_sess, 
 					host, port);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor client connect to broker (%s,%d) fail!\n",
 						host/*MQTTOR_BROKER_IP*/, 
@@ -262,7 +262,7 @@ int main(int argc, char * argv[]){
 			//< connect
 			err = mqttor_client_connect(mq_sess, 
 					host, port);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor client connect to broker (%s,%d) fail!\n",
 						host/*MQTTOR_BROKER_IP*/, 
@@ -336,7 +336,7 @@ int main(int argc, char * argv[]){
 			//< connect
 			err = mqttor_client_connect(mq_sess, 
 					host, port);
-			if(err){
+			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor client connect to broker (%s,%d) fail!\n",
 						host/*MQTTOR_BROKER_IP*/, 
