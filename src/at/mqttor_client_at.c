@@ -51,6 +51,9 @@ static int at_cmd_MQCONF_set_handler(char * parameter){
 	//< parse parameter -- AT+MQCONF=KEY,VALUE
 	at_cmd_params_t * p_at_params = at_cmd_params_new(parameter, 2, 2);
 	assert(p_at_params);
+	if(NULL == p_at_params){
+		return -1;
+	}
 	if(0 == strcmp("username", p_at_params->params[0]->param)){
 		mq_sess->config->user = p_at_params->params[1]->param;
 		mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client user is `%s`!\n", 
@@ -181,6 +184,9 @@ static int at_cmd_MQCON_set_handler(char * parameter){
 	//< parse parameter -- AT+MQCON=host,port
 	at_cmd_params_t * p_at_params = at_cmd_params_new(parameter, 2, 2);
 	assert(p_at_params);
+	if(NULL == p_at_params){
+		return -1;
+	}
 
 	host = p_at_params->params[0]->param;
 	port = atoi(p_at_params->params[1]->param);
@@ -247,6 +253,10 @@ static int at_cmd_MQSUB_set_handler(char * parameter){
 
 	//< parse parameter -- AT+MQSUB=topic,requested_qos
 	at_cmd_params_t * p_at_params = at_cmd_params_new(parameter, 1, 2);
+	assert(p_at_params);
+	if(NULL == p_at_params){
+		return -1;
+	}
 	if(1 == p_at_params->count){  //!< AT+MQSUB=topic
 		topic = p_at_params->params[0]->param;
 	}else if(2 == p_at_params->count){  //!< AT+MQSUB=topic,requested_qos
@@ -286,6 +296,9 @@ static int at_cmd_MQPUB_set_handler(char * parameter){
 	//< parse parameter -- AT+MQPUB=topic,message,qos
 	at_cmd_params_t * p_at_params = at_cmd_params_new(parameter, 2, 3);
 	assert(p_at_params);
+	if(NULL == p_at_params){
+		return -1;
+	}
 	
 	if(2 == p_at_params->count){  //!< AT+MQPUB=topic,message
 		topic   = p_at_params->params[0]->param;
