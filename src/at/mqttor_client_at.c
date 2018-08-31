@@ -281,6 +281,43 @@ static int at_cmd_MQSUB_set_handler(char * parameter){
 }
 
 
+static int at_cmd_MQUNSUB_set_handler(char * parameter){
+	int err = 0;
+
+	assert(parameter);
+
+	if(!is_connected){
+		return -1;
+	}
+	if(NULL == mq_sess){
+		return -1;
+	}
+
+	//< parse parameter -- AT+MQUNSUB=topic
+	at_cmd_params_t * p_at_params = at_cmd_params_new(parameter, 1, 1);
+	assert(p_at_params);
+	if(1 == p_at_params->count){
+		topic = p_at_params->params[0]->param;
+	}else{  //!< invalid parameter count
+		at_cmd_params_release(p_at_params);
+		return -1;
+	}
+	if(NULL == p_at_params){
+		return -1;
+	}
+
+	//< unsubscribe
+	err = mqttor_client_unsubscribe(mq_sess, topic);
+	if(0 > err){
+		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client unsubscribe fail!\n");
+	}
+	
+	at_cmd_params_release(p_at_params);
+
+	return err;
+}
+
+
 static int at_cmd_MQPUB_set_handler(char * parameter){
 	int err = 0;
 
@@ -318,7 +355,7 @@ static int at_cmd_MQPUB_set_handler(char * parameter){
 	err = mqttor_client_publish(mq_sess, topic, payload, 
 			qos, true);
 	mqtt_attr_payload_release(payload);
-	if(err){
+	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client publish fail!\n");
 	}
 
@@ -330,10 +367,11 @@ static int at_cmd_MQPUB_set_handler(char * parameter){
 static at_cmd_cb_t mqttor_client_at[] = {
 	{AT_FLAG_VISIABLE, "MQCONF", at_cmd_MQCONF_set_handler, 
 		at_cmd_MQCONF_read_handler, NULL, NULL},
-	{AT_FLAG_VISIABLE, "MQCON",  at_cmd_MQCON_set_handler, NULL, NULL, NULL},
-	{AT_FLAG_VISIABLE, "MQDSC",  NULL, NULL, NULL, at_cmd_MQDSC_exec_handler},
-	{AT_FLAG_VISIABLE, "MQSUB",  at_cmd_MQSUB_set_handler, NULL, NULL, NULL},
-	{AT_FLAG_VISIABLE, "MQPUB",  at_cmd_MQPUB_set_handler, NULL, NULL, NULL}
+	{AT_FLAG_VISIABLE, "MQCON",   at_cmd_MQCON_set_handler, NULL, NULL, NULL},
+	{AT_FLAG_VISIABLE, "MQDSC",   NULL, NULL, NULL, at_cmd_MQDSC_exec_handler},
+	{AT_FLAG_VISIABLE, "MQSUB",   at_cmd_MQSUB_set_handler, NULL, NULL, NULL},
+	{AT_FLAG_VISIABLE, "MQPUB",   at_cmd_MQPUB_set_handler, NULL, NULL, NULL},
+	{AT_FLAG_VISIABLE, "MQUNSUB", at_cmd_MQUNSUB_set_handler, NULL, NULL, NULL}
 };
 
 #define TEST_AT_CMD_MAX_LEN       20
