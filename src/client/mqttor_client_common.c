@@ -428,10 +428,27 @@ int mqttor_client_subscribe(mqttor_session_t * mq_sess, const char * sub,
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor unpack suback fail!\n");
 		return err;
 	}
+	uint8_t ret_code_digit = 0;
+	err = mqtt_attr_payload_read_byte(p_attr_suback->payload, &ret_code_digit);
+	if(0 > err){
+		mqtt_log_printf(LOG_LEVEL_ERR, 
+				"Mqttor client read byte from suback payload fail!\n");
+	}
+	union mqtt_attr_payload_suback_ret_code ret_code = {
+		.all = ret_code_digit
+	};
 	if(MQTT_CTL_TYPE_SUBACK == p_attr_suback->hdr.bits.type){
-		err = E_NONE;
+		if(0 == ret_code.bits.ok){
+			err = E_NONE;
+		}else{
+			err = -E_SESS_ACK;
+			mqtt_log_printf(LOG_LEVEL_WARN, 
+					"Mqttor client subscribe refused by borker!\n");
+		}
 	}else{
 		err = -E_SESS_ACK;
+		mqtt_log_printf(LOG_LEVEL_WARN, 
+				"Mqttor client don't recv suback!\n");
 	}
 	mqtt_attr_packet_release(p_attr_suback);
 	
