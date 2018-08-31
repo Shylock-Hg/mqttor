@@ -122,7 +122,7 @@ int mqtt_attr_payload_read_byte(mqtt_attr_payload_t * payload, uint8_t * byte){
 
 	*byte = payload->buf[payload->pos++];
 
-	return E_NONE;
+	return sizeof(uint8_t);
 }
 
 int mqtt_attr_payload_write_bytes(mqtt_attr_payload_t * payload, 
