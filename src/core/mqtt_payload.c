@@ -69,7 +69,8 @@ int mqtt_attr_payload_write_string(mqtt_attr_payload_t * payload,
 	//mqtt_log_print_buf(payload->buf, payload->len_valid);
 	mqtt_buf_release(buf_uint16);
 
-	strcpy((char*)payload->buf+payload->len_valid, string);
+	//strcpy((char*)payload->buf+payload->len_valid, string);
+	memcpy(payload->buf+payload->len_valid, string, len);
 	payload->len_valid += len;
 
 	return len+MQTT_BUF_STR_MAX_BYTE;
