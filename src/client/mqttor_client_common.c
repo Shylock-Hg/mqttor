@@ -454,7 +454,7 @@ int mqttor_client_unsubscribe(mqttor_session_t * mq_sess, const char * sub){
 			len_sub+MQTT_BUF_STR_MAX_BYTE);
 	p_attr_unsubscribe->hdr.bits.type = MQTT_CTL_TYPE_UNSUBSCRIBE;
 	p_attr_unsubscribe->attr_packet.unsubscribe.id_packet = 
-		mq_sess->id_packet;
+		mq_sess->id_packet++;
 	mqtt_attr_payload_write_string(p_attr_unsubscribe->payload, sub);
 	mqtt_buf_packet_t * p_buf_unsubscribe = NULL;
 	err = mqtt_pack_unsubscribe(p_attr_unsubscribe, &p_buf_unsubscribe);
@@ -496,6 +496,7 @@ int mqttor_client_unsubscribe(mqttor_session_t * mq_sess, const char * sub){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor unsubscribe fail!\n");
 		err = -E_SESS_ACK;
 	}
+	mqtt_attr_packet_release(p_attr_unsuback);
 	return err;
 }
 
