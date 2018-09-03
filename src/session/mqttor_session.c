@@ -7,7 +7,13 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#include <sys/socket.h>
+#if defined(MQTTOR_LINUX)
+	#include <sys/socket.h>
+#elif defined(MQTTOR_HI2115)
+	#include <neul_socket.h>
+#else
+	#error "Don't specify platform!"
+#endif
 
 #include <core/mqtt_packet.h>
 #include <toolkit/mqtt_log.h>

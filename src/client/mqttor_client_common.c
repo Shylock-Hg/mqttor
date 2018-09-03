@@ -8,11 +8,20 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#if defined(MQTTOR_LINUX)
+	#include <sys/socket.h>
+	#include <sys/types.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <unistd.h>
+#elif defined(MQTTOR_HI2115)
+	#include <neul_socket.h>
+	#include <neul_socket_types.h>
+	#include <neul_ip_addr.h>
+	#undef BIT
+#else
+	#error "Don't specify platfrom!"
+#endif
 
 #include <toolkit/mqtt_log.h>
 #include <core/mqtt_packet.h>
@@ -45,12 +54,25 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
+#if defined(MQTTOR_LINUX)
 	addr.sin_addr.s_addr = inet_addr(host);
+#elif defined(MQTTOR_HI2115)
+	ipaddr_aton(host, &addr.sin_addr);
+#else
+	#error "Don't specify platform!"
+#endif
 
 	//< initialize socket
 	if(0 > mq_sess->socket){  //!< invalid socket
 		if(0 > (mq_sess->socket = socket(addr.sin_family,
-						SOCK_STREAM,IPPROTO_TCP))){
+						SOCK_STREAM,
+#if defined(MQTTOR_LINUX)
+						IPPROTO_TCP))){
+#elif defined(MQTTOR_HI2115)
+						TCP))){
+#else
+	#error "Don't specify platform!"
+#endif
 			mqtt_log_printf(LOG_LEVEL_ERR, 
 					"Mqttor create socket fail!\n");
 			return -E_NET_SOCK;
