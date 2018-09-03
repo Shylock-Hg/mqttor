@@ -7,7 +7,10 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#include <sys/socket.h>
+//#include <sys/socket.h>
+#include <neul_socket.h>
+//#include <neul_socket_types.h>
+//#include <neul_ip_addr.h>
 
 #include <core/mqtt_packet.h>
 #include <toolkit/mqtt_log.h>

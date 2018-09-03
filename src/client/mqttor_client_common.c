@@ -8,11 +8,17 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+//#include <sys/socket.h>
+//#include <sys/types.h>
+//#include <netinet/in.h>
+//#include <arpa/inet.h>
+//#include <unistd.h>
+//
+#include <neul_socket.h>
+#include <neul_socket_types.h>
+#include <neul_ip_addr.h>
+
+#undef BIT
 
 #include <toolkit/mqtt_log.h>
 #include <core/mqtt_packet.h>
@@ -45,12 +51,13 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = inet_addr(host);
+	//addr.sin_addr.s_addr = inet_addr(host);
+	ipaddr_aton(host, &addr.sin_addr);
 
 	//< initialize socket
 	if(0 > mq_sess->socket){  //!< invalid socket
 		if(0 > (mq_sess->socket = socket(addr.sin_family,
-						SOCK_STREAM,IPPROTO_TCP))){
+						SOCK_STREAM,/*IPPROTO_TCP*/TCP))){
 			mqtt_log_printf(LOG_LEVEL_ERR, 
 					"Mqttor create socket fail!\n");
 			return -E_NET_SOCK;
@@ -122,7 +129,7 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	//< wait for connack
 	mqtt_buf_t * p_buf_connack = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_CONNACK);
 	err = recv(mq_sess->socket, p_buf_connack->buf, p_buf_connack->len, 
-			MSG_WAITALL);
+			0);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv connack fail!\n");
 		return -E_NET_XFER;
