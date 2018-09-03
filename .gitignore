@@ -61,3 +61,4 @@ tags
 doc/
 
 vgcore.*
+.travis.yml
