@@ -122,7 +122,7 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	//< wait for connack
 	mqtt_buf_t * p_buf_connack = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_CONNACK);
 	err = recv(mq_sess->socket, p_buf_connack->buf, p_buf_connack->len, 
-			MSG_WAITALL);
+			0);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv connack fail!\n");
 		return -E_NET_XFER;
