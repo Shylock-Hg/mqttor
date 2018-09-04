@@ -13,7 +13,7 @@
  * */
 #define configENDIAN 0
 
-#define configLOG    1 //!< bool 
+#define configLOG    0 //!< bool 
 
 /// @}
 
