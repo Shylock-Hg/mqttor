@@ -223,6 +223,8 @@ mqttor_session_t * mqttor_session_new(void){
 
 	mq_sess->socket = -1;
 
+	mq_sess->is_connected = false;
+
 	mq_sess->id_packet = 0;
 
 	return mq_sess;

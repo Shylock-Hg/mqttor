@@ -38,7 +38,7 @@ static enum mqttor_QoS qos = MQTTOR_QoS_MONCE;
 static const char * host = "127.0.0.1";//"37.187.106.16";
 static int port  = 1883;
 
-static bool is_connected = false;  //!< mqttor session connection
+//static bool mq_sess->is_connected = false;  //!< mqttor session connection
 static mqttor_session_t * mq_sess = NULL;  //!< mqttor session instance
 
 static int at_cmd_MQCONF_set_handler(char * parameter){
@@ -174,7 +174,7 @@ static int at_cmd_MQCON_set_handler(char * parameter){
 
 	int err = 0;
 
-	if(is_connected){
+	if(mq_sess->is_connected){
 		return 0;
 	}
 	if(NULL == mq_sess){
@@ -205,7 +205,7 @@ static int at_cmd_MQCON_set_handler(char * parameter){
 	//< release params 
 	at_cmd_params_release(p_at_params);
 
-	is_connected = (0 == err ? true : is_connected);
+	mq_sess->is_connected = (0 == err ? true : mq_sess->is_connected);
 
 	return err;
 }
@@ -216,7 +216,7 @@ static int at_cmd_MQDSC_exec_handler(void){
 	//< 
 	assert(mq_sess);
 	
-	if(!is_connected){
+	if(!mq_sess->is_connected){
 		return 0;
 	}
 	if(NULL == mq_sess){
@@ -224,7 +224,7 @@ static int at_cmd_MQDSC_exec_handler(void){
 	}
 
 	int err = mqttor_client_disconnect(mq_sess);
-	is_connected = false;
+	mq_sess->is_connected = false;
 
 	return err;
 }
@@ -244,7 +244,7 @@ static int at_cmd_MQSUB_set_handler(char * parameter){
 
 	assert(parameter);
 
-	if(!is_connected){  //!< not connected
+	if(!mq_sess->is_connected){  //!< not connected
 		return -1;
 	}
 	if(NULL == mq_sess){
@@ -286,7 +286,7 @@ static int at_cmd_MQUNSUB_set_handler(char * parameter){
 
 	assert(parameter);
 
-	if(!is_connected){
+	if(!mq_sess->is_connected){
 		return -1;
 	}
 	if(NULL == mq_sess){
@@ -323,7 +323,7 @@ static int at_cmd_MQPUB_set_handler(char * parameter){
 
 	assert(parameter);
 
-	if(!is_connected){
+	if(!mq_sess->is_connected){
 		return -1;
 	}
 	if(NULL == mq_sess){
@@ -417,7 +417,7 @@ int main(int argc, char * argv[]){
 			at_cmd_execute_script_string(context, buffer);
 		}
 
-		if(is_connected){  //!< connected to broker and listen to publish
+		if(mq_sess->is_connected){  //!< connected to broker and listen to publish
 			//< receive publish packet
 			err = recv(mq_sess->socket, buf->buf, buf->len,
 					MSG_DONTWAIT);
@@ -450,7 +450,7 @@ int main(int argc, char * argv[]){
 			}
 
 			//err = (n==count_publish ? 0 : err);
-		}  //!< is_connected
+		}  //!< mq_sess->is_connected
 	}  //!< runcond
 
 	mqtt_buf_release(buf);

@@ -70,7 +70,9 @@ typedef struct mqttor_session {
 	//< configuration
 	mqttor_config_t * config;
 
-	int socket;
+	int socket;  //!< socket of client -1 for not initialized
+
+	bool is_connected;  //!< is connected to broker
 
 	uint16_t id_packet;  //!< record message id
 
