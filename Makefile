@@ -1,13 +1,10 @@
 
 WITH_GCOV = no
 
-PLATFORM = -DMQTTOR_LINUX #-DMQTTOR_HI2115
-
 #export CC = gcc
 export INSTALL = install
 export prefix = /usr/local
 export CFLAGS = -Wall -g -std=gnu99
-CFLAGS += $(PLATFORM)
 
 ifeq ($(WITH_GCOV),yes)
 	CFLAGS += -fprofile-arcs -ftest-coverage
