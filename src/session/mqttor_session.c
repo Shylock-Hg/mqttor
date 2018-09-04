@@ -11,7 +11,6 @@
 	#include <sys/socket.h>
 #elif defined(MQTTOR_HI2115)
 	#include <neul_socket.h>
-	#undef BIT
 #else
 	#error "Don't specify platform!"
 #endif
