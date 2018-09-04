@@ -194,7 +194,11 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	mqtt_attr_packet_release(p_attr_packet);
 
 	//!< close socket
-	close(mq_sess->socket);
+	//close(mq_sess->socket);
+    if (close_socket(mq_sess->socket) != NEUL_SOCKET_RET_OK)
+    {
+        return -E_NET_SOCK;
+    }
 	mq_sess->socket = -1;
 
 	mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client disconnect!\n");
