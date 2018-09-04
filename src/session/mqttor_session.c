@@ -11,6 +11,7 @@
 #include <neul_socket.h>
 //#include <neul_socket_types.h>
 //#include <neul_ip_addr.h>
+#undef BIT
 
 #include <core/mqtt_packet.h>
 #include <toolkit/mqtt_log.h>
