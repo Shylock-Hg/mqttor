@@ -3,6 +3,8 @@
  *  \date 2018-08-20
  *  \email tcath2s@gmail.com
  * */
+#include <irmalloc.h>
+#undef BIT
 
 #include <string.h>
 #include <assert.h>

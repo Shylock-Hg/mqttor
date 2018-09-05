@@ -76,7 +76,7 @@ struct mqtt_buf * mqtt_buf_new(size_t len);
  * */
 mqtt_buf_t * mqtt_buf_new_4_buf(uint8_t * buf, size_t len);
 
-/*! \brief release mqtt_buf by free memory
+/*! \brief release mqtt_buf by irfree memory
  *  \param buf mqtt_buf object pointer to release
  * */
 void mqtt_buf_release(struct mqtt_buf * mq_buf);

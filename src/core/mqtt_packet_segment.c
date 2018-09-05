@@ -3,6 +3,9 @@
  *  \date 2018-04-09
  *  \email tcath2s@gmail.com
  * */
+#include <irmalloc.h>
+#undef BIT
+
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
@@ -29,9 +32,9 @@ const char * mqtt_str_error(mqtt_err_t err){
 }
 
 struct mqtt_buf * mqtt_buf_new(size_t len){
-	//uint8_t * buf = malloc(len);
-	uint8_t * buf = calloc(len,sizeof(uint8_t));
-	struct mqtt_buf * mq_buf = malloc(sizeof(struct mqtt_buf));
+	//uint8_t * buf = irmalloc(len);
+	uint8_t * buf = ircalloc(len,sizeof(uint8_t));
+	struct mqtt_buf * mq_buf = irmalloc(sizeof(struct mqtt_buf));
 	mq_buf->buf = buf;
 	mq_buf->len = len;
 	//memset(mq_buf->buf,0x00,mq_buf->len);
@@ -50,8 +53,8 @@ mqtt_buf_t * mqtt_buf_new_4_buf(uint8_t * buf, size_t len){
 }
 
 void mqtt_buf_release(struct mqtt_buf * mq_buf){
-	free(mq_buf->buf);
-	free(mq_buf);
+	irfree(mq_buf->buf);
+	irfree(mq_buf);
 }
 
 
@@ -67,7 +70,7 @@ struct mqtt_buf_str * mqtt_buf_str_encode(const char * str){
 	MQTT_BUF_STR_LEN_CHECK(len);  //< check c-string length
 
 	//< caculate buffer length
-	//struct mqtt_buf_str * mq_str = malloc(sizeof(struct mqtt_buf_str));
+	//struct mqtt_buf_str * mq_str = irmalloc(sizeof(struct mqtt_buf_str));
 	//mq_str->len = len + MQTT_BUF_STR_MAX_BYTE;
 	struct mqtt_buf_str * mq_str = mqtt_buf_new(len+MQTT_BUF_STR_MAX_BYTE);
 
@@ -88,7 +91,7 @@ mqtt_attr_str_t mqtt_buf_str_decode(const struct mqtt_buf_str * mq_str){
 
 	//< c-string length with '\0'
 	size_t len = (mq_str->len)+1-MQTT_BUF_STR_MAX_BYTE;
-	mqtt_attr_str_t str = malloc(len);
+	mqtt_attr_str_t str = irmalloc(len);
 
 	//< copy c-string content
 	memcpy(str,mq_str->buf+MQTT_BUF_STR_MAX_BYTE,len-1);

@@ -14,6 +14,8 @@
  *              [-n publish] [-i host] [-p port]
  *          --  mqttor_client con [-i host] [-p port] [-n count of publish]
  * */
+#include <irmalloc.h>
+#undef BIT
 
 #include <string.h>
 #include <stdlib.h>

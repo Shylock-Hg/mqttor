@@ -1,4 +1,7 @@
 //#include "../../inc/core/mqtt_packet_segment.h"
+//
+#include <irmalloc.h>
+#undef BIT
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -12,12 +15,12 @@ mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len){
 	if(0 == len)
 		return NULL;
 
-	mqtt_attr_payload_t * payload = malloc(sizeof(mqtt_attr_payload_t));
+	mqtt_attr_payload_t * payload = irmalloc(sizeof(mqtt_attr_payload_t));
 	assert(payload);
 	payload->len = len;
 	payload->len_valid = 0;
 	payload->pos = 0;
-	payload->buf = malloc(len);
+	payload->buf = irmalloc(len);
 	assert(payload->buf);
 	
 	return payload;
@@ -27,8 +30,8 @@ mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len){
 void mqtt_attr_payload_release(mqtt_attr_payload_t * payload){
 	//assert(payload);
 	if(NULL != payload){
-		free(payload->buf);
-		free(payload);
+		irfree(payload->buf);
+		irfree(payload);
 	}
 }
 

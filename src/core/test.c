@@ -2,6 +2,8 @@
  *  \author Shylock Hg
  *  \data 2018-03-21
  * */
+#include <irmalloc.h>
+#undef BIT
 
 #include <stdio.h>
 #include <string.h>
@@ -94,8 +96,8 @@ void test_packet_segment(void){
 	mqtt_log_print_buf(LOG_LEVEL_LOG, mq_str->buf, mq_str->len);
 	printf("[info]:decode __str `%s`.\n", __str);
 
-	free(__str);
-	free(_str);
+	irfree(__str);
+	irfree(_str);
 	mqtt_buf_release(mq_str);
 }
 
@@ -299,7 +301,7 @@ void test_packet(void){
 	printf("keepalive = `%d`\n", attr_packet->attr_packet.connect.keep_alive);
 	mqtt_log_print_buf(LOG_LEVEL_LOG, attr_packet->payload->buf, attr_packet->payload->len);
 
-	//!< don't free in mqtt_pack_connect
+	//!< don't irfree in mqtt_pack_connect
 	//mqtt_attr_payload_release(attr_connect->payload); 
 	mqtt_attr_packet_release(attr_packet);
 	mqtt_attr_packet_release(attr_connect);

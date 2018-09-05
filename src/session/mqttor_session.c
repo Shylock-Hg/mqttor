@@ -3,6 +3,9 @@
  *  \date 2018-08-10
  *  \email tcath2s@gmail.com
  * */
+#include <irmalloc.h>
+#undef BIT
+
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
@@ -48,7 +51,7 @@ void mqttor_config_deinit(mqttor_config_t * mq_config){
 }
 
 mqttor_config_t * mqttor_config_new(void){
-	mqttor_config_t * mq_config = malloc(sizeof(mqttor_config_t));
+	mqttor_config_t * mq_config = irmalloc(sizeof(mqttor_config_t));
 	
 	mqttor_config_deinit(mq_config);
 
@@ -56,7 +59,7 @@ mqttor_config_t * mqttor_config_new(void){
 }
 
 void mqttor_config_release(mqttor_config_t * mq_config){
-	free(mq_config);
+	irfree(mq_config);
 }
 
 
@@ -191,7 +194,7 @@ int mqttor_session_on_publish(mqttor_session_t * mq_sess,
 							p_attr_publish->hdr.bits.QoS);
 			}
 
-			free(p_attr_publish->attr_packet.publish.topic_name);
+			irfree(p_attr_publish->attr_packet.publish.topic_name);
 			mqtt_attr_packet_release(p_attr_publish);
 			p_attr_publish = NULL;
 
@@ -217,7 +220,7 @@ void mqttor_session_deinit(mqttor_session_t * mq_sess){
 }
 
 mqttor_session_t * mqttor_session_new(void){
-	mqttor_session_t * mq_sess = malloc(sizeof(mqttor_session_t));
+	mqttor_session_t * mq_sess = irmalloc(sizeof(mqttor_session_t));
 
 	mq_sess->config = mqttor_config_new();
 	mq_sess->on_publish = mqttor_session_on_publish;
@@ -233,6 +236,6 @@ mqttor_session_t * mqttor_session_new(void){
 
 void mqttor_session_release(mqttor_session_t * mq_sess){
 	mqttor_config_release(mq_sess->config);
-	free(mq_sess);
+	irfree(mq_sess);
 }
 

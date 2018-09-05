@@ -4,6 +4,9 @@
  *  \date 2018-04-10
  * */
 
+#include <irmalloc.h>
+#undef BIT
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,7 +20,7 @@
 mqtt_attr_packet_t * mqtt_attr_packet_new(size_t len_payload){
 	//assert(len_payload);
 
-	mqtt_attr_packet_t * packet = malloc(sizeof(mqtt_attr_packet_t));
+	mqtt_attr_packet_t * packet = irmalloc(sizeof(mqtt_attr_packet_t));
 	assert(packet);
 	packet->payload = mqtt_attr_payload_new(len_payload);
 	if(0 != len_payload)
@@ -31,12 +34,12 @@ void mqtt_attr_packet_release(mqtt_attr_packet_t * packet){
 
 	/*
 	if(MQTT_CTL_TYPE_PUBLISH == packet->hdr.bits.type){
-		free(packet->attr_packet.publish.topic_name);
+		irfree(packet->attr_packet.publish.topic_name);
 	}
 	*/
 
 	mqtt_attr_payload_release(packet->payload);
-	free(packet);
+	irfree(packet);
 }
 
 
@@ -154,7 +157,7 @@ int mqtt_pack_connect(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -183,7 +186,7 @@ int mqtt_unpack_connect(
 			p_buf_packet->buf+offset,
 			strlen(MQTT_PROTOCOL_NAME)+MQTT_BUF_STR_MAX_BYTE);
 	mqtt_attr_str_t attr_protocol_name = mqtt_buf_str_decode(p_buf_protocol_name);
-	free(attr_protocol_name);
+	irfree(attr_protocol_name);
 	mqtt_buf_release(p_buf_protocol_name);
 	offset += (strlen(MQTT_PROTOCOL_NAME)+MQTT_BUF_STR_MAX_BYTE);
 	//< level
@@ -290,7 +293,7 @@ int mqtt_pack_connack(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -408,7 +411,7 @@ int mqtt_pack_publish(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -435,7 +438,7 @@ int mqtt_unpack_publish(
 	//< variable header
 	//< topic name
 	mqtt_attr_uint16_t len_str = BYTES_2_UINT16((p_buf_packet->buf+offset));
-	mqtt_attr_str_t attr_topic_name = malloc(len_str+1);
+	mqtt_attr_str_t attr_topic_name = irmalloc(len_str+1);
 	memcpy(attr_topic_name, p_buf_packet->buf+offset+MQTT_BUF_STR_MAX_BYTE,
 			len_str);
 	attr_topic_name[len_str] = '\0';
@@ -525,7 +528,7 @@ int mqtt_pack_puback(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -622,7 +625,7 @@ int mqtt_pack_pubrec(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -720,7 +723,7 @@ int mqtt_pack_pubrel(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -824,7 +827,7 @@ int mqtt_pack_pubcomp(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -938,7 +941,7 @@ int mqtt_pack_subscribe(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -1054,7 +1057,7 @@ int mqtt_pack_suback(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -1166,7 +1169,7 @@ int mqtt_pack_unsubscribe(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -1267,7 +1270,7 @@ int mqtt_pack_unsuback(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		return E_MEM_FAIL;
 	}
 
@@ -1360,7 +1363,7 @@ int mqtt_pack_pingreq(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -1442,7 +1445,7 @@ int mqtt_pack_pingresp(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}
@@ -1525,7 +1528,7 @@ int mqtt_pack_disconnect(
 		}
 		return E_NONE;
 	}else{
-		//printf("[err]:malloc fail!\n");
+		//printf("[err]:irmalloc fail!\n");
 		mqtt_log_printf(LOG_LEVEL_ERR, "alloc fail!\n");
 		return E_MEM_FAIL;
 	}

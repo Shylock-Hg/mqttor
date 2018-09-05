@@ -1,3 +1,6 @@
+#include <irmalloc.h>
+#undef BIT
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -43,7 +46,7 @@ union mqtt_attr_ctl_flag mqtt_ctl_flag_unpack(uint8_t ** p_packet){
 mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len_low(const struct mqtt_buf_re_len * mq_buf_re_len){
 	int multiplier = 1;
 	mqtt_attr_re_len_t value = 0;
-	uint8_t * data = calloc(MQTT_CTL_REMAINING_MAX_LEN_BYTE,sizeof(uint8_t));
+	uint8_t * data = ircalloc(MQTT_CTL_REMAINING_MAX_LEN_BYTE,sizeof(uint8_t));
 	uint8_t * code = data;
 	memcpy(code,mq_buf_re_len->buf,mq_buf_re_len->len);
 	do{
@@ -58,7 +61,7 @@ mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len_low(const struct mqtt_buf_re_le
 	//!< check length range
 	MQTT_CTL_REMAINING_LEN_CHECK(value);
 
-	free(data);
+	irfree(data);
 	
 	return value;
 }
@@ -85,7 +88,7 @@ struct mqtt_buf_re_len * mqtt_ctl_encode_remaining_len(mqtt_attr_re_len_t mq_att
 	//!< check length range
 	MQTT_CTL_REMAINING_LEN_CHECK(mq_attr_re_len);
 
-	uint8_t * data = calloc(MQTT_CTL_REMAINING_MAX_LEN_BYTE,sizeof(uint8_t));
+	uint8_t * data = ircalloc(MQTT_CTL_REMAINING_MAX_LEN_BYTE,sizeof(uint8_t));
 	uint8_t * code = data;
 
 	int count = 0;
@@ -102,7 +105,7 @@ struct mqtt_buf_re_len * mqtt_ctl_encode_remaining_len(mqtt_attr_re_len_t mq_att
 	struct mqtt_buf_re_len * mq_buf_re_len = mqtt_buf_new(count);
 	memcpy(mq_buf_re_len->buf,data,count);
 	
-	free(data);
+	irfree(data);
 
 	return mq_buf_re_len;
 }

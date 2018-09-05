@@ -1,3 +1,6 @@
+#include <irmalloc.h>
+#undef BIT
+
 #include <stdint.h>
 
 #include <core/mqtt_var_header.h>
