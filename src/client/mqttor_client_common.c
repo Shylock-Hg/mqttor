@@ -28,6 +28,10 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 
 	int err = 0;
 
+	if(mq_sess->is_connected){
+		return E_NONE;
+	}
+
 	/*
 	mq_sess->config->broker_ip = host ? 
 		host : 
@@ -152,6 +156,8 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 		err = -E_NET_CONN;
 	}
 	mqtt_attr_packet_release(p_attr_connack);
+
+	mq_sess->is_connected = true;
 	return err;
 }
 
@@ -161,6 +167,10 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	if(0 > mq_sess->socket){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor invalid socket!\n");
 		return -E_NET_SOCK;
+	}
+
+	if(!mq_sess->is_connected){
+		return E_NONE;
 	}
 	
 	int err = 0;
@@ -189,6 +199,8 @@ int mqttor_client_disconnect(mqttor_session_t * mq_sess){
 	//!< close socket
 	close(mq_sess->socket);
 	mq_sess->socket = -1;
+
+	mq_sess->is_connected = false;
 
 	mqtt_log_printf(LOG_LEVEL_LOG, "Mqttor client disconnect!\n");
 

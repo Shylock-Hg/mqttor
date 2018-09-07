@@ -205,7 +205,7 @@ static int at_cmd_MQCON_set_handler(char * parameter){
 	//< release params 
 	at_cmd_params_release(p_at_params);
 
-	mq_sess->is_connected = (0 == err ? true : mq_sess->is_connected);
+	//mq_sess->is_connected = (0 == err ? true : mq_sess->is_connected);
 
 	return err;
 }
@@ -224,7 +224,7 @@ static int at_cmd_MQDSC_exec_handler(void){
 	}
 
 	int err = mqttor_client_disconnect(mq_sess);
-	mq_sess->is_connected = false;
+	//mq_sess->is_connected = false;
 
 	return err;
 }
