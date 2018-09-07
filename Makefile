@@ -1,13 +1,20 @@
 
-WITH_GCOV = no
+WITH_GCOV = yes
+
+WITH_DEBUG = yes
 
 #export CC = gcc
 export INSTALL = install
 export prefix = /usr/local
-export CFLAGS = -Wall -g -std=gnu99
+export CFLAGS = -Wall -std=gnu99
+export BUILD_ROOT = $(shell pwd)
 
 ifeq ($(WITH_GCOV),yes)
-	CFLAGS += -fprofile-arcs -ftest-coverage
+	CFLAGS += -coverage#-fprofile-arcs -ftest-coverage
+endif
+
+ifeq ($(WITH_DEBUG),yes)
+	CFLAGS += -g
 endif
 
 

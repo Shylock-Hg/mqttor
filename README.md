@@ -2,7 +2,7 @@ The simple mqtt protocol implementation
 =======================================
 
 [![Build Status](https://travis-ci.org/Shylock-Hg/mqttor.svg?branch=master)](https://travis-ci.org/Shylock-Hg/mqttor)
-[![Coverage Status](https://coveralls.io/repos/github/Shylock-Hg/mqttor/badge.svg?branch=master)](https://coveralls.io/github/Shylock-Hg/mqttor?branch=master)
+[![codecov](https://codecov.io/gh/Shylock-Hg/mqttor/branch/master/graph/badge.svg)](https://codecov.io/gh/Shylock-Hg/mqttor)
 
 ## Feature
 
