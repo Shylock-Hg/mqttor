@@ -29,7 +29,7 @@ DEPFILES = $(patsubst %.o, %.d, $(APP_OBJECT))
 all : $(DIR_BUILD)/$(TARGET)
 
 $(DIR_BUILD)/$(TARGET) : $(APP_OBJECT) Makefile $(DIR_BUILD)
-	$(CC) $(CFLAGS_LOCAL) -o $@ $< -lat -lmqttor
+	$(CC) $(CFLAGS_LOCAL) -o $@ $< -L$(BUILD_ROOT)/src/client/build -L$(BUILD_ROOT)/AT-interpreter/build -lat -lmqttor
 
 $(APP_OBJECT) : $(APP_SOURCE) Makefile $(DIR_BUILD)
 	$(CC) $(PPFLAGS) $(CFLAGS_LOCAL) -c $< -o $@
