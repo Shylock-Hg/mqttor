@@ -76,6 +76,12 @@ typedef struct mqttor_session {
 
 	uint16_t id_packet;  //!< record message id
 
+	void (*on_recv)(int socket, ssize_t length,
+			const struct sockaddr * addr,
+			socklen_t addr_len);  //!< client and broker
+
+	ssize_t socket_buf_available;  //!< available buffer length to recv
+
 	//< callback functions
 	int (*on_publish)(struct mqttor_session * mq_sess, 
 			mqtt_buf_packet_t * buf_packet);  //!< client and broker
