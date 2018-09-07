@@ -12,6 +12,9 @@
 #endif
 	
 #include <stdbool.h>
+#include <stdint.h>
+
+#include <neul_socket_types.h>
 
 #include <core/mqtt_packet.h>
 
@@ -76,11 +79,11 @@ typedef struct mqttor_session {
 
 	uint16_t id_packet;  //!< record message id
 
-	void (*on_recv)(int socket, ssize_t length,
+	void (*on_recv)(int socket, int32_t length,
 			const struct sockaddr * addr,
 			socklen_t addr_len);  //!< client and broker
 
-	ssize_t socket_buf_available;  //!< available buffer length to recv
+	int32_t socket_buf_available;  //!< available buffer length to recv
 
 	//< callback functions
 	int (*on_publish)(struct mqttor_session * mq_sess, 
