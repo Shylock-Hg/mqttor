@@ -7,7 +7,6 @@ The simple mqtt protocol implementation
 ## Feature
 
 - mqtt specification v3.1.1
-- -std=c99.
 - easy port.
 - easy using.
 
@@ -35,5 +34,8 @@ The simple mqtt protocol implementation
 
 ## Demo
 
-- ipc:build mqtt protocol in linux ipc.
+### Client
+
+Install by `make -j8 && sudo make install`, check usage by \
+`mqttor_client_at -h`, `mqttor_client -h`.
 
