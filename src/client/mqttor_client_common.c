@@ -17,6 +17,7 @@
 #include <neul_socket.h>
 #include <neul_socket_types.h>
 #include <neul_ip_addr.h>
+#include <app_at.h>
 
 #undef BIT
 
@@ -54,9 +55,16 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
+	//addr.sin_port = htons(port);
+	addr.sin_port = port;
 	//addr.sin_addr.s_addr = inet_addr(host);
 	ipaddr_aton(host, &addr.sin_addr);
+
+	struct sockaddr_in local_addr;
+	memset(&local_addr, 0, sizeof(addr));
+	local_addr.sin_family = AF_INET;
+	local_addr.sin_port = 0;
+	ip_addr_set_any((local_addr.sin_family == AF_INET6), &local_addr.sin_addr);
 
 	//< initialize socket
 	if(0 > mq_sess->socket){  //!< invalid socket
@@ -67,6 +75,17 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 			return -E_NET_SOCK;
 		}
 		
+	}
+
+	err = neul_bind(
+			mq_sess->socket, 
+			(struct sockaddr*)&local_addr, 
+			sizeof(local_addr), 
+			mq_sess->on_recv);
+	if(NEUL_SOCKET_RET_OK != err){
+		close_socket(mq_sess->socket);
+		mq_sess->socket = -1;
+		return -E_NET_SOCK;
 	}
 
 	//< tcp connect
@@ -119,6 +138,8 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 			&p_buf_packet);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor packet connect fail!\n");
+		close_socket(mq_sess->socket);
+		mq_sess->socket = -1;
 		return err;
 	}
 	err = send(mq_sess->socket, p_buf_packet->buf, p_buf_packet->len, 0);
@@ -126,16 +147,20 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, 
 				"Mqttor send connect packet fail!\n");
+		close_socket(mq_sess->socket);
+		mq_sess->socket = -1;
 		return -E_NET_CONN;
 	}
 	mqtt_attr_packet_release(p_attr_connect);
 
 	//< wait for connack
 	mqtt_buf_t * p_buf_connack = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_CONNACK);
-	err = recv(mq_sess->socket, p_buf_connack->buf, p_buf_connack->len, 
-			0);
+	//while(MQTT_FIXED_PACKET_LEN_CONNACK > mq_sess->socket_buf_available);
+	err = recv(mq_sess->socket, p_buf_connack->buf, p_buf_connack->len, 0);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv connack fail!\n");
+		close_socket(mq_sess->socket);
+		mq_sess->socket = -1;
 		return -E_NET_XFER;
 	}
 	mqtt_attr_packet_t * p_attr_connack = NULL;
@@ -143,6 +168,8 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	mqtt_buf_release(p_buf_connack);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor unpack connack fail!\n");
+		close_socket(mq_sess->socket);
+		mq_sess->socket = -1;
 		return err;
 	}
 	if(MQTT_CTL_TYPE_CONNACK == p_attr_connack->hdr.bits.type){
@@ -164,7 +191,12 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 	}
 	mqtt_attr_packet_release(p_attr_connack);
 
-	mq_sess->is_connected = true;
+	if(err == 0){
+		mq_sess->is_connected = true;
+	}else{
+		close_socket(mq_sess->socket);
+		mq_sess->socket = -1;
+	}
 	return err;
 }
 
