@@ -170,7 +170,7 @@ before_script:
 
 script :
     - make -j8 && sudo make install
-    - export LD_LIBRARY_PATH=/usr/local
+    - export LD_LIBRARY_PATH=/usr/local/lib
     - make test
 
 after_success:
