@@ -169,7 +169,8 @@ before_script:
     - mosquitto -d
 
 script :
-    - make -j8 && sudo make install
+    - make -j8
+    - sudo make install
     - export LD_LIBRARY_PATH=/usr/local/lib
     - make test
     - sudo make uninstall
