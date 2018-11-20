@@ -80,11 +80,11 @@ uninstall :
 	rm -f "${DESTDIR}${prefix}/bin/$(TARGET)"
 
 test :
-	mqttor_client -h
-	mqttor_client pub -t 'test/topic' -m 'QoS0' -q 0
-	mqttor_client pub -t 'test/topic' -m 'QoS1' -q 1
-	mqttor_client pub -t 'test/topic' -m 'QoS2' -q 2
-	mqttor_client sub -t 'test/topic' -n 1
+	$(TARGET) -h
+	$(TARGET) pub -t 'test/topic' -m 'QoS0' -q 0
+	$(TARGET) pub -t 'test/topic' -m 'QoS1' -q 1
+	$(TARGET) pub -t 'test/topic' -m 'QoS2' -q 2
+	$(TARGET) sub -t 'test/topic' -n 1
 
 clean : 
 	rm -rf $(DIR_BUILD)
