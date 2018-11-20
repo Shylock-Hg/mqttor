@@ -32,9 +32,7 @@ uninstall :
 	set -e; for d in $(DIRS); do $(MAKE) -C $${d} uninstall; done
 
 test :
-	set -e; for d in $(DIRS); do $(MAKE) -C $${d} test; done
+	set -e; for d in $(DIRS_TEST); do $(MAKE) -C $${d} test; done
 
 clean :
-	set -e; for d in $(DIRS_TEST); do $(MAKE) -C $${d} clean; done
-
-
+	set -e; for d in $(DIRS); do $(MAKE) -C $${d} clean; done
