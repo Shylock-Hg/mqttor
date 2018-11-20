@@ -25,7 +25,7 @@ DEPFILES = $(patsubst %.o, %.d, $(APP_OBJECT))
 # set c sources search path
 #vpath %.c $(sort $(dir $(SOURCES)))
 
-.PHONY : all clean install
+.PHONY : all clean install uninstall
 all : $(DIR_BUILD)/$(TARGET)
 
 $(DIR_BUILD)/$(TARGET) : $(APP_OBJECT) Makefile $(DIR_BUILD)
