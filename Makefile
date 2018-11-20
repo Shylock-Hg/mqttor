@@ -19,8 +19,9 @@ endif
 
 
 DIRS = ./src/client AT-interpreter/ ./src/at
+DIRS_TEST = ./src/client AT-interpreter/
 
-.PHONY : all install clean
+.PHONY : all install uninstall test clean
 all :
 	set -e; for d in $(DIRS); do $(MAKE) -C $${d}; done
 
@@ -30,7 +31,8 @@ install :
 uninstall :
 	set -e; for d in $(DIRS); do $(MAKE) -C $${d} uninstall; done
 
+test :
+	set -e; for d in $(DIRS_TEST); do $(MAKE) -C $${d} test; done
+
 clean :
 	set -e; for d in $(DIRS); do $(MAKE) -C $${d} clean; done
-
-

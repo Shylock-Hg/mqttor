@@ -45,7 +45,7 @@ vpath %.c $(sort $(dir $(LIB_SOURCES)))
 # set c headers search path
 #vpath %.h $(sort $(dir $(INCLUDES)))
 
-.PHONY : all clean install
+.PHONY : all clean install uninstall test
 all : $(DIR_BUILD)/$(TARGET)
 
 $(DIR_BUILD)/$(TARGET) : $(OBJECTS) $(DIR_BUILD)/$(LIB_SO_MQTTOR) Makefile
@@ -78,6 +78,13 @@ uninstall :
 	rm -f "${DESTDIR}${prefix}/lib/$(LIB_SO_MQTTOR)"
 	rm -f "${DESTDIR}${prefix}/lib/lib${LIBNAME}.so"
 	rm -f "${DESTDIR}${prefix}/bin/$(TARGET)"
+
+test :
+	$(TARGET) -h
+	$(TARGET) pub -t 'test/topic' -m 'QoS0' -q 0
+	$(TARGET) pub -t 'test/topic' -m 'QoS1' -q 1
+	$(TARGET) pub -t 'test/topic' -m 'QoS2' -q 2
+	$(TARGET) sub -t 'test/topic' -n 1
 
 clean : 
 	rm -rf $(DIR_BUILD)
