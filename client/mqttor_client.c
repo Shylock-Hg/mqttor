@@ -27,10 +27,9 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#include <client/mqttor_client_common.h>
-#include <client/mqttor_client.h>
+#include "../mqtt/inc/mqttor_client_common.h"
 
-#include <toolkit/mqtt_log.h>
+#include "../mqtt/inc/mqtt_log.h"
 
 /********** mqttor client options **********/
 static /*const*/ char * topic = "test/topic";

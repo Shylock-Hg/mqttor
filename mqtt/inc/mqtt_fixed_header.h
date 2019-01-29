@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include "mqtt_packet_segment.h"
+#include "./mqtt_packet_segment.h"
 
 /*********** macro of MQTT protocol datagram  ***********/
 

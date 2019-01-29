@@ -12,8 +12,8 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <toolkit/array.h>
-#include "mqtt_packet_segment.h"
+#include "./array.h"
+#include "./mqtt_packet_segment.h"
 
 /***********if packet with payload***********/
 
