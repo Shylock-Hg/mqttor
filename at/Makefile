@@ -55,11 +55,7 @@ uninstall :
 	$(RM) -f  "$(prefix)/bin/$(APP)"
 
 test :
-	$(VALGRIND) $(APP) -h
-	$(TARGET) pub -t 'test/topic' -m 'QoS0' -q 0
-	$(TARGET) pub -t 'test/topic' -m 'QoS1' -q 1
-	$(TARGET) pub -t 'test/topic' -m 'QoS2' -q 2
-	$(TARGET) sub -t 'test/topic' -n 1
+	echo 'Not better way to test in REPL mode!'
 
 clean :
 	$(RM) -rf $(DIR_BUILD)
