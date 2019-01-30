@@ -1,3 +1,3 @@
 [submodule "AT-interpreter"]
 	path = AT-interpreter
-	url = git@github.com:Shylock-Hg/AT-interpreter.git
+	url = https://github.com/Shylock-Hg/AT-interpreter.git
