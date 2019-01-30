@@ -9,10 +9,10 @@
 
 #include <sys/socket.h>
 
-#include <core/mqtt_packet.h>
-#include <toolkit/mqtt_log.h>
+#include "../inc/mqtt_packet.h"
+#include "../inc/mqtt_log.h"
 
-#include <session/mqttor_session.h>
+#include "../inc/mqttor_session.h"
 
 
 void mqttor_config_deinit(mqttor_config_t * mq_config){

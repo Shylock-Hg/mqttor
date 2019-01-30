@@ -17,8 +17,7 @@ ifeq ($(WITH_DEBUG),yes)
 	CFLAGS += -g
 endif
 
-
-DIRS = ./src/client AT-interpreter/ ./src/at
+DIRS = ./mqtt ./client ./AT-interpreter ./at
 
 .PHONY : all install uninstall test clean
 all :

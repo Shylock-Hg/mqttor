@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <core/mqtt_fixed_header.h>
+#include "../inc/mqtt_fixed_header.h"
 
 struct mqtt_buf_ctl_flag * mqtt_ctl_flag_pack(union mqtt_attr_ctl_flag flag){
         //< check parameters

@@ -12,9 +12,9 @@
 
 #include <assert.h>
 
-#include "mqtt_fixed_header.h"
-#include "mqtt_var_header.h"
-#include "mqtt_payload.h"
+#include "./mqtt_fixed_header.h"
+#include "./mqtt_var_header.h"
+#include "./mqtt_payload.h"
 
 
 /*

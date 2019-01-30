@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <core/mqtt_payload.h>
-#include <toolkit/mqtt_log.h>
+#include "../inc/mqtt_payload.h"
+#include "../inc/mqtt_log.h"
 
 mqtt_attr_payload_t * mqtt_attr_payload_new(size_t len){
 	//assert(len);

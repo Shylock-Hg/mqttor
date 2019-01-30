@@ -17,13 +17,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <at_table.h>
-#include <at_param.h>
-#include <at_command.h>
-#include <at_xrecord.h>
-#include <at_fsm.h>
-#include <client/mqttor_client_common.h>
-#include <toolkit/mqtt_log.h>
+#include "../AT-interpreter/inc/at_table.h"
+#include "../AT-interpreter/inc/at_param.h"
+#include "../AT-interpreter/inc/at_command.h"
+#include "../AT-interpreter/inc/at_xrecord.h"
+#include "../AT-interpreter/inc/at_fsm.h"
+#include "../mqtt/inc/mqttor_client_common.h"
+#include "../mqtt/inc/mqtt_log.h"
 
 
 #define REPL

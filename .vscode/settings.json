@@ -1,0 +1,5 @@
+{
+    "files.associations": {
+        "mqttor_session.h": "c"
+    }
+}
