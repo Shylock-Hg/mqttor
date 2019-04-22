@@ -2,10 +2,10 @@
 #define _CONFIG_H_
 
 #ifdef __cplusplus
-	extern "C" {
+extern "C" {
 #endif
 
-///! \defgroup mqtt_config configuration of mqttor 
+///! \defgroup mqtt_config configuration of mqttor
 /// @{
 
 /*! \brief endian of bytes
@@ -13,13 +13,12 @@
  * */
 #define configENDIAN 0
 
-#define configLOG    1 //!< bool 
+#define configLOG 1  //!< bool
 
 /// @}
 
 #ifdef __cplusplus
-	}
+}
 #endif
 
 #endif  //!< _CONFIG_H_
-
