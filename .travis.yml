@@ -161,9 +161,6 @@ before_install:
     - eval "${MATRIX_EVAL}"
     - sudo apt install mosquitto
 
-before_script:
-    - sudo service mosquitto start
-
 script :
     - make -j$(nproc)
     - sudo make install
