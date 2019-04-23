@@ -162,7 +162,7 @@ before_install:
     - sudo apt install mosquitto
 
 before_script:
-    - service mosquitto start
+    - sudo service mosquitto start
 
 script :
     - make -j$(nproc)
