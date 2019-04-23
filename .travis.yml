@@ -159,7 +159,7 @@ matrix:
 
 before_install:
     - eval "${MATRIX_EVAL}"
-    - sudo apt install mosquitto
+    - sudo apt install mosquitto valgrind
 
 script :
     - make -j$(nproc)
