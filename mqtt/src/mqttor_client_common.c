@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 
@@ -45,11 +46,22 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 			mq_sess->config->broker_port);
 	*/
 
+	struct hostent* entry = gethostbyname(host);
+	struct in_addr raw_addr;
+	assert(entry);
+	for (struct in_addr** addr_it = (struct in_addr**)(entry->h_addr_list); addr_it != NULL; addr_it++) {
+		// fetch first ip queried
+		assert(addr_it);
+		assert(*addr_it);
+		raw_addr = **addr_it;
+		break;
+	}
+
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = inet_addr(host);
+	addr.sin_addr.s_addr = raw_addr.s_addr;
 
 	//< initialize socket
 	if(0 > mq_sess->socket){  //!< invalid socket
