@@ -3,9 +3,8 @@ language : c
 #    - gcc
 #    - clang
 os : linux
-# Handle git submodules yourself
-#git:
-#    submodules: false
+services:
+  - docker
 
 matrix:
   include:
@@ -159,14 +158,9 @@ matrix:
 
 before_install:
     - eval "${MATRIX_EVAL}"
-    - sudo apt-get install xsltproc docbook-xsl valgrind
-    - git clone --depth=1 https://github.com/eclipse/mosquitto.git && cd mosquitto && make -j8 && sudo make install && cd ..
-    #- sudo pip install cpp-coveralls
-#    - git config --file=.gitmodules submodule.AT-interpreter.url https://github.com/Shylock-Hg/AT-interpreter.git
-#    - git submodule update --init --recursive
 
 before_script:
-    - mosquitto -d
+    - docker run -d -p 1883:1883 eclipse-mosquitto
 
 script :
     - make -j$(nproc)
