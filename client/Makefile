@@ -53,10 +53,10 @@ uninstall :
 
 test :
 	$(VALGRIND) $(APP) -h
-	$(APP) pub -t 'test/topic' -m 'QoS0' -q 0
-	$(APP) pub -t 'test/topic' -m 'QoS1' -q 1
-	$(APP) pub -t 'test/topic' -m 'QoS2' -q 2
-	$(APP) sub -t 'test/topic' -n 1
+	$(VALGRIND) $(APP) pub -t 'test/topic' -m 'QoS0' -q 0
+	$(VALGRIND) $(APP) pub -t 'test/topic' -m 'QoS1' -q 1
+	$(VALGRIND) $(APP) pub -t 'test/topic' -m 'QoS2' -q 2
+	$(VALGRIND) $(APP) sub -t 'test/topic' -n 1
 
 clean :
 	$(RM) -rf $(DIR_BUILD)
