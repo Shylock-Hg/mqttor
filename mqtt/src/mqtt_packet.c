@@ -9,6 +9,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <sys/socket.h>
+
 #include "../inc/mqtt_packet.h"
 #include "../inc/mqtt_log.h"
 
@@ -1557,4 +1559,66 @@ int mqtt_unpack_disconnect(
 
 }
 
+/// \brief receive the mqtt packet by header
+/// \param fd the file descriptor to read packet data
+/// \param p_buf the mqtt packet buffer
+/// \return error code
+int mqtt_recv(int fd, mqtt_buf_packet_t* p_buf, int flags) {
+	assert(fd > 0);
+	assert(p_buf);
 
+	int err = 0, pos = 0;
+//	mqtt_buf_packet_t * buf = mqtt_buf_new(MQTT_FIXED_HEADER_LEN + MQTT_CTL_REMAINING_MAX_LEN_BYTE);
+//	assert(buf);
+	if (p_buf->len < MQTT_FIXED_HEADER_LEN + MQTT_CTL_REMAINING_MAX_LEN_BYTE) {
+		mqtt_buf_resize(p_buf, MQTT_FIXED_HEADER_LEN + MQTT_CTL_REMAINING_MAX_LEN_BYTE);
+	}
+	err = recv(fd, p_buf->buf, MQTT_FIXED_HEADER_LEN, flags);
+	if (err <= 0) {
+		return err;
+	}
+	do {
+		// receive one byte of remaining length
+		err = recv(fd, p_buf->buf + pos + 1, 1, 0);
+		if (err < 0) {
+			return err;
+		}
+		pos++;  // position to remaining length byte
+	} while((p_buf->buf[pos] && 128) != 0);
+
+	size_t re_buf_len = 0;
+	mqtt_attr_re_len_t re_len = mqtt_ctl_decode_remaining_len(p_buf->buf+MQTT_FIXED_HEADER_LEN, &re_buf_len);
+	assert(re_buf_len == pos - MQTT_FIXED_HEADER_LEN + 1);
+	if (p_buf->len < MQTT_FIXED_HEADER_LEN + re_buf_len + re_len) {
+		err = mqtt_buf_resize(p_buf, MQTT_FIXED_HEADER_LEN + re_buf_len + re_len);
+	}
+	if (err < 0) {
+		return err;
+	}
+
+	err = recv(fd, p_buf->buf + MQTT_FIXED_HEADER_LEN + re_buf_len, re_len, 0);
+	return err;
+}
+
+/// \brief mqtt receive fixed length packet
+/// \param fd the file descriptor
+/// \param p_buf the mqtt buffer
+/// \param fixed the fixed length about mqtt packet
+/// \return the length received, negative when err
+int mqtt_recv_fixed(int fd, mqtt_buf_t* p_buf, size_t fixed) {
+	assert(fd > 0);
+	assert(p_buf);
+	assert(fixed > 0);
+
+	int err = 0;
+
+	if (p_buf->len < fixed) {
+		err = mqtt_buf_resize(p_buf, fixed);
+	}
+	if (err < 0) {
+		return err;
+	}
+	err = recv(fd, p_buf->buf, fixed, 0);
+	assert(err == fixed);
+	return err;
+}

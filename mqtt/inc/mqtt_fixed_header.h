@@ -33,6 +33,9 @@
 //
 #define MQTT_CTL_FLAG_MAX_LEN_BYTE 1
 
+/// the fixed header length 1 byte
+#define MQTT_FIXED_HEADER_LEN 1
+
 /*! \brief MQTT contorl packet type macro
  *
  * */

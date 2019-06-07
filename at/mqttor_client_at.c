@@ -419,8 +419,7 @@ int main(int argc, char * argv[]){
 
 		if(mq_sess->is_connected){  //!< connected to broker and listen to publish
 			//< receive publish packet
-			err = recv(mq_sess->socket, buf->buf, buf->len,
-					MSG_DONTWAIT);
+			err = mqtt_recv(mq_sess->socket, buf, MSG_DONTWAIT);
 			if(0 < err){  //!< receive packet
 				mqtt_log_printf(LOG_LEVEL_LOG,
 						"Mqttor client recv %d bytes!\n", err);

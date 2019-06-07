@@ -125,8 +125,7 @@ int mqttor_client_connect(mqttor_session_t * mq_sess, const char * host,
 
 	//< wait for connack
 	mqtt_buf_t * p_buf_connack = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_CONNACK);
-	err = recv(mq_sess->socket, p_buf_connack->buf, p_buf_connack->len, 
-			0);
+	err = mqtt_recv_fixed(mq_sess->socket, p_buf_connack, MQTT_FIXED_PACKET_LEN_CONNACK);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv connack fail!\n");
 		return -E_NET_XFER;
@@ -268,8 +267,7 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 			break;
 		case MQTTOR_QoS_LONCE:
 			//< puback
-			err = recv(mq_sess->socket, p_buf_puback->buf, 
-					p_buf_puback->len, 0);
+			err = mqtt_recv_fixed(mq_sess->socket, p_buf_puback, MQTT_FIXED_PACKET_LEN_PUBACK);
 			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor recv puback fail!\n");
@@ -294,8 +292,7 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 			break;
 		case MQTTOR_QoS_EONCE:
 			//< pubrec
-			err = recv(mq_sess->socket, p_buf_puback->buf, 
-					p_buf_puback->len, 0);
+			err = mqtt_recv_fixed(mq_sess->socket, p_buf_puback, MQTT_FIXED_PACKET_LEN_PUBACK);
 			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor recv pubrec fail!=n");
@@ -334,8 +331,7 @@ int mqttor_client_publish(mqttor_session_t * mq_sess, /*const*/ char * topic,
 				break;
 			}
 			//< pubcomp
-			err = recv(mq_sess->socket, p_buf_puback->buf, 
-					p_buf_puback->len, 0);
+			err = mqtt_recv_fixed(mq_sess->socket, p_buf_puback, MQTT_FIXED_PACKET_LEN_PUBACK);
 			if(0 > err){
 				mqtt_log_printf(LOG_LEVEL_ERR, 
 						"Mqttor recv pubcomp fail!=n");
@@ -424,8 +420,8 @@ int mqttor_client_subscribe(mqttor_session_t * mq_sess, const char * sub,
 
 	//< handle suback
 	//< only on subscribe in this version
-	mqtt_buf_packet_t * p_buf_suback = mqtt_buf_new(5);
-	err = recv(mq_sess->socket, p_buf_suback->buf, p_buf_suback->len, 0);
+	mqtt_buf_packet_t * p_buf_suback = mqtt_buf_new(MQTT_FIXED_PACKET_LEN_SUBACK);
+	err = mqtt_recv_fixed(mq_sess->socket, p_buf_suback, MQTT_FIXED_PACKET_LEN_SUBACK);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv suback fail!\n");
 		return err;
@@ -505,8 +501,7 @@ int mqttor_client_unsubscribe(mqttor_session_t * mq_sess, const char * sub){
 	//< unsuback
 	mqtt_buf_t * p_buf_unsuback =  mqtt_buf_new(
 			MQTT_FIXED_PACKET_LEN_UNSUBACK);
-	err = recv(mq_sess->socket, p_buf_unsuback->buf, p_buf_unsuback->len, 
-			0);
+	err = mqtt_recv_fixed(mq_sess->socket, p_buf_unsuback, MQTT_FIXED_PACKET_LEN_UNSUBACK);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor recv unsuback fail!\n");
 		return -E_NET_XFER;
@@ -571,7 +566,7 @@ int mqttor_client_pingreq(mqttor_session_t * mq_sess){
 			MQTT_FIXED_PACKET_LEN_PINGRESP);
 	mqtt_attr_packet_t * p_attr_pingresp = NULL;
 	assert(p_buf_pingresp);
-	err = recv(mq_sess->socket, p_buf_pingresp->buf, p_buf_pingresp->len, 0);
+	err = mqtt_recv_fixed(mq_sess->socket, p_buf_pingresp, MQTT_FIXED_PACKET_LEN_PINGRESP);
 	if(0 > err){
 		mqtt_log_printf(LOG_LEVEL_ERR, "Mqttor client recv pingresp fail!\n");
 		mqtt_buf_release(p_buf_pingresp);

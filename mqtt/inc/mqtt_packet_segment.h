@@ -76,6 +76,12 @@ struct mqtt_buf * mqtt_buf_new(size_t len);
  * */
 mqtt_buf_t * mqtt_buf_new_4_buf(uint8_t * buf, size_t len);
 
+/// \brief resize the mqtt buffer
+/// \param mq_buf mqtt buffer
+/// \param newlen the new length of buffer
+/// \return the status
+int mqtt_buf_resize(mqtt_buf_t * mq_buf, size_t newlen);
+
 /*! \brief release mqtt_buf by free memory
  *  \param buf mqtt_buf object pointer to release
  * */
