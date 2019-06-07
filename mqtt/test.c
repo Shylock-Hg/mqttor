@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 
@@ -230,16 +231,24 @@ void test_payload(void){
 	mqtt_buf_release(p_buf_subscribe_flag);
 }
 
-#define TEST_IP   "127.0.0.1"//"37.187.106.16"//
-#define TEST_PORT 1883
+//static const char * TEST_HOST = "test.mosquitto.org";
+static const char* TEST_HOST = "localhost";
+static const uint32_t TEST_PORT = 1883;
 
 void test_packet(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	/*
 	struct mqtt_attr_packet attr_connect = {
 		.attr_packet = {
@@ -326,9 +335,16 @@ void test_packet_connack(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_connack = mqtt_attr_packet_new(0);
@@ -376,9 +392,16 @@ void test_packet_publish(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_publish = mqtt_attr_packet_new(1024);
@@ -435,9 +458,16 @@ void test_packet_puback(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_puback = mqtt_attr_packet_new(0);
@@ -491,9 +521,16 @@ void test_packet_pubrec(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_pubrec = mqtt_attr_packet_new(0);
@@ -547,9 +584,16 @@ void test_packet_pubrel(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_pubrel = mqtt_attr_packet_new(0);
@@ -603,9 +647,16 @@ void test_packet_pubcomp(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_pubcomp = mqtt_attr_packet_new(0);
@@ -659,9 +710,16 @@ void test_packet_subscribe(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_subscribe = mqtt_attr_packet_new(1024);
@@ -720,9 +778,16 @@ void test_packet_suback(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_suback = mqtt_attr_packet_new(1024);
@@ -792,9 +857,16 @@ void test_packet_unsubscribe(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_unsubscribe = mqtt_attr_packet_new(1024);
@@ -851,9 +923,16 @@ void test_packet_unsuback(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_unsuback = mqtt_attr_packet_new(0);
@@ -907,9 +986,16 @@ void test_packet_pingreq(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_pingreq = mqtt_attr_packet_new(0);
@@ -960,9 +1046,16 @@ void test_packet_pingresp(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_pingresp = mqtt_attr_packet_new(0);
@@ -1013,9 +1106,16 @@ void test_packet_disconnect(void){
 	int sock;
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
+	struct hostent* entry = gethostbyname(TEST_HOST);
+	assert(entry);
+	assert(entry->h_addr_list);
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
+		addr.sin_addr.s_addr = (*it)->s_addr;
+		break;
+	}
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(TEST_PORT);
-	addr.sin_addr.s_addr = inet_addr(TEST_IP);
+//	addr.sin_addr.s_addr = inet_addr(TEST_HOST);
 	
 
 	mqtt_attr_packet_t * attr_disconnect = mqtt_attr_packet_new(0);

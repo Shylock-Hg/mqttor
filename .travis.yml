@@ -112,8 +112,6 @@ matrix:
 before_install:
     - eval "${MATRIX_EVAL}"
     - sudo apt install valgrind
-
-before_script:
     - docker run -d -p 1883:1883 eclipse-mosquitto
 
 script :
