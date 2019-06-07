@@ -3,9 +3,8 @@ language : c
 #    - gcc
 #    - clang
 os : linux
-# Handle git submodules yourself
-#git:
-#    submodules: false
+services:
+  - docker
 
 matrix:
   include:
@@ -160,6 +159,7 @@ matrix:
 before_install:
     - eval "${MATRIX_EVAL}"
     - sudo apt install valgrind
+    - docker run -d -p 1883:1883 eclipse-mosquitto
 
 script :
     - make -j$(nproc)

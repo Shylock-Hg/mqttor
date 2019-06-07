@@ -61,3 +61,6 @@ tags
 doc/
 
 vgcore.*
+
+.vscode/
+

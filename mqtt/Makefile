@@ -89,7 +89,7 @@ uninstall :
 	$(RM) -rf "$(prefix)/include/$(LIB_NAME)"
 
 test :
-	$(VALGRIND) $(APP)
+#	$(VALGRIND) $(APP)
 
 clean :
 	$(RM) -rf $(DIR_BUILD)

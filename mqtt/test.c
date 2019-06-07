@@ -231,7 +231,8 @@ void test_payload(void){
 	mqtt_buf_release(p_buf_subscribe_flag);
 }
 
-static const char * TEST_HOST = "test.mosquitto.org";
+//static const char * TEST_HOST = "test.mosquitto.org";
+static const char* TEST_HOST = "localhost";
 static const uint32_t TEST_PORT = 1883;
 
 void test_packet(void){
@@ -241,7 +242,7 @@ void test_packet(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -337,7 +338,7 @@ void test_packet_connack(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -394,7 +395,7 @@ void test_packet_publish(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -460,7 +461,7 @@ void test_packet_puback(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -523,7 +524,7 @@ void test_packet_pubrec(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -586,7 +587,7 @@ void test_packet_pubrel(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -649,7 +650,7 @@ void test_packet_pubcomp(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -712,7 +713,7 @@ void test_packet_subscribe(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -780,7 +781,7 @@ void test_packet_suback(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -859,7 +860,7 @@ void test_packet_unsubscribe(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -925,7 +926,7 @@ void test_packet_unsuback(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -988,7 +989,7 @@ void test_packet_pingreq(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -1048,7 +1049,7 @@ void test_packet_pingresp(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
@@ -1108,7 +1109,7 @@ void test_packet_disconnect(void){
 	struct hostent* entry = gethostbyname(TEST_HOST);
 	assert(entry);
 	assert(entry->h_addr_list);
-	for (struct in_addr** it = entry->h_addr_list; *it != NULL; it++) {
+	for (struct in_addr** it = (struct in_addr**)(entry->h_addr_list); *it != NULL; it++) {
 		addr.sin_addr.s_addr = (*it)->s_addr;
 		break;
 	}
