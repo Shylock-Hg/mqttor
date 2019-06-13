@@ -63,7 +63,11 @@ mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len_low(const struct mqtt_buf_re_le
 	return value;
 }
 mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(uint8_t * buf, size_t * len_bytes){
-	*len_bytes = 0;
+	assert(buf);
+
+	if (NULL != len_bytes) {
+		*len_bytes = 0;
+	}
 #define code (buf)
 	int multiplier = 1;
 	mqtt_attr_re_len_t value = 0;
@@ -74,7 +78,9 @@ mqtt_attr_re_len_t mqtt_ctl_decode_remaining_len(uint8_t * buf, size_t * len_byt
 		}
 		value += ((*code) & 127) * multiplier;
 		multiplier *= 128;
-		(*len_bytes)++;
+		if (NULL != len_bytes) {
+			(*len_bytes)++;
+		}
 	}while(((*code++) & 128) != 0);
 
 	return value;

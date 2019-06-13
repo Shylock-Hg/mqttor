@@ -282,9 +282,7 @@ int main(int argc, char * argv[]){
 			mqtt_buf_t * buf_publish = NULL;
 			assert(buf);
 			while(runcond){
-
-				err = recv(mq_sess->socket, buf->buf, buf->len,
-						MSG_DONTWAIT);
+				err = mqtt_recv(mq_sess->socket, buf, MSG_DONTWAIT);
 				if(0 < err){
 					seconds = 0;  //!< reset timeout
 					buf_publish = mqtt_buf_new(err);
@@ -350,8 +348,7 @@ int main(int argc, char * argv[]){
 			assert(buf);
 			while(runcond){
 
-				err = recv(mq_sess->socket, buf->buf, buf->len,
-						MSG_DONTWAIT);
+				err = mqtt_recv(mq_sess->socket, buf, MSG_DONTWAIT);
 				if(0 < err){
 					seconds = 0;  //!< reset timeout
 					buf_publish = mqtt_buf_new(err);

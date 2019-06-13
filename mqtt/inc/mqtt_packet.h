@@ -49,6 +49,7 @@
 #define MQTT_FIXED_PACKET_LEN_PUBREL     4
 #define MQTT_FIXED_PACKET_LEN_PUBCOMP    4
 
+#define MQTT_FIXED_PACKET_LEN_SUBACK     5
 #define MQTT_FIXED_PACKET_LEN_UNSUBACK   4
 
 #define MQTT_FIXED_PACKET_LEN_PINGREQ    2
@@ -708,6 +709,18 @@ int mqtt_unpack_disconnect(
 		mqtt_attr_packet_t ** pp_attr_packet
 		);
 
+/// \brief receive the mqtt packet by header
+/// \param fd the file descriptor to read packet data
+/// \param p_buf the mqtt packet buffer
+/// \return error code
+int mqtt_recv(int fd, mqtt_buf_packet_t* p_buf, int flags);
+
+/// \brief mqtt receive fixed length packet
+/// \param fd the file descriptor
+/// \param p_buf the mqtt buffer
+/// \param fixed the fixed length about mqtt packet
+/// \return the length received, negative when err
+int mqtt_recv_fixed(int fd, mqtt_buf_t* p_buf, size_t fixed);
 /// @}
 
 /// @}

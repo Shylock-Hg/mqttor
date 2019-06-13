@@ -148,8 +148,7 @@ int mqttor_session_on_publish(mqttor_session_t * mq_sess,
 					mqtt_buf_t * p_buf_pubrel = mqtt_buf_new(
 							MQTT_FIXED_PACKET_LEN_PUBREL);
 					mqtt_attr_packet_t * p_attr_pubrel = NULL;
-					err = recv(mq_sess->socket, p_buf_pubrel->buf,
-							p_buf_pubrel->len, 0);
+					err = mqtt_recv_fixed(mq_sess->socket, p_buf_pubrel, MQTT_FIXED_PACKET_LEN_PUBREL);
 					if(0 > err){
 						mqtt_log_printf(LOG_LEVEL_ERR, 
 								"Mqttor client recv pubrel fail!\n");

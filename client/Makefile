@@ -13,7 +13,9 @@ PPFLAGS = -MT $@ -MMD -MP -MF $(patsubst %.o, %.d, $@)
 CFLAGS_LOCAL = -Wall -g -std=c99 -coverage
 CFLAGS_LOCAL += $(CFLAGS)
 
+ifeq ($(WITH_VALGRIND), yes)
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
+endif
 
 APP_SOURCE = mqttor_client.c
 APP_OBJECT = mqttor_client.o

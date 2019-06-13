@@ -48,6 +48,28 @@ mqtt_buf_t * mqtt_buf_new_4_buf(uint8_t * buf, size_t len){
 
 	return mq_buf;
 }
+/// \brief resize the mqtt buffer
+/// \param mq_buf mqtt buffer
+/// \param newlen the new length of buffer
+/// \return the status
+int mqtt_buf_resize(mqtt_buf_t * mq_buf, size_t newlen) {
+	assert(mq_buf);
+	assert(newlen > 0);
+
+	if (mq_buf->len > newlen) {
+		return -1;
+	}
+
+	void* ptr = realloc(mq_buf->buf, newlen);
+	mq_buf->buf = ptr;
+	if (NULL == ptr) {
+		mq_buf->len = 0;
+		return -1;
+	}
+	mq_buf->len = newlen;
+
+	return 0;
+}
 
 void mqtt_buf_release(struct mqtt_buf * mq_buf){
 	free(mq_buf->buf);
