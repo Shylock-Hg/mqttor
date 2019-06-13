@@ -13,7 +13,9 @@ PPFLAGS = -MT $@ -MMD -MP -MF $(patsubst %.o, %.d, $@)
 CFLAGS_LOCAL = -Wall -g -std=c99 -coverage
 CFLAGS_LOCAL += $(CFLAGS)
 
+ifeq ($(WITH_VALGRIND), yes)
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
+endif
 
 APP_SOURCE = test.c
 APP_OBJECT = test.o
@@ -89,7 +91,7 @@ uninstall :
 	$(RM) -rf "$(prefix)/include/$(LIB_NAME)"
 
 test :
-	$(VALGRIND) $(APP)
+#	$(VALGRIND) $(APP)
 
 clean :
 	$(RM) -rf $(DIR_BUILD)
